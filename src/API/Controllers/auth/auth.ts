@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { LoginBody, RegisterBody } from "../../types/auth/auth";
+import { prisma } from "../../../Database";
 
 export function loginHandler(req: Request, res: Response)
 {
