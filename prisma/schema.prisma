@@ -13,7 +13,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model TestTable {
-  id   Int    @id @default(autoincrement())
-  Name String
+model Users {
+  id       Int    @id @default(autoincrement())
+  Email    String
+  Password String
+  Phone    String
 }
