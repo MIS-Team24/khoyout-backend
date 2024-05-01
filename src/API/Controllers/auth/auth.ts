@@ -13,5 +13,6 @@ export function RegisterHandler(req: Request, res: Response)
 {
     const registerBody = req.body as RegisterBody;
 
+    
     res.status(200).send("register");
 }

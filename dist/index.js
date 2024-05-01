@@ -11,8 +11,10 @@ const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-let port = 3000;
+app.use(express_1.default.urlencoded({ extended: true }));
+let port = 3005;
 app.use(mainRoutes_1.apiRoutes);
+app.use("*", (req, res) => res.send("This page in not exist!"));
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });

@@ -8,7 +8,8 @@ import cors from 'cors';
 const app = express();
 app.use(cors());
 app.use(express.json());
-let port = 3000;
+app.use(express.urlencoded({extended:true}))
+let port = 3005;
 
 
 declare global {
@@ -18,6 +19,7 @@ declare global {
 }
 
 app.use(apiRoutes);
+app.use( "*" , (req : Request , res : Response) => res.send("This page in not exist!"))
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
