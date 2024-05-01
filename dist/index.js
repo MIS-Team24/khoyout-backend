@@ -14,7 +14,7 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 let port = 3005;
 app.use(mainRoutes_1.apiRoutes);
-app.use("*", (req, res) => res.send("This page in not exist!"));
+app.all("*", (req, res) => res.send("This page in not exist!"));
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });

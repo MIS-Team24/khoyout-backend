@@ -19,7 +19,7 @@ declare global {
 }
 
 app.use(apiRoutes);
-app.use( "*" , (req : Request , res : Response) => res.send("This page in not exist!"))
+app.all( "*" , (req : Request , res : Response) => res.send("This page in not exist!"))
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
