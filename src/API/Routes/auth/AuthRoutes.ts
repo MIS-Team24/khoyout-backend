@@ -1,7 +1,7 @@
 import express from "express";
 import { z } from "zod";
 import BodyValidator from "../../Middleware/BodyValidator";
-import { RegisterHandler, loginHandler } from "../../Controllers/auth/auth";
+import { RegisterHandler, loginHandler } from "../../Controllers/auth/AuthController";
 
 const router = express.Router();
 
