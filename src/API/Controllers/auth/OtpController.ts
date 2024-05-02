@@ -3,9 +3,8 @@ import { sendEmail } from "../../../Services/sendEmail";
 import { isUserExist } from "../../Models/UserModel";
 import { EmailBody } from "../../types/auth/auth";
 import { Request, Response } from "express";
-import { nodemailerResult } from "../../types/responsesJson/generalResponse";
 
-//recieve the email target to send and email
+//recieve the email target to send and otp or any thing to this email
 export async function OtpSentToEmailHandler(req: Request, res: Response) {
     
     const registerBody = req.body as EmailBody;
@@ -19,17 +18,16 @@ export async function OtpSentToEmailHandler(req: Request, res: Response) {
     const otpServer = generateOTP(4)
     //
 
-    //send email
-    const result = sendEmail({
+    const success = await sendEmail({
         from    :   process.env.OWNER_USER_APP,
         to      :   registerBody.email,
         subject :   "Verify your email",
         text    :   "Verify your email",
-        html    :   `<h2>Welcome to our service</h2>
+        html    :   `<h2>Welcome to our khoyout service</h2>
                     <p>Please, inter this otp to verify your email.</p>
                     <h1>${otpServer}</h1>`
-    }) as nodemailerResult
-    //
+    } , res)
+    
 
-    res.json(result)
+    res.json({success , otpServer})
 }

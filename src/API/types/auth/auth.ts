@@ -10,6 +10,7 @@ export type RegisterBody = {
     repeatPassword: string,
 }
 
+//to send otp to
 export type EmailBody = {
     email: string,
 }

@@ -1,19 +1,13 @@
 import { MailOptions } from "nodemailer/lib/sendmail-transport";
 import { transporter } from "./nodemailer";
-import { nodemailerResult } from "../API/types/responsesJson/generalResponse";
+import { Response } from "express";
 
-
-export const sendEmail = (mailOptions : MailOptions) : nodemailerResult => {
-    let result = {} as nodemailerResult
-
-    transporter.sendMail(mailOptions , (error , info)=>{
-        if(error) result =  {success : false , details : error}
-        result = {success : true , details : info}
-    }) 
-
-    return result
+export const sendEmail = async (mailOptions : MailOptions , res : Response) => {
+    await transporter.sendMail(mailOptions , (error , info)=>{
+        if(error) res.status(400).json({success : false , details : error})
+    })     
+    return true
 }
-
 
 /*
     example for mailOption object here

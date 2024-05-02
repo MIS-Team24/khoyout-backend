@@ -4,7 +4,7 @@ exports.OtpSentToEmailHandler = void 0;
 const generateOTP_1 = require("../../../Services/generateOTP");
 const sendEmail_1 = require("../../../Services/sendEmail");
 const UserModel_1 = require("../../Models/UserModel");
-//recieve the email target to send and email
+//recieve the email target to send and otp or any thing to this email
 async function OtpSentToEmailHandler(req, res) {
     const registerBody = req.body;
     //check if user already exist 
@@ -15,17 +15,15 @@ async function OtpSentToEmailHandler(req, res) {
     //generate a random Otp from 4 numbers
     const otpServer = (0, generateOTP_1.generateOTP)(4);
     //
-    //send email
-    const result = (0, sendEmail_1.sendEmail)({
+    const success = await (0, sendEmail_1.sendEmail)({
         from: process.env.OWNER_USER_APP,
         to: registerBody.email,
         subject: "Verify your email",
         text: "Verify your email",
-        html: `<h2>Welcome to our service</h2>
+        html: `<h2>Welcome to our khoyout service</h2>
                     <p>Please, inter this otp to verify your email.</p>
                     <h1>${otpServer}</h1>`
-    });
-    //
-    res.json(result);
+    }, res);
+    res.json({ success, otpServer });
 }
 exports.OtpSentToEmailHandler = OtpSentToEmailHandler;

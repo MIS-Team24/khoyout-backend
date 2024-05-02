@@ -2,14 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmail = void 0;
 const nodemailer_1 = require("./nodemailer");
-const sendEmail = (mailOptions) => {
-    let result = {};
-    nodemailer_1.transporter.sendMail(mailOptions, (error, info) => {
+const sendEmail = async (mailOptions, res) => {
+    await nodemailer_1.transporter.sendMail(mailOptions, (error, info) => {
         if (error)
-            result = { success: false, details: error };
-        result = { success: true, details: info };
+            res.status(400).json({ success: false, details: error });
     });
-    return result;
+    return true;
 };
 exports.sendEmail = sendEmail;
 /*
