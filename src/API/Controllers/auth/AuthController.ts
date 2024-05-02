@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { LoginBody, RegisterBody } from "../../types/auth/auth";
-import { addUser, isUserExist } from "../../Models/User";
+import { addUser, isUserExist } from "../../Models/UserModel";
 import * as bcrypt from "bcrypt"
+import 'dotenv/config';
 
 export function loginHandler(req: Request, res: Response)
 {
@@ -14,10 +15,10 @@ export async function RegisterHandler (req: Request, res: Response)
 {
     const registerBody = req.body as RegisterBody;
 
-    //check if user already exist 
-    const userExistence : boolean = await isUserExist(registerBody.email)
-    if(userExistence) res.json({error : "This user is already exist"});
-    //
+    // //check if user already exist 
+    // const userExistence : boolean = await isUserExist(registerBody.email)
+    // if(userExistence) res.json({error : "This user is already exist"});
+    // //
 
     //if password amd repeated password not the same
     if(registerBody.password != registerBody.repeatPassword){
@@ -44,3 +45,4 @@ export async function RegisterHandler (req: Request, res: Response)
 
     
 }
+

@@ -2,12 +2,11 @@ import { prisma  } from "../../Database";
 import { Prisma  } from "@prisma/client";
 
 
-
 //check if user exist (using email checking)
 export const isUserExist = async (email : string) : Promise<boolean> => {
-    const user : null | object = await prisma.users.findUnique({
+    const user = await prisma.users.findUnique({
         where :{
-            email
+            email : email
         }
     })
 

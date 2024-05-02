@@ -22,4 +22,5 @@ const register = z.object({
 
 router.post("/auth/register", BodyValidator({schema: register}), RegisterHandler)
 
+
 export default router;

@@ -8,3 +8,4 @@ export const transporter  = nodemailer.createTransport({
         pass:process.env.OWNER_PASSWORD_APP
     }
 })
+

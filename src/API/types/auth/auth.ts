@@ -10,3 +10,7 @@ export type RegisterBody = {
     repeatPassword: string,
 }
 
+export type EmailBody = {
+    email: string,
+}
+
