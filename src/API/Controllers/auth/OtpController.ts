@@ -1,4 +1,5 @@
 import { generateOTP } from "../../../Services/generateOTP";
+import { OtpEmailStructure } from "../../../Services/htmlEmailStructures/OtpEmailStructures";
 import { sendEmail } from "../../../Services/sendEmail";
 import { isUserExist } from "../../Models/UserModel";
 import { EmailBody } from "../../types/auth/auth";
@@ -23,9 +24,7 @@ export async function OtpSentToEmailHandler(req: Request, res: Response) {
         to      :   registerBody.email,
         subject :   "Verify your email",
         text    :   "Verify your email",
-        html    :   `<h2>Welcome to our khoyout service</h2>
-                    <p>Please, inter this otp to verify your email.</p>
-                    <h1>${otpServer}</h1>`
+        html    :   OtpEmailStructure(otpServer)
     } , res)
     
 

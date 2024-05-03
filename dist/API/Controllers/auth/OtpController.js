@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OtpSentToEmailHandler = void 0;
 const generateOTP_1 = require("../../../Services/generateOTP");
+const OtpEmailStructures_1 = require("../../../Services/htmlEmailStructures/OtpEmailStructures");
 const sendEmail_1 = require("../../../Services/sendEmail");
 const UserModel_1 = require("../../Models/UserModel");
 //recieve the email target to send and otp or any thing to this email
@@ -20,9 +21,7 @@ async function OtpSentToEmailHandler(req, res) {
         to: registerBody.email,
         subject: "Verify your email",
         text: "Verify your email",
-        html: `<h2>Welcome to our khoyout service</h2>
-                    <p>Please, inter this otp to verify your email.</p>
-                    <h1>${otpServer}</h1>`
+        html: (0, OtpEmailStructures_1.OtpEmailStructure)(otpServer)
     }, res);
     res.json({ success, otpServer });
 }
