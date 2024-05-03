@@ -30,5 +30,5 @@ export async function loginHandler (req: Request, res: Response)
         token
     }
 
-    res.cookie('khoyout-user', token, { httpOnly: true, maxAge}).json(targetUser);
+    res.cookie('khoyout_user', token, { httpOnly: true, maxAge}).json(targetUser);
 }

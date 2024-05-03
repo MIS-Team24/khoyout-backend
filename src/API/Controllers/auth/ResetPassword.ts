@@ -28,3 +28,4 @@ export async function resetPasswordHandler (req: Request, res: Response)
         res.json({error})
     }
 }
+
