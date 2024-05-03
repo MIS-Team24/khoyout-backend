@@ -24,3 +24,10 @@ export type UserBody = {
     token: string
 }
 
+//reset password 
+export type PasswordResetBody = {
+    email : string,
+    password: string,
+    repeatPassword: string
+}
+

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUser = exports.findUserByEmail = void 0;
+exports.resetPassword = exports.addUser = exports.findUserByEmail = void 0;
 const Database_1 = require("../../Database");
 //check if user exist and return that user (using email checking) 
 const findUserByEmail = async (email) => {
@@ -19,4 +19,18 @@ const addUser = async (data) => {
     return user;
 };
 exports.addUser = addUser;
+//
+//reset password
+const resetPassword = async (data, email) => {
+    const user = await Database_1.prisma.users.update({
+        where: {
+            email
+        },
+        data: {
+            password: data.password
+        }
+    });
+    return user;
+};
+exports.resetPassword = resetPassword;
 //

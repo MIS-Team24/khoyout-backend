@@ -13,8 +13,22 @@ export const findUserByEmail = async (email : string) => {
 //
 
 //create user
-export const addUser = async (data : Prisma.UsersCreateInput) : Promise<object> => {
+export const addUser = async (data : Prisma.UsersCreateInput) => {
     const user : object = await prisma.users.create({data})
+    return user
+}
+//
+
+//reset password
+export const resetPassword = async (data : Prisma.UsersUpdateInput , email : string) => {
+    const user : object = await prisma.users.update({
+        where : {
+            email
+        },
+        data : {
+            password : data.password
+        }
+    })
     return user
 }
 //
