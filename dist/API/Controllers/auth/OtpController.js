@@ -9,8 +9,8 @@ const UserModel_1 = require("../../Models/UserModel");
 async function OtpSentToEmailHandler(req, res) {
     const registerBody = req.body;
     //check if user already exist 
-    const userExistence = await (0, UserModel_1.isUserExist)(registerBody.email);
-    if (userExistence)
+    const user = await (0, UserModel_1.findUserByEmail)(registerBody.email);
+    if (user)
         res.json({ error: "This user is already exist" });
     //
     //generate a random Otp from 4 numbers

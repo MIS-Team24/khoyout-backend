@@ -23,33 +23,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginHandler = void 0;
+exports.generateToken = void 0;
+const jwt = __importStar(require("jsonwebtoken"));
 require("dotenv/config");
-const UserModel_1 = require("../../Models/UserModel");
-const bcrypt = __importStar(require("bcrypt"));
-const generateToken_1 = require("../../../Services/generateToken");
-async function loginHandler(req, res) {
-    const loginBody = req.body;
-    //check if user exist 
-    const user = await (0, UserModel_1.findUserByEmail)(loginBody.email);
-    if (!user)
-        res.json({ error: "This user not exist!" });
-    //
-    //compare password
-    let isPasswordCorrect = await bcrypt.compare(loginBody.password, user?.password || "");
-    if (!isPasswordCorrect)
-        res.json({ error: "incorrect password!" });
-    //
-    const token = (0, generateToken_1.generateToken)({ id: user?.id });
-    const maxAge = 5 * 24 * 60 * 60 * 1000; //this is 5 days persiod using milliseconds
-    let targetUser = {
-        id: user?.id,
-        fullName: user?.fullName,
-        email: user?.email,
-        phone: user?.phone,
-        createdAt: user?.createdAt,
-        token
-    };
-    res.cookie('khoyout-user', token, { httpOnly: true, maxAge }).json(targetUser);
-}
-exports.loginHandler = loginHandler;
+const generateToken = (userDataStoredInCookie) => {
+    return jwt.sign(userDataStoredInCookie, process.env.ACCESS_TOKEN_SECRET_KEY || "secret key", {
+        expiresIn: "5m"
+    });
+};
+exports.generateToken = generateToken;

@@ -10,8 +10,17 @@ export type RegisterBody = {
     repeatPassword: string,
 }
 
-//to send otp to
+//to send otp to email
 export type EmailBody = {
     email: string,
+}
+
+export type UserBody = {
+    id?      : number,
+    fullName?  : string,
+    email?     : string,
+    phone?    : string | null,
+    createdAt? : Date,
+    token: string
 }
 
