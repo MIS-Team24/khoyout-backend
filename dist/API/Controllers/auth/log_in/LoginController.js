@@ -33,12 +33,12 @@ async function loginHandler(req, res) {
     //check if user exist 
     const user = await (0, UserModel_1.findUserByEmail)(loginBody.email);
     if (!user)
-        res.json({ error: "This user not exist!" });
+        return res.json({ error: "This user not exist!" });
     //
     //compare password
     let isPasswordCorrect = await bcrypt.compare(loginBody.password, user?.password || "");
     if (!isPasswordCorrect)
-        res.json({ error: "incorrect password!" });
+        return res.json({ error: "incorrect password!" });
     //
     const token = (0, generateToken_1.generateToken)({ id: user?.id }, "5m");
     const maxAge = 5 * 24 * 60 * 60 * 1000; //this is 5 days persiod using milliseconds
@@ -50,6 +50,6 @@ async function loginHandler(req, res) {
         createdAt: user?.createdAt,
         token
     };
-    res.cookie('khoyout_user', token, { httpOnly: true, maxAge }).json(targetUser);
+    return res.cookie('khoyout_user', token, { httpOnly: true, maxAge }).json(targetUser);
 }
 exports.loginHandler = loginHandler;

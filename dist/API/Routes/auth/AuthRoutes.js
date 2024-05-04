@@ -19,8 +19,8 @@ router.post("/auth/verify-email", (0, BodyValidator_1.default)({ schema: UserSch
 router.post("/auth/send-otp", (0, BodyValidator_1.default)({ schema: UserSchema_1.sendToEmailSchema }), SendingOtpController_1.OtpSentToEmailHandler);
 //
 //log-in
-// router.post("/auth/login", BodyValidator({schema: loginSchema}), loginHandler);
-// router.get("/auth/logout", logoutHandler);
+//router.post("/auth/login", BodyValidator({schema: loginSchema}), loginHandler);
+//router.get("/auth/logout", logoutHandler);
 //
 //reset password
 router.post("/auth/validate-otp", (0, BodyValidator_1.default)({ schema: UserSchema_1.otpVerifyEmailSchema }), ValidateOtp_1.validateOtp, validateOtpHandler_1.validateOtpHandler);

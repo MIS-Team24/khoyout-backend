@@ -11,12 +11,12 @@ export async function loginHandler (req: Request, res: Response)
 
     //check if user exist 
     const user = await findUserByEmail(loginBody.email)
-    if(!user) res.json({error : "This user not exist!"});
+    if(!user) return res.json({error : "This user not exist!"});
     //
 
     //compare password
     let isPasswordCorrect = await bcrypt.compare(loginBody.password , user?.password || "");
-    if(!isPasswordCorrect) res.json({error : "incorrect password!"})
+    if(!isPasswordCorrect) return res.json({error : "incorrect password!"})
     //
 
     const token = generateToken({id : user?.id} , "5m");
@@ -30,5 +30,5 @@ export async function loginHandler (req: Request, res: Response)
         token
     }
     
-    res.cookie('khoyout_user', token, { httpOnly: true, maxAge}).json(targetUser);
+    return res.cookie('khoyout_user', token, { httpOnly: true, maxAge}).json(targetUser);
 }
