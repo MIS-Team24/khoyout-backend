@@ -23,33 +23,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginHandler = void 0;
-require("dotenv/config");
-const UserModel_1 = require("../../Models/UserModel");
+exports.validateOtp = void 0;
 const bcrypt = __importStar(require("bcrypt"));
-const generateToken_1 = require("../../../Services/generateToken");
-async function loginHandler(req, res) {
-    const loginBody = req.body;
-    //check if user exist 
-    const user = await (0, UserModel_1.findUserByEmail)(loginBody.email);
-    if (!user)
-        res.json({ error: "This user not exist!" });
+const OtpModel_1 = require("../../Models/OtpModel");
+async function validateOtp(req, res, next) {
+    const otpBody = req.body;
+    const targetOtp = await (0, OtpModel_1.findOtpById)(otpBody.id);
+    if (!targetOtp)
+        res.json({ error: "This otp is not valid!" });
+    //compare otp id
+    let isOtpCorrect = await bcrypt.compare(otpBody.code, targetOtp?.id || "");
+    if (!isOtpCorrect)
+        res.json({ error: "This otp is not valid!" });
     //
-    //compare password
-    let isPasswordCorrect = await bcrypt.compare(loginBody.password, user?.password || "");
-    if (!isPasswordCorrect)
-        res.json({ error: "incorrect password!" });
+    //compare otp code itself
+    if (otpBody)
+        res.json({ error: "This otp is not valid!" });
     //
-    const token = (0, generateToken_1.generateToken)({ id: user?.id }, "5m");
-    const maxAge = 5 * 24 * 60 * 60 * 1000; //this is 5 days persiod using milliseconds
-    let targetUser = {
-        id: user?.id,
-        fullName: user?.fullName,
-        email: user?.email,
-        phone: user?.phone,
-        createdAt: user?.createdAt,
-        token
-    };
-    res.cookie('khoyout_user', token, { httpOnly: true, maxAge }).json(targetUser);
 }
-exports.loginHandler = loginHandler;
+exports.validateOtp = validateOtp;

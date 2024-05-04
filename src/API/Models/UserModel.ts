@@ -21,12 +21,25 @@ export const addUser = async (data : Prisma.UsersCreateInput) => {
 
 //reset password
 export const resetPassword = async (data : Prisma.UsersUpdateInput , email : string) => {
-    const user : object = await prisma.users.update({
+    return await prisma.users.update({
         where : {
             email
         },
         data : {
             password : data.password
+        }
+    })
+}
+//
+
+//verify email
+export const verifyEmail = async (email : string) => {
+    const user : object = await prisma.users.update({
+        where : {
+            email
+        },
+        data : {
+            emailActivated:true
         }
     })
     return user

@@ -23,12 +23,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateToken = void 0;
+exports.verifyTokenHandler = void 0;
 const jwt = __importStar(require("jsonwebtoken"));
-require("dotenv/config");
-const generateToken = (userDataStoredInCookie, expiresIn) => {
-    return jwt.sign(userDataStoredInCookie, process.env.ACCESS_TOKEN_SECRET_KEY || "secret key", {
-        expiresIn
-    });
+const verifyTokenHandler = (req, res) => {
+    const token = req.cookies.khoyout_user;
+    if (token) {
+        jwt.verify(token, 'net ninja secret', async (err, decodedToken) => {
+            if (err) {
+                res.json({ success: false, message: "this token is not valid!" });
+            }
+            else {
+                res.json({ success: true, message: "this token is valid!" });
+            }
+        });
+    }
+    res.json({ success: false, message: "this token is not valid!" });
 };
-exports.generateToken = generateToken;
+exports.verifyTokenHandler = verifyTokenHandler;

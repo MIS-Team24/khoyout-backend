@@ -23,33 +23,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginHandler = void 0;
-require("dotenv/config");
-const UserModel_1 = require("../../Models/UserModel");
+exports.resetPasswordHandler = void 0;
 const bcrypt = __importStar(require("bcrypt"));
-const generateToken_1 = require("../../../Services/generateToken");
-async function loginHandler(req, res) {
-    const loginBody = req.body;
-    //check if user exist 
-    const user = await (0, UserModel_1.findUserByEmail)(loginBody.email);
-    if (!user)
-        res.json({ error: "This user not exist!" });
-    //
-    //compare password
-    let isPasswordCorrect = await bcrypt.compare(loginBody.password, user?.password || "");
-    if (!isPasswordCorrect)
-        res.json({ error: "incorrect password!" });
-    //
-    const token = (0, generateToken_1.generateToken)({ id: user?.id }, "5m");
-    const maxAge = 5 * 24 * 60 * 60 * 1000; //this is 5 days persiod using milliseconds
-    let targetUser = {
-        id: user?.id,
-        fullName: user?.fullName,
-        email: user?.email,
-        phone: user?.phone,
-        createdAt: user?.createdAt,
-        token
-    };
-    res.cookie('khoyout_user', token, { httpOnly: true, maxAge }).json(targetUser);
+const UserModel_1 = require("../../../Models/UserModel");
+async function resetPasswordHandler(req, res) {
+    try {
+        const passwordResetBody = req.body;
+        //if password amd repeated password not the same
+        if (passwordResetBody.password != passwordResetBody.repeatPassword) {
+            res.json({ error: "Password and repeated password are not the same!" });
+        }
+        //
+        //hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(passwordResetBody.password, salt);
+        //
+        await (0, UserModel_1.resetPassword)({ password: hashedPassword }, passwordResetBody.email);
+        res.json({ message: "The password changed successfully" });
+    }
+    catch (error) {
+        res.json({ error });
+    }
 }
-exports.loginHandler = loginHandler;
+exports.resetPasswordHandler = resetPasswordHandler;

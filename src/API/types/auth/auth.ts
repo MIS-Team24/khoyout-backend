@@ -16,7 +16,7 @@ export type EmailBody = {
 }
 
 export type UserBody = {
-    id?      : number,
+    id?      : string,
     fullName?  : string,
     email?     : string,
     phone?    : string | null,
@@ -29,5 +29,12 @@ export type PasswordResetBody = {
     email : string,
     password: string,
     repeatPassword: string
+}
+
+//otp
+export type OtpBody = {
+    email: string,
+    code : string,
+    keyVal   : string
 }
 

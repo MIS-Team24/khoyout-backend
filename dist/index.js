@@ -5,8 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // src/index.ts
 const express_1 = __importDefault(require("express"));
-require("dotenv/config"); // To read CLERK_SECRET_KEY
-//import { LooseAuthProp } from '@clerk/clerk-sdk-node';
+require("dotenv/config");
 const mainRoutes_1 = require("./API/Routes/mainRoutes");
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
@@ -16,11 +15,6 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 let port = 3005;
-// declare global {
-//   namespace Express {
-//     interface Request extends LooseAuthProp {}
-//   }
-// }
 app.use(mainRoutes_1.apiRoutes);
 app.all("*", (req, res) => res.send("This page in not exist!"));
 app.listen(port, () => {

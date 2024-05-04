@@ -24,14 +24,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegisterHandler = void 0;
-const UserModel_1 = require("../../Models/UserModel");
+const UserModel_1 = require("../../../Models/UserModel");
 const bcrypt = __importStar(require("bcrypt"));
 require("dotenv/config");
-const generateOTP_1 = require("../../../Services/generateOTP");
-const sendEmail_1 = require("../../../Services/sendEmail");
-const OtpEmailStructures_1 = require("../../../Services/htmlEmailStructures/OtpEmailStructures");
-const OtpModel_1 = require("../../Models/OtpModel");
-const generateToken_1 = require("../../../Services/generateToken");
+const generateOTP_1 = require("../../../../Services/generateOTP");
+const sendEmail_1 = require("../../../../Services/sendEmail");
+const OtpEmailStructures_1 = require("../../../../Services/htmlEmailStructures/OtpEmailStructures");
+const OtpModel_1 = require("../../../Models/OtpModel");
+const generateToken_1 = require("../../../../Services/generateToken");
 async function RegisterHandler(req, res, next) {
     const registerBody = req.body;
     //check if user already exist 
@@ -67,7 +67,7 @@ async function RegisterHandler(req, res, next) {
     const newOtp = await (0, OtpModel_1.addNewOtp)({
         email: registerBody.email,
         code: otpServer,
-        expiredIn: validtionPeriod
+        expiredAt: validtionPeriod
     });
     //
     //send it
@@ -79,9 +79,6 @@ async function RegisterHandler(req, res, next) {
         html: (0, OtpEmailStructures_1.OtpEmailStructure)(otpServer)
     }, res);
     //
-    //
-    //hash otp id
-    const hashedOtpId = await bcrypt.hash(newOtp.id, salt);
     //
     if (!success) {
         res.json({
@@ -97,7 +94,7 @@ async function RegisterHandler(req, res, next) {
         message: "User has been saved successfuly!",
         Otp: {
             success,
-            keyVal: hashedOtpId
+            keyVal: newOtp.id
         },
         user
     });

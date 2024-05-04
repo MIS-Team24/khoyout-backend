@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
-import 'dotenv/config';
 import * as bcrypt from "bcrypt"
-import { PasswordResetBody } from "../../types/auth/auth";
-import { resetPassword } from "../../Models/UserModel";
-
+import { PasswordResetBody } from "../../../types/auth/auth";
+import { resetPassword } from "../../../Models/UserModel";
 
 export async function resetPasswordHandler (req: Request, res: Response)
 {
@@ -21,7 +19,7 @@ export async function resetPasswordHandler (req: Request, res: Response)
         const hashedPassword = await bcrypt.hash(passwordResetBody.password , salt)
         //
 
-        const user = await resetPassword({password : hashedPassword}
+        await resetPassword({password : hashedPassword}
             , passwordResetBody.email)
         res.json({message : "The password changed successfully"})
     } catch (error) {

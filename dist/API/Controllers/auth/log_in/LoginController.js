@@ -25,9 +25,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginHandler = void 0;
 require("dotenv/config");
-const UserModel_1 = require("../../Models/UserModel");
+const UserModel_1 = require("../../../Models/UserModel");
 const bcrypt = __importStar(require("bcrypt"));
-const generateToken_1 = require("../../../Services/generateToken");
+const generateToken_1 = require("../../../../Services/generateToken");
 async function loginHandler(req, res) {
     const loginBody = req.body;
     //check if user exist 

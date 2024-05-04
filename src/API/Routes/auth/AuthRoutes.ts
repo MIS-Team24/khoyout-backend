@@ -1,21 +1,32 @@
 import express from "express";
 import BodyValidator from "../../Middleware/BodyValidator";
-import { RegisterHandler } from "../../Controllers/auth/RegisterController";
-import { OtpSentToEmailHandler } from "../../Controllers/auth/OtpController";
-import { loginHandler } from "../../Controllers/auth/LoginController";
-import { loginSchema, registerSchema, sendToEmailSchema } from "../../../Services/validationSchemas/UserSchema";
-import { resetPasswordHandler } from "../../Controllers/auth/ResetPassword";
-import { logoutHandler } from "../../Controllers/auth/LogoutController";
-import { verifyTokenHandler } from "../../Controllers/auth/verifyTokenController";
+import { RegisterHandler } from "../../Controllers/auth/sign_up/RegisterController";
+import { OtpSentToEmailHandler } from "../../Controllers/auth/SendingOtpController";
+import { loginSchema, otpVerifyEmailSchema, registerSchema, sendToEmailSchema } from "../../../Services/validationSchemas/UserSchema";
+import { resetPasswordHandler } from "../../Controllers/auth/log_in/ResetPassword";
+import { validateOtp } from "../../Middleware/ValidateOtp";
+import { verifyEmailHandler } from "../../Controllers/auth/sign_up/VerifyEmailController";
+import { validateOtpHandler } from "../../Controllers/auth/validateOtpHandler";
 
 const router = express.Router();
 
-router.post("/auth/login", BodyValidator({schema: loginSchema}), loginHandler);
+//sign-up
 router.post("/auth/register", BodyValidator({schema: registerSchema}), RegisterHandler)
-router.post("/auth/sign-up/send-otp", BodyValidator({schema: sendToEmailSchema}), OtpSentToEmailHandler)
-router.get("/auth/logout", logoutHandler);
-router.post("/auth/forget-password", BodyValidator({schema: sendToEmailSchema}), OtpSentToEmailHandler);
+router.post("/auth/verify-email", BodyValidator({schema: otpVerifyEmailSchema}) 
+, validateOtp , verifyEmailHandler)
+router.post("/auth/send-otp", BodyValidator({schema: sendToEmailSchema})
+, OtpSentToEmailHandler)
+//
+
+//log-in
+// router.post("/auth/login", BodyValidator({schema: loginSchema}), loginHandler);
+// router.get("/auth/logout", logoutHandler);
+//
+
+//reset password
+router.post("/auth/validate-otp", BodyValidator({schema: otpVerifyEmailSchema})
+, validateOtp , validateOtpHandler);
 router.post("/auth/reset-password", resetPasswordHandler);
-router.get("/auth/verify-token", verifyTokenHandler);
+//
 
 export default router;
