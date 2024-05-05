@@ -11,7 +11,6 @@ const initializePassport = (passport) => {
     passport.use(new localStrategy({
         usernameField: 'email'
     }, async (email, password, done) => {
-        console.log(email, password);
         if (email && password) {
             const user = await (0, UserModel_1.findUserByEmail)(email);
             if (!user) {

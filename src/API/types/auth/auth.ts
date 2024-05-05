@@ -21,7 +21,6 @@ export type UserBody = {
     email?     : string,
     phone?    : string | null,
     createdAt? : Date,
-    token: string
 }
 
 //reset password 

@@ -1,5 +1,6 @@
 import { prisma  } from "../../Database";
 import { Prisma  } from "@prisma/client";
+import { UserBody } from "../types/auth/auth";
 
 //check if user exist and return that user (using email checking) 
 export const findUserByEmail = async (email : string) => {

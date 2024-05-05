@@ -7,8 +7,6 @@ export const initializePassport = (passport : PassportStatic)=>{
     passport.use(new localStrategy({
     usernameField:'email'
     } , async (email : string , password : string , done : CallableFunction)=>{
-
-    console.log(email , password);
         
     if(email && password){
         const user = await findUserByEmail(email)

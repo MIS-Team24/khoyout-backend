@@ -18,17 +18,25 @@ const getUserAfterLogged = async (req, res) => {
 };
 exports.getUserAfterLogged = getUserAfterLogged;
 const logoutProcess = async (req, res) => {
-    req.logOut((error) => {
-        if (error)
-            return res.json({ error });
-        req.session.destroy((error) => {
-            return res.json({ error });
+    if (req.user) {
+        req.logOut((error) => {
+            if (error)
+                return res.json({ error });
+            req.session.destroy((error) => {
+                return res.json({ error });
+            });
+            return res.json({
+                success: true,
+                message: "user loged out successfully"
+            });
         });
+    }
+    else {
         return res.json({
-            success: true,
-            message: "user loged out successfully"
+            success: false,
+            message: "User is already logged out!"
         });
-    });
+    }
 };
 exports.logoutProcess = logoutProcess;
 const localAuthonticateUser = (req, res, next) => {
@@ -36,14 +44,14 @@ const localAuthonticateUser = (req, res, next) => {
         if (error) {
             console.log(error);
             return res.json({
-                errorType: 'user',
+                errorLocate: 'user',
                 isLogged: false,
                 error: error.message
             });
         }
         if (!user) {
             return res.json({
-                errorType: 'user',
+                errorLocate: 'user',
                 isLogged: false,
                 message: 'No user found!'
             });
@@ -52,13 +60,12 @@ const localAuthonticateUser = (req, res, next) => {
             if (error) {
                 console.log(error);
                 return res.json({
-                    errorType: 'server',
+                    errorLocate: 'server',
                     isLogged: false,
                     error: error.message
                 });
             }
             return res.json({
-                success: true,
                 isLogged: true,
                 message: 'User has logged successfully',
                 user

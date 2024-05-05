@@ -7,7 +7,7 @@ const router = Router()
 router.post('/auth/login' , localAuthonticateUser)
 router.get('/auth/get-user' , getUserAfterLogged)
 router.get('/auth/is-logged-in', isUserAuthonticated)
-router.get('/auth/logout' , checkAuthontication , logoutProcess)
+router.get('/auth/logout' , logoutProcess)
 
 //protected route for test
 router.get("/auth/protected-route", checkAuthontication , (req , res) => {

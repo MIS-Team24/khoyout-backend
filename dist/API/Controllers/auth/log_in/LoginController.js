@@ -27,7 +27,6 @@ exports.loginHandler = void 0;
 require("dotenv/config");
 const UserModel_1 = require("../../../Models/UserModel");
 const bcrypt = __importStar(require("bcrypt"));
-const generateToken_1 = require("../../../../Services/generateToken");
 async function loginHandler(req, res) {
     const loginBody = req.body;
     //check if user exist 
@@ -40,7 +39,7 @@ async function loginHandler(req, res) {
     if (!isPasswordCorrect)
         return res.json({ error: "incorrect password!" });
     //
-    const token = (0, generateToken_1.generateToken)({ id: user?.id }, "5m");
+    //const token = generateToken({id : user?.id} , "5m");
     const maxAge = 5 * 24 * 60 * 60 * 1000; //this is 5 days persiod using milliseconds
     let targetUser = {
         id: user?.id,
@@ -48,8 +47,7 @@ async function loginHandler(req, res) {
         email: user?.email,
         phone: user?.phone,
         createdAt: user?.createdAt,
-        token
     };
-    return res.cookie('khoyout_user', token, { httpOnly: true, maxAge }).json(targetUser);
+    return res.cookie('khoyout_user', { httpOnly: true, maxAge }).json(targetUser);
 }
 exports.loginHandler = loginHandler;
