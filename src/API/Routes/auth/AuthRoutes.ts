@@ -3,7 +3,7 @@ import BodyValidator from "../../Middleware/BodyValidator";
 import { RegisterHandler } from "../../Controllers/auth/sign_up/RegisterController";
 import { OtpSentToEmailHandler } from "../../Controllers/auth/SendingOtpController";
 import { loginSchema, otpVerifyEmailSchema, registerSchema, sendToEmailSchema } from "../../../Services/validationSchemas/UserSchema";
-import { resetPasswordHandler } from "../../Controllers/auth/log_in/ResetPassword";
+import { resetPasswordHandler } from "../../Controllers/auth/log_in/ResetPasswordController";
 import { validateOtp } from "../../Middleware/ValidateOtp";
 import { verifyEmailHandler } from "../../Controllers/auth/sign_up/VerifyEmailController";
 import { validateOtpHandler } from "../../Controllers/auth/validateOtpHandler";

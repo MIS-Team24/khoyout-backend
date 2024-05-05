@@ -8,7 +8,7 @@ const BodyValidator_1 = __importDefault(require("../../Middleware/BodyValidator"
 const RegisterController_1 = require("../../Controllers/auth/sign_up/RegisterController");
 const SendingOtpController_1 = require("../../Controllers/auth/SendingOtpController");
 const UserSchema_1 = require("../../../Services/validationSchemas/UserSchema");
-const ResetPassword_1 = require("../../Controllers/auth/log_in/ResetPassword");
+const ResetPasswordController_1 = require("../../Controllers/auth/log_in/ResetPasswordController");
 const ValidateOtp_1 = require("../../Middleware/ValidateOtp");
 const VerifyEmailController_1 = require("../../Controllers/auth/sign_up/VerifyEmailController");
 const validateOtpHandler_1 = require("../../Controllers/auth/validateOtpHandler");
@@ -24,6 +24,6 @@ router.post("/auth/send-otp", (0, BodyValidator_1.default)({ schema: UserSchema_
 //
 //reset password
 router.post("/auth/validate-otp", (0, BodyValidator_1.default)({ schema: UserSchema_1.otpVerifyEmailSchema }), ValidateOtp_1.validateOtp, validateOtpHandler_1.validateOtpHandler);
-router.post("/auth/reset-password", ResetPassword_1.resetPasswordHandler);
+router.post("/auth/reset-password", ResetPasswordController_1.resetPasswordHandler);
 //
 exports.default = router;
