@@ -43,7 +43,7 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
     //
 
     //create token to control the validtion time of the otp
-    const validtionPeriod = generateToken({} , "1m");
+    const validtionPeriod = generateToken({} , "5m");
     //
     
     //save it

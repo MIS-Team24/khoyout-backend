@@ -22,7 +22,7 @@ export async function OtpSentToEmailHandler(req: Request, res: Response) {
     //
 
     //create token to control the validtion time of the otp
-    const validtionPeriod = generateToken({} , "3m");
+    const validtionPeriod = generateToken({} , "5m");
     //
     
     //save it

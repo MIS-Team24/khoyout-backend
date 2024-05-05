@@ -18,11 +18,6 @@ router.post("/auth/send-otp", BodyValidator({schema: sendToEmailSchema})
 , OtpSentToEmailHandler)
 //
 
-//log-in
-//router.post("/auth/login", BodyValidator({schema: loginSchema}), loginHandler);
-//router.get("/auth/logout", logoutHandler);
-//
-
 //reset password
 router.post("/auth/validate-otp", BodyValidator({schema: otpVerifyEmailSchema})
 , validateOtp , validateOtpHandler);
