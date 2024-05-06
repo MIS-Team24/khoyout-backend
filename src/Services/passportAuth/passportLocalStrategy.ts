@@ -2,30 +2,23 @@ const localStrategy = require('passport-local').Strategy
 import { PassportStatic } from 'passport'
 import {findUserByEmail, findUserById} from '../../API/Models/UserModel'
 import bcrypt from 'bcrypt'
+import { LoginBody } from '../../API/types/auth/auth'
 
 export const initializePassport = (passport : PassportStatic)=>{
-    passport.use(new localStrategy({
-    usernameField:'email'
-    } , async (email : string , password : string , done : CallableFunction)=>{
-        
-    if(email && password){
-        const user = await findUserByEmail(email)
-        
-        if(!user){
-            return done(null , false) //there is no user with this email
-        } 
-        
-        const isMatch = await bcrypt.compare(password , user.password)
-
-        if(isMatch) {
-            return done(null , user)
+    passport.use(new localStrategy({ usernameField :'email'}    
+    , async (email : string , password : string , done : CallableFunction)=>{       
+            const loginBody = {email , password} as LoginBody;
+            const user = await findUserByEmail(loginBody.email)        
+            if(!user){
+                return done(null , false) //there is no user with this email
+            }     
+            const isMatch = await bcrypt.compare(loginBody.password , user.password)
+            if(isMatch) {
+                return done(null , user)
+            }
+            return done(new Error("Incorrect password!") , null)    
         }
-
-        return done(new Error("incorrect password!") , null)
-    }else{      
-        return done(new Error('No input!'), null)
-    } 
-    }))
+    ))
 
     passport.serializeUser((user : any, done) =>{
         return done(null , user.id)
@@ -33,8 +26,8 @@ export const initializePassport = (passport : PassportStatic)=>{
     
     passport.deserializeUser(async (id : string, done) => {
         try {
-            const user =await findUserById(id)
-            if(!user) return done(new Error("user not found") , false )       
+            const user = await findUserById(id)
+            if(!user) return done(new Error("User not found") , false )       
             return done(null , user)
 
         } catch (error) {

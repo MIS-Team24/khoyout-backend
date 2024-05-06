@@ -7,16 +7,16 @@ import cookieParser from 'cookie-parser';
 import { Pool } from 'pg';
 import session from 'express-session';
 import expressSession from 'express-session';
-import {passportLocal} from './API/Controllers/auth/log_in/passportLogin/LocalLoginController'
+import { passportLocal } from './API/Controllers/auth/log_in/passportLogin/localStrategy/LoginController';
 
 const app = express();
 const PORT = 3005;
 
 //passport configuration steps
-const pgSession = require('connect-pg-simple')(expressSession);
+const pgSession = require('connect-pg-simple')(expressSession)
 const poolInstance = new Pool({
   connectionString: process.env.DATABASE_URL
-});
+})
 const postgreStore = new pgSession({
   pool: poolInstance,
   createTableIfMissing: true,
@@ -32,15 +32,15 @@ app.use(session({
     httpOnly : true,
     //secure : true
   } ,
-}));
+}))
 app.use(passportLocal.session())
 app.use(passportLocal.initialize())
 //
 
-app.use(cors({credentials: true}));
-app.use(express.json());
+app.use(cors({credentials: true}))
+app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-app.use(cookieParser());
+app.use(cookieParser())
 
 //routes
 app.use(apiRoutes);

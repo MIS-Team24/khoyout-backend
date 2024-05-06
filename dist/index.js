@@ -12,7 +12,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const pg_1 = require("pg");
 const express_session_1 = __importDefault(require("express-session"));
 const express_session_2 = __importDefault(require("express-session"));
-const LocalLoginController_1 = require("./API/Controllers/auth/log_in/passportLogin/LocalLoginController");
+const LoginController_1 = require("./API/Controllers/auth/log_in/passportLogin/localStrategy/LoginController");
 const app = (0, express_1.default)();
 const PORT = 3005;
 //passport configuration steps
@@ -36,8 +36,8 @@ app.use((0, express_session_1.default)({
         //secure : true
     },
 }));
-app.use(LocalLoginController_1.passportLocal.session());
-app.use(LocalLoginController_1.passportLocal.initialize());
+app.use(LoginController_1.passportLocal.session());
+app.use(LoginController_1.passportLocal.initialize());
 //
 app.use((0, cors_1.default)({ credentials: true }));
 app.use(express_1.default.json());

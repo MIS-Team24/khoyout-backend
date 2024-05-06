@@ -61,7 +61,7 @@ async function RegisterHandler(req, res, next) {
     const otpServer = (0, generateOTP_1.generateOTP)(4);
     //
     //create token to control the validtion time of the otp
-    const validtionPeriod = (0, generateToken_1.generateToken)({}, "1m");
+    const validtionPeriod = (0, generateToken_1.generateToken)({}, "5m");
     //
     //save it
     const newOtp = await (0, OtpModel_1.addNewOtp)({
