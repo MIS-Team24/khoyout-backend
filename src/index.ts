@@ -49,7 +49,7 @@ app.all( "*" , (req : Request , res : Response) => res.send("This page in not ex
 //
 
 //handle the errors in a better way
-app.use(errorMidllewareHandler)
+//app.use(errorMidllewareHandler)
 //
 
 app.listen(PORT, () => {

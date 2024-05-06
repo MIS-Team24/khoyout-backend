@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const zod_1 = require("zod");
+const main_1 = require("../Exceptions/main");
 function BodyValidator(options) {
     return function (req, res, next) {
         try {
@@ -12,10 +13,26 @@ function BodyValidator(options) {
                 const errorMessages = error.errors.map((issue) => ({
                     message: `${issue.path.join('.')} is ${issue.message}`,
                 }));
-                res.status(400).json({ error: 'Invalid data', details: errorMessages });
+                const responeError = {
+                    error: {
+                        message: 'Invalid data',
+                        errorCode: main_1.ErrorCode.INVALID_DATA,
+                        errorStatus: main_1.ErrorStatus.BAD_REQUEST,
+                        details: { error: errorMessages, isDataValid: false }
+                    }
+                };
+                res.json(responeError);
             }
             else {
-                res.status(500).json({ error: 'Internal Server Error' });
+                const responeError = {
+                    error: {
+                        message: 'Internal Server Error',
+                        errorCode: main_1.ErrorCode.SERVER_ERROR,
+                        errorStatus: main_1.ErrorStatus.SERVER_ERROR,
+                        details: { error, isDataValid: false }
+                    }
+                };
+                res.json(responeError);
             }
         }
     };

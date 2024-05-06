@@ -7,7 +7,7 @@ import { EmailBody } from "../../../types/auth/auth";
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../../../Services/generateToken";
 import { BadRequestException } from "../../../Exceptions/badRequest";
-import { ErrorCode } from "../../../Exceptions/main";
+import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
 
 //recieve the email target to send an otp 
 export async function OtpSentToEmailHandler(req: Request, res: Response , next : NextFunction) {
@@ -17,11 +17,15 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
     //check if user already exist 
     const user = await findUserByEmail(emailBody.email)
     if(!user){
-        next(new BadRequestException("This user is not exist!" 
-        , ErrorCode.USER_NOT_FOUND , {
-            isOtpSent : false,
-            success: false
-        }))
+        const responeError = {
+            error : {
+                message : "This user is not exist!" ,
+                errorCode : ErrorCode.USER_NOT_FOUND,
+                errorStatus : ErrorStatus.BAD_REQUEST,
+                details : {isOtpSent : false , success : false}                            
+            }
+        }
+        return res.json(responeError)
     }
     //
 
@@ -47,7 +51,7 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
         to      :   emailBody.email,
         subject :   "Verify your email",
         text    :   "Verify your email",
-        html    :   OtpEmailStructure(otpServer)
+        html    :   OtpEmailStructure(otpServer , "5m")
     } , res)
     //
     

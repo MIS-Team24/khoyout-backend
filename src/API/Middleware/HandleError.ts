@@ -1,9 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import { HttpExceptions } from "../Exceptions/main";
+import { Request, Response } from "express";
+import {  HttpExceptions } from "../Exceptions/main";
 
-export const errorMidllewareHandler = (error : HttpExceptions , req : Request 
-    , res : Response , next : NextFunction) =>{
-    res.json({
+export const errorMidllewareHandler = (error : HttpExceptions , req : Request , res : Response) =>{   
+    res.status(error.errorStatus).json({
         error : {
             message : error.message,
             errorCode : error.errorCode,

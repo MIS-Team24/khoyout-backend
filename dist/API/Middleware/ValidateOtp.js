@@ -26,25 +26,48 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateOtp = void 0;
 const OtpModel_1 = require("../Models/OtpModel");
 const jwt = __importStar(require("jsonwebtoken"));
-const badRequest_1 = require("../Exceptions/badRequest");
 const main_1 = require("../Exceptions/main");
 async function validateOtp(req, res, next) {
     const otpBody = req.body;
     const targetOtp = await (0, OtpModel_1.findOtpById)(otpBody.keyVal);
     if (!targetOtp) {
-        next(new badRequest_1.BadRequestException("Otp is not valid!", main_1.ErrorCode.OTP_NOT_VALID, { seccess: false }));
+        const responeError = {
+            error: {
+                message: "Otp is not valid!",
+                errorCode: main_1.ErrorCode.OTP_NOT_VALID,
+                errorStatus: main_1.ErrorStatus.BAD_REQUEST,
+                details: { isOtpValid: false, success: false }
+            }
+        };
+        return res.json(responeError);
     }
     //check the validation period token
     const token = targetOtp?.expiredAt;
     if (token) {
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY || "hello world", async (error) => {
             if (error) {
-                next(new badRequest_1.BadRequestException("Otp is not valid!", main_1.ErrorCode.EXPIRED_DATE, { seccess: false, error }));
+                const responeError = {
+                    error: {
+                        message: "Otp is not valid!",
+                        errorCode: main_1.ErrorCode.EXPIRED_DATE,
+                        errorStatus: main_1.ErrorStatus.BAD_REQUEST,
+                        details: { isOtpValid: false, success: false, error }
+                    }
+                };
+                return res.json(responeError);
             }
             else {
                 //compare otp code itself
                 if (otpBody.code !== targetOtp?.code) {
-                    next(new badRequest_1.BadRequestException("Otp is not valid!", main_1.ErrorCode.OTP_NOT_VALID, { seccess: false }));
+                    const responeError = {
+                        error: {
+                            message: "Otp is not valid!",
+                            errorCode: main_1.ErrorCode.OTP_NOT_VALID,
+                            errorStatus: main_1.ErrorStatus.BAD_REQUEST,
+                            details: { isOtpValid: false, success: false }
+                        }
+                    };
+                    return res.json(responeError);
                 }
                 //
                 next();
@@ -52,7 +75,15 @@ async function validateOtp(req, res, next) {
         });
     }
     else {
-        next(new badRequest_1.BadRequestException("Otp is not valid!", main_1.ErrorCode.OTP_NOT_VALID, { seccess: false }));
+        const responeError = {
+            error: {
+                message: "Otp is not valid!",
+                errorCode: main_1.ErrorCode.OTP_NOT_VALID,
+                errorStatus: main_1.ErrorStatus.BAD_REQUEST,
+                details: { isOtpValid: false, success: false }
+            }
+        };
+        return res.json(responeError);
     }
     //
 }

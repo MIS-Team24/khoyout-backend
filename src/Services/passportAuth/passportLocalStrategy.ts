@@ -3,6 +3,9 @@ import { PassportStatic } from 'passport'
 import {findUserByEmail, findUserById} from '../../API/Models/UserModel'
 import bcrypt from 'bcrypt'
 import { LoginBody, UserBody } from '../../API/types/auth/auth'
+import { BadRequestException } from '../../API/Exceptions/badRequest'
+import { ErrorCode, ErrorStatus } from '../../API/Exceptions/main'
+import { BadServerException } from '../../API/Exceptions/badServer'
 
 export const initializePassport = (passport : PassportStatic) => {
     passport.use(new localStrategy({ usernameField :'email'}    
@@ -23,10 +26,12 @@ export const initializePassport = (passport : PassportStatic) => {
             if(!user){
                 return done(null , false) //there is no user with this email
             }     
+
             const isMatch = await bcrypt.compare(loginBody.password , user.password)
             if(isMatch) {
                 return done(null , userReturnedToFront)
             }
+
             return done(new Error("Incorrect password!") , null)    
         }
     ))
@@ -50,12 +55,14 @@ export const initializePassport = (passport : PassportStatic) => {
             }
             //   
 
-            if(!user) return done(new Error("User not found") , false )       
-            return done(null , userReturnedToFront)
+            if(!user){           
+                return done(new Error("User not found"), false )
+            }   
 
+            return done(null , userReturnedToFront)
         } catch (error) {
             console.log(error);
-            return done(new Error('Error on the sever please try again!') , null)
+            return done(new Error('Internal server error!') , null)
         }
     })
 }

@@ -5,8 +5,8 @@ exports.isUserAuthonticatedHandler = void 0;
 //also there is a middleware controller in the midlleware folder
 const isUserAuthonticatedHandler = (req, res) => {
     if (req.isAuthenticated()) {
-        return res.json({ authonticated: true });
+        return res.json({ isLoggedIn: true, authonticated: true });
     }
-    return res.json({ authonticated: false });
+    return res.json({ isLoggedIn: false, authonticated: false });
 };
 exports.isUserAuthonticatedHandler = isUserAuthonticatedHandler;

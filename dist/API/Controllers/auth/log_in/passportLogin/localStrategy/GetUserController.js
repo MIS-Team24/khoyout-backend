@@ -5,10 +5,10 @@ exports.getUserHandler = void 0;
 //get authonticated user
 const getUserHandler = async (req, res) => {
     if (req.user) {
-        return res.json({ user: req.user });
+        return res.json({ isLoggedIn: true, authonticated: true, user: req.user });
     }
     else {
-        return res.json({ isLogged: false, user: null });
+        return res.json({ isLoggedIn: false, authonticated: false, user: null });
     }
 };
 exports.getUserHandler = getUserHandler;

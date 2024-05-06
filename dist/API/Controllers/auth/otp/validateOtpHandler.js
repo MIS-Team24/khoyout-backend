@@ -5,6 +5,7 @@ async function validateOtpHandler(req, res) {
     res.json({
         Otp: {
             success: true,
+            isOtpValid: true,
             message: "Otp is correct!",
         }
     });

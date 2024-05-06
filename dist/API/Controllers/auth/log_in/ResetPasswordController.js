@@ -26,12 +26,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.resetPasswordHandler = void 0;
 const bcrypt = __importStar(require("bcrypt"));
 const UserModel_1 = require("../../../Models/UserModel");
-async function resetPasswordHandler(req, res) {
+const badRequest_1 = require("../../../Exceptions/badRequest");
+const main_1 = require("../../../Exceptions/main");
+const badServer_1 = require("../../../Exceptions/badServer");
+async function resetPasswordHandler(req, res, next) {
     try {
         const passwordResetBody = req.body;
         //if password amd repeated password not the same
         if (passwordResetBody.password != passwordResetBody.repeatPassword) {
-            res.json({ error: "Password and repeated password are not the same!" });
+            next(new badRequest_1.BadRequestException("Password and repeated password are not the same!", main_1.ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD, {
+                success: false,
+                isPasswordUpdated: false
+            }));
         }
         //
         //hash password
@@ -41,17 +47,16 @@ async function resetPasswordHandler(req, res) {
         await (0, UserModel_1.resetPassword)({ password: hashedPassword }, passwordResetBody.email);
         return res.json({
             success: true,
+            isPasswordUpdated: true,
             message: "The password changed successfully"
         });
     }
     catch (error) {
-        return res.json({
-            error: {
-                message: "Something went wrong, try again!",
-                errorStatus: 500,
-                details: error
-            }
-        });
+        next(new badServer_1.BadServerException("Internal server error!", main_1.ErrorCode.SERVER_ERROR, {
+            success: false,
+            isPasswordUpdated: false,
+            error
+        }));
     }
 }
 exports.resetPasswordHandler = resetPasswordHandler;

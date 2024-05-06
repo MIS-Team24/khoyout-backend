@@ -12,13 +12,13 @@ const localLoginHandler = (req, res, next) => {
         if (error) {
             console.log(error);
             return res.json({
-                isLogged: false,
-                error: error.message
+                isLoggedIn: false,
+                error: error
             });
         }
         if (!user) {
             return res.json({
-                isLogged: false,
+                isLoggedIn: false,
                 message: 'No user found!'
             });
         }
@@ -26,8 +26,8 @@ const localLoginHandler = (req, res, next) => {
             if (error) {
                 console.log(error);
                 return res.json({
-                    isLogged: false,
-                    error: error.message
+                    isLoggedIn: false,
+                    error: error
                 });
             }
             //the user form returned according to the frontent desire
@@ -41,7 +41,7 @@ const localLoginHandler = (req, res, next) => {
             };
             //
             return res.json({
-                isLogged: true,
+                isLoggedIn: true,
                 message: 'User has logged successfully',
                 user: userReturnedToFront
             });
@@ -49,4 +49,66 @@ const localLoginHandler = (req, res, next) => {
     })(req, res, next);
 };
 exports.localLoginHandler = localLoginHandler;
+// export const localLoginHandler = (req:Request , res : Response , next : NextFunction) => {
+//     return passport.authenticate('local', (error : any , user : any , info: any )=>{
+//         if(error){
+//             console.log(error);     
+//             return res.json({
+//                 error : {
+//                     message : "Internal server error!" ,
+//                     errorCode : ErrorCode.SERVER_ERROR,
+//                     errorStatus : ErrorStatus.SERVER_ERROR,
+//                     details : {
+//                         isLoggedIn : false , 
+//                         success : false,
+//                         error
+//                     }  
+//                 }                            
+//             })             
+//         }    
+//         if(!user){        
+//             return res.json({
+//                 error : {
+//                     message : "User not found",
+//                     errorCode : ErrorCode.USER_NOT_FOUND,
+//                     errorStatus : ErrorStatus.BAD_REQUEST,
+//                     details : {isLoggedIn : false , success : false}  
+//                 }                            
+//             })   
+//         } 
+//         req.logIn(user , (error)=>{
+//             if(error){
+//                 console.log(error);
+//                 return res.json({
+//                     error : {
+//                         message : "Internal server error!" ,
+//                         errorCode : ErrorCode.SERVER_ERROR,
+//                         errorStatus : ErrorStatus.SERVER_ERROR,
+//                         details : {
+//                             isLoggedIn : false , 
+//                             success : false,
+//                             error
+//                         }  
+//                     }                            
+//                 })      
+//             }
+//         //the user form returned according to the frontent desire
+//         let userReturnedToFront : UserBody = {
+//             id : user?.id,
+//             email: user?.id,
+//             emailActivated:user?.emailActivated,
+//             createdAt : user?.createdAt,
+//             fullName: user?.fullName,
+//             phone : user?.phone
+//         }
+//         //
+//         return res.json({
+//                 isLoggedIn:true,
+//                 success:true,
+//                 message:'User has logged successfully',
+//                 user : userReturnedToFront
+//             })
+//         })
+//     })(req,res,next)
+// }
 exports.passportLocal = passport_1.default;

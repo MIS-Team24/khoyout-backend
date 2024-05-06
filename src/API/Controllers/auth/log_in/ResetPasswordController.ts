@@ -1,16 +1,23 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import * as bcrypt from "bcrypt"
 import { PasswordResetBody } from "../../../types/auth/auth";
 import { resetPassword } from "../../../Models/UserModel";
+import { BadRequestException } from "../../../Exceptions/badRequest";
+import { ErrorCode } from "../../../Exceptions/main";
+import { BadServerException } from "../../../Exceptions/badServer";
 
-export async function resetPasswordHandler (req: Request, res: Response)
+export async function resetPasswordHandler (req: Request, res: Response , next : NextFunction)
 {
     try {
         const passwordResetBody  = req.body as  PasswordResetBody
 
         //if password amd repeated password not the same
         if(passwordResetBody.password != passwordResetBody.repeatPassword){
-            res.json({error : "Password and repeated password are not the same!"})
+            next(new BadRequestException("Password and repeated password are not the same!"
+            ,ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD , {
+                success : false,
+                isPasswordUpdated : false
+            }))
         }
         //
 
@@ -24,17 +31,18 @@ export async function resetPasswordHandler (req: Request, res: Response)
 
         return res.json({
             success : true,
+            isPasswordUpdated : true,
             message : "The password changed successfully"
         })
         
     } catch (error) {
-        return res.json({
-            error : {
-                message : "Something went wrong, try again!",
-                errorStatus : 500,                
-                details : error
-            }
-        })
+        next(new BadServerException("Internal server error!" , ErrorCode.SERVER_ERROR
+            , {
+                success : false,
+                isPasswordUpdated : false,
+                error
+            })
+        )
     }
 }
 

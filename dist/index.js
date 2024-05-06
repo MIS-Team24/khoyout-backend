@@ -13,7 +13,6 @@ const pg_1 = require("pg");
 const express_session_1 = __importDefault(require("express-session"));
 const express_session_2 = __importDefault(require("express-session"));
 const LoginController_1 = require("./API/Controllers/auth/log_in/passportLogin/localStrategy/LoginController");
-const HandleError_1 = require("./API/Middleware/HandleError");
 const app = (0, express_1.default)();
 const PORT = 3005;
 //passport configuration steps
@@ -49,7 +48,7 @@ app.use(mainRoutes_1.apiRoutes);
 app.all("*", (req, res) => res.send("This page in not exist!"));
 //
 //handle the errors in a better way
-app.use(HandleError_1.errorMidllewareHandler);
+//app.use(errorMidllewareHandler)
 //
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

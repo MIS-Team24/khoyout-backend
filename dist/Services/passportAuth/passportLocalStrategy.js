@@ -45,13 +45,14 @@ const initializePassport = (passport) => {
                 phone: user?.phone
             };
             //   
-            if (!user)
+            if (!user) {
                 return done(new Error("User not found"), false);
+            }
             return done(null, userReturnedToFront);
         }
         catch (error) {
             console.log(error);
-            return done(new Error('Error on the sever please try again!'), null);
+            return done(new Error('Internal server error!'), null);
         }
     });
 };

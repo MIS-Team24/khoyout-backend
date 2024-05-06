@@ -9,7 +9,7 @@ import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpE
 import { addNewOtp } from "../../../Models/OtpModel";
 import { generateToken } from "../../../../Services/generateToken";
 import { BadRequestException } from "../../../Exceptions/badRequest";
-import { ErrorCode } from "../../../Exceptions/main";
+import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
 
 export async function RegisterHandler (req: Request, res: Response , next : NextFunction)
 {
@@ -18,16 +18,29 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
     //check if user already exist 
     const userTarget = await findUserByEmail(registerBody.email)
     if(userTarget){
-        next(new BadRequestException("This user is already exist!" 
-        , ErrorCode.USER_ALREADY_EXIST , {isUserSaved : false , success : false}))
+        const responeError = {
+            error : {
+                message : "This user is already exist!",
+                errorCode : ErrorCode.USER_ALREADY_EXIST,
+                errorStatus : ErrorStatus.BAD_REQUEST,
+                details : {isUserSaved : false , success : false}                            
+            }
+        }
+        return res.json(responeError)
     }
     //
 
     //if password amd repeated password not the same
     if(registerBody.password != registerBody.repeatPassword){
-        next(new BadRequestException("Password and repeated password are not the same!" 
-        , ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD , {
-            isUserSaved : false , success : false}))
+        const responeError = {
+            error : {
+                message : "Password and repeated password are not the same!",
+                errorCode : ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD,
+                errorStatus : ErrorStatus.BAD_REQUEST,
+                details : {isUserSaved : false , success : false}                            
+            }
+        }
+        return res.json(responeError)
     }
     //
 
@@ -78,13 +91,13 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
         to      :   registerBody.email,
         subject :   "Verify your email",
         text    :   "Verify your email",
-        html    :   OtpEmailStructure(otpServer)
+        html    :   OtpEmailStructure(otpServer , "5m")
     } , res)
     //
     //
 
     if(!success){
-        res.json({
+        return res.json({
             message : "User has been saved successfuly!",
             isUserSaved : true,
             success : true,
@@ -97,7 +110,7 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
         })
     }
     
-    res.json({
+    return res.json({
         message : "User has been saved successfuly!",
         isUserSaved : true,
         success : true,

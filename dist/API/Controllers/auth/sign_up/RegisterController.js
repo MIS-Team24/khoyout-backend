@@ -32,16 +32,34 @@ const sendEmail_1 = require("../../../../Services/sendEmail");
 const OtpEmailStructures_1 = require("../../../../Services/htmlEmailStructures/OtpEmailStructures");
 const OtpModel_1 = require("../../../Models/OtpModel");
 const generateToken_1 = require("../../../../Services/generateToken");
+const main_1 = require("../../../Exceptions/main");
 async function RegisterHandler(req, res, next) {
     const registerBody = req.body;
     //check if user already exist 
     const userTarget = await (0, UserModel_1.findUserByEmail)(registerBody.email);
-    if (userTarget)
-        res.json({ error: "This user is already exist" });
+    if (userTarget) {
+        const responeError = {
+            error: {
+                message: "This user is already exist!",
+                errorCode: main_1.ErrorCode.USER_ALREADY_EXIST,
+                errorStatus: main_1.ErrorStatus.BAD_REQUEST,
+                details: { isUserSaved: false, success: false }
+            }
+        };
+        return res.json(responeError);
+    }
     //
     //if password amd repeated password not the same
     if (registerBody.password != registerBody.repeatPassword) {
-        res.json({ error: "Password and repeated password are not the same!" });
+        const responeError = {
+            error: {
+                message: "Password and repeated password are not the same!",
+                errorCode: main_1.ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD,
+                errorStatus: main_1.ErrorStatus.BAD_REQUEST,
+                details: { isUserSaved: false, success: false }
+            }
+        };
+        return res.json(responeError);
     }
     //
     //add this user to database
@@ -86,27 +104,33 @@ async function RegisterHandler(req, res, next) {
         to: registerBody.email,
         subject: "Verify your email",
         text: "Verify your email",
-        html: (0, OtpEmailStructures_1.OtpEmailStructure)(otpServer)
+        html: (0, OtpEmailStructures_1.OtpEmailStructure)(otpServer, "5m")
     }, res);
     //
     //
     if (!success) {
-        res.json({
+        return res.json({
             message: "User has been saved successfuly!",
+            isUserSaved: true,
+            success: true,
+            user: userReturnedToFront,
             Otp: {
-                success,
-                message: "There something wrong with sending email try later!"
-            },
-            user: userReturnedToFront
+                success: false,
+                isOtpSent: success,
+                message: "Not able to send email!, Make sure that your email is working!"
+            }
         });
     }
-    res.json({
+    return res.json({
         message: "User has been saved successfuly!",
+        isUserSaved: true,
+        success: true,
+        user: userReturnedToFront,
         Otp: {
-            success,
+            success: true,
+            isOtpSent: success,
             keyVal: newOtp.id
-        },
-        user: userReturnedToFront
+        }
     });
 }
 exports.RegisterHandler = RegisterHandler;
