@@ -15,7 +15,14 @@ jobs:
         run: |
           docker build -t ezzops/khoyoutbackend:${{ github.sha }} .
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ezzops --password-stdin
-          docker push ezzops/khoyoutbackend:${{ github.sha }}
+      - name: Docker slim
+        uses: kitabisa/docker-slim-action@v1
+        env:
+             DSLIM_HTTP_PROBE: false
+        with:
+              target: ezzops/khoyoutbackend:${{ github.sha }}
+              tag: "slim"
+      - run: docker image push ezzops/khoyoutbackend:${{ github.sha }} --all-tags
 
   CD:
     needs: CI
@@ -29,7 +36,7 @@ jobs:
             password: ${{ secrets.Node_Pass }}
             script: |
               container_id=$(docker ps --format "{{.ID}}")
-              docker logs $container_id > file$(date)
+              docker logs $container_id > logs__khoyoutbackend$(date +%Y%m%d).log
               docker stop $(docker ps -aq)
               docker rm $(docker ps -aq)
               docker rmi $(docker images -q)
