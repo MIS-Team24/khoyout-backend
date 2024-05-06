@@ -12,7 +12,7 @@ COPY . .
 RUN npx prisma generate && \
     npm run build
 
-FROM cgr.dev/chainguard/node:latest-dev
+FROM cgr.dev/chainguard/node:latest
 
 WORKDIR /app
 

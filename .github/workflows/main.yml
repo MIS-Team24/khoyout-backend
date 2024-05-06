@@ -15,15 +15,7 @@ jobs:
         run: |
           docker build -t ezzops/khoyoutbackend:${{ github.sha }} .
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ezzops --password-stdin
-      - name: Docker slim
-        uses: kitabisa/docker-slim-action@v1
-        env:
-             DSLIM_HTTP_PROBE: false
-        with:
-              target: ezzops/khoyoutbackend:${{ github.sha }}
-              tag: "slim"
-      - run: docker image push ezzops/khoyoutbackend:${{ github.sha }}
-      - run: docker image push ezzops/khoyoutbackend:slim
+          docker push ezzops/khoyoutbackend:${{ github.sha }}
 
   CD:
     needs: CI
