@@ -3,18 +3,26 @@ import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpE
 import { sendEmail } from "../../../../Services/sendEmail";
 import { addNewOtp } from "../../../Models/OtpModel";
 import { findUserByEmail } from "../../../Models/UserModel";
-import { EmailBody, UserBody } from "../../../types/auth/auth";
-import { Request, Response } from "express";
+import { EmailBody } from "../../../types/auth/auth";
+import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../../../Services/generateToken";
+import { BadRequestException } from "../../../Exceptions/badRequest";
+import { ErrorCode } from "../../../Exceptions/main";
 
 //recieve the email target to send an otp 
-export async function OtpSentToEmailHandler(req: Request, res: Response) {
+export async function OtpSentToEmailHandler(req: Request, res: Response , next : NextFunction) {
     
     const emailBody = req.body as EmailBody;
 
     //check if user already exist 
     const user = await findUserByEmail(emailBody.email)
-    if(!user) res.json({error : "This user is not exist!"});
+    if(!user){
+        next(new BadRequestException("This user is not exist!" 
+        , ErrorCode.USER_NOT_FOUND , {
+            isOtpSent : false,
+            success: false
+        }))
+    }
     //
 
     //generate a random Otp from 4 numbers
@@ -46,15 +54,17 @@ export async function OtpSentToEmailHandler(req: Request, res: Response) {
     if(!success){
         res.json({
             Otp : {
-                success,
-                message : "There something wrong with sending email try later!"
+                isOtpSent : success,
+                success   : false,
+                message   : "Not able to send email!, Make sure that your email is working!"
             }
         })
     }
 
     res.json({
         Otp : {
-            success,
+            isOtpSent : true,
+            success : true,
             keyVal : newOtp.id
         }
     })

@@ -8,6 +8,8 @@ import { sendEmail } from "../../../../Services/sendEmail";
 import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructures";
 import { addNewOtp } from "../../../Models/OtpModel";
 import { generateToken } from "../../../../Services/generateToken";
+import { BadRequestException } from "../../../Exceptions/badRequest";
+import { ErrorCode } from "../../../Exceptions/main";
 
 export async function RegisterHandler (req: Request, res: Response , next : NextFunction)
 {
@@ -15,12 +17,17 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
 
     //check if user already exist 
     const userTarget = await findUserByEmail(registerBody.email)
-    if(userTarget) res.json({error : "This user is already exist"});
+    if(userTarget){
+        next(new BadRequestException("This user is already exist!" 
+        , ErrorCode.USER_ALREADY_EXIST , {isUserSaved : false , success : false}))
+    }
     //
 
     //if password amd repeated password not the same
     if(registerBody.password != registerBody.repeatPassword){
-        res.json({error : "Password and repeated password are not the same!"})
+        next(new BadRequestException("Password and repeated password are not the same!" 
+        , ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD , {
+            isUserSaved : false , success : false}))
     }
     //
 
@@ -79,21 +86,27 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
     if(!success){
         res.json({
             message : "User has been saved successfuly!",
-            Otp : {
-                success,
-                message : "There something wrong with sending email try later!"
-            },
-            user : userReturnedToFront
+            isUserSaved : true,
+            success : true,
+            user : userReturnedToFront,
+            Otp : {    
+                success : false,           
+                isOtpSent : success,
+                message : "Not able to send email!, Make sure that your email is working!"
+            }            
         })
     }
     
     res.json({
         message : "User has been saved successfuly!",
+        isUserSaved : true,
+        success : true,
+        user : userReturnedToFront,        
         Otp : {
-            success,
+            success : true, 
+            isOtpSent : success,
             keyVal : newOtp.id
-        },
-        user : userReturnedToFront
+        }       
     });
 }
 

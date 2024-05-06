@@ -6,12 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const BodyValidator_1 = __importDefault(require("../../Middleware/BodyValidator"));
 const RegisterController_1 = require("../../Controllers/auth/sign_up/RegisterController");
-const SendingOtpController_1 = require("../../Controllers/auth/SendingOtpController");
+const SendingOtpController_1 = require("../../Controllers/auth/otp/SendingOtpController");
 const UserSchema_1 = require("../../../Services/validationSchemas/UserSchema");
 const ResetPasswordController_1 = require("../../Controllers/auth/log_in/ResetPasswordController");
 const ValidateOtp_1 = require("../../Middleware/ValidateOtp");
 const VerifyEmailController_1 = require("../../Controllers/auth/sign_up/VerifyEmailController");
-const validateOtpHandler_1 = require("../../Controllers/auth/validateOtpHandler");
+const validateOtpHandler_1 = require("../../Controllers/auth/otp/validateOtpHandler");
 const router = express_1.default.Router();
 //sign-up
 router.post("/auth/register", (0, BodyValidator_1.default)({ schema: UserSchema_1.registerSchema }), RegisterController_1.RegisterHandler);

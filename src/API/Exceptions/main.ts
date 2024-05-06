@@ -4,11 +4,11 @@
 export class HttpExceptions extends Error {
     message: string
     errorCode : ErrorCode
-    errorStatus : number    
+    errorStatus : ErrorStatus    
     details : any
 
     constructor(message : string, errorCode : ErrorCode 
-        , errorStatus : number , details : any) {
+        , errorStatus : ErrorStatus , details : any) {
         super(message)
         this.message = message
         this.errorStatus = errorStatus
@@ -25,6 +25,13 @@ export enum ErrorCode {
     NOT_ABLE_SEND_EMAIL = 1005,
     EXPIRED_DATE = 1006,
     SERVER_ERROR = 1007,
-    ZOD_INVALID_DATA = 1008,
+    INVALID_DATA = 1008,
     USER_NOT_AUTHONTICATED = 1009
+}
+
+export enum ErrorStatus {
+    SERVER_ERROR = 500,
+    BAD_REQUEST = 400,
+    UNAUTHORIZED = 401,
+    PAGE_NOT_FOUND = 404
 }

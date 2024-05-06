@@ -26,39 +26,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateOtp = void 0;
 const OtpModel_1 = require("../Models/OtpModel");
 const jwt = __importStar(require("jsonwebtoken"));
+const badRequest_1 = require("../Exceptions/badRequest");
+const main_1 = require("../Exceptions/main");
 async function validateOtp(req, res, next) {
     const otpBody = req.body;
     const targetOtp = await (0, OtpModel_1.findOtpById)(otpBody.keyVal);
     if (!targetOtp) {
-        return res.json({
-            Otp: {
-                success: false,
-                message: "this otp is not valid!"
-            }
-        });
+        next(new badRequest_1.BadRequestException("Otp is not valid!", main_1.ErrorCode.OTP_NOT_VALID, { seccess: false }));
     }
     //check the validation period token
     const token = targetOtp?.expiredAt;
     if (token) {
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY || "hello world", async (error) => {
             if (error) {
-                return res.json({
-                    Otp: {
-                        success: false,
-                        message: "this otp is not valid!",
-                        error
-                    }
-                });
+                next(new badRequest_1.BadRequestException("Otp is not valid!", main_1.ErrorCode.EXPIRED_DATE, { seccess: false, error }));
             }
             else {
                 //compare otp code itself
                 if (otpBody.code !== targetOtp?.code) {
-                    return res.json({
-                        Otp: {
-                            success: false,
-                            message: "this otp is not valid!"
-                        }
-                    });
+                    next(new badRequest_1.BadRequestException("Otp is not valid!", main_1.ErrorCode.OTP_NOT_VALID, { seccess: false }));
                 }
                 //
                 next();
@@ -66,12 +52,7 @@ async function validateOtp(req, res, next) {
         });
     }
     else {
-        return res.json({
-            Otp: {
-                success: false,
-                message: "this otp is expired!"
-            }
-        });
+        next(new badRequest_1.BadRequestException("Otp is not valid!", main_1.ErrorCode.OTP_NOT_VALID, { seccess: false }));
     }
     //
 }

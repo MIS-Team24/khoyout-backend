@@ -1,7 +1,7 @@
 import { ErrorCode, ErrorStatus, HttpExceptions } from "./main";
 
-export class BadRequestException extends HttpExceptions {
+export class BadAuthonticationException extends HttpExceptions {
     constructor(message : string , errorCode : ErrorCode , details : any) {
-        super(message ,  errorCode , ErrorStatus.BAD_REQUEST , details)
+        super(message ,  errorCode , ErrorStatus.UNAUTHORIZED , details)
     }
 }
