@@ -8,6 +8,7 @@ import { Pool } from 'pg';
 import session from 'express-session';
 import expressSession from 'express-session';
 import { passportLocal } from './API/Controllers/auth/log_in/passportLogin/localStrategy/LoginController';
+import { errorMidllewareHandler } from './API/Middleware/HandleError';
 
 const app = express();
 const PORT = 3005;
@@ -45,6 +46,10 @@ app.use(cookieParser())
 //routes
 app.use(apiRoutes);
 app.all( "*" , (req : Request , res : Response) => res.send("This page in not exist!"))
+//
+
+//handle the errors in a better way
+app.use(errorMidllewareHandler)
 //
 
 app.listen(PORT, () => {

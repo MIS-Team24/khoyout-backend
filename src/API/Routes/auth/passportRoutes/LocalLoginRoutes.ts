@@ -1,5 +1,5 @@
 import { Router} from 'express'
-import { checkIfAuthonticated, checkIfNotAuthonticated } from '../../../Middleware/checkAuthontication';
+import { checkIfAuthonticated, checkIfNotAuthonticated } from '../../../Middleware/CheckAuthontication';
 import { loginSchema } from '../../../../Services/validationSchemas/UserSchema';
 import BodyValidator from '../../../Middleware/BodyValidator';
 import { localLoginHandler } from '../../../Controllers/auth/log_in/passportLogin/localStrategy/LoginController';

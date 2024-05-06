@@ -1,11 +1,11 @@
-import { generateOTP } from "../../../Services/generateOTP";
-import { OtpEmailStructure } from "../../../Services/htmlEmailStructures/OtpEmailStructures";
-import { sendEmail } from "../../../Services/sendEmail";
-import { addNewOtp } from "../../Models/OtpModel";
-import { findUserByEmail } from "../../Models/UserModel";
-import { EmailBody, UserBody } from "../../types/auth/auth";
+import { generateOTP } from "../../../../Services/generateOTP";
+import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructures";
+import { sendEmail } from "../../../../Services/sendEmail";
+import { addNewOtp } from "../../../Models/OtpModel";
+import { findUserByEmail } from "../../../Models/UserModel";
+import { EmailBody, UserBody } from "../../../types/auth/auth";
 import { Request, Response } from "express";
-import { generateToken } from "../../../Services/generateToken";
+import { generateToken } from "../../../../Services/generateToken";
 
 //recieve the email target to send an otp 
 export async function OtpSentToEmailHandler(req: Request, res: Response) {
