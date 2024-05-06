@@ -48,10 +48,6 @@ app.use(apiRoutes);
 app.all( "*" , (req : Request , res : Response) => res.send("This page in not exist!"))
 //
 
-//handle the errors in a better way
-//app.use(errorMidllewareHandler)
-//
-
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

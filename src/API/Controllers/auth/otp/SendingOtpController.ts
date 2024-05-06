@@ -6,7 +6,6 @@ import { findUserByEmail } from "../../../Models/UserModel";
 import { EmailBody } from "../../../types/auth/auth";
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../../../Services/generateToken";
-import { BadRequestException } from "../../../Exceptions/badRequest";
 import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
 
 //recieve the email target to send an otp 
@@ -56,7 +55,7 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
     //
     
     if(!success){
-        res.json({
+        return res.json({
             Otp : {
                 isOtpSent : success,
                 success   : false,
@@ -65,7 +64,7 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
         })
     }
 
-    res.json({
+    return res.json({
         Otp : {
             isOtpSent : true,
             success : true,

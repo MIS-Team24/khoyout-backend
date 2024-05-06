@@ -8,7 +8,6 @@ import { sendEmail } from "../../../../Services/sendEmail";
 import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructures";
 import { addNewOtp } from "../../../Models/OtpModel";
 import { generateToken } from "../../../../Services/generateToken";
-import { BadRequestException } from "../../../Exceptions/badRequest";
 import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
 
 export async function RegisterHandler (req: Request, res: Response , next : NextFunction)

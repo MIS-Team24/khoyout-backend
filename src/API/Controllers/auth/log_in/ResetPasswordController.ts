@@ -2,9 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import * as bcrypt from "bcrypt"
 import { PasswordResetBody } from "../../../types/auth/auth";
 import { resetPassword } from "../../../Models/UserModel";
-import { BadRequestException } from "../../../Exceptions/badRequest";
-import { ErrorCode } from "../../../Exceptions/main";
-import { BadServerException } from "../../../Exceptions/badServer";
+import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
 
 export async function resetPasswordHandler (req: Request, res: Response , next : NextFunction)
 {
@@ -13,11 +11,15 @@ export async function resetPasswordHandler (req: Request, res: Response , next :
 
         //if password amd repeated password not the same
         if(passwordResetBody.password != passwordResetBody.repeatPassword){
-            next(new BadRequestException("Password and repeated password are not the same!"
-            ,ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD , {
-                success : false,
-                isPasswordUpdated : false
-            }))
+            const responeError = {
+                error : {
+                    message : "Password and repeated password are not the same!",
+                    errorCode : ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD,
+                    errorStatus : ErrorStatus.BAD_REQUEST,
+                    details : {isPasswordUpdated : false , success : false}                            
+                }
+            }
+            return res.json(responeError)
         }
         //
 
@@ -36,13 +38,15 @@ export async function resetPasswordHandler (req: Request, res: Response , next :
         })
         
     } catch (error) {
-        next(new BadServerException("Internal server error!" , ErrorCode.SERVER_ERROR
-            , {
-                success : false,
-                isPasswordUpdated : false,
-                error
-            })
-        )
+        const responeError = {
+            error : {
+                message : "Internal server error!",
+                errorCode : ErrorCode.SERVER_ERROR,
+                errorStatus : ErrorStatus.SERVER_ERROR,
+                details : {isPasswordUpdated : false , success : false , error}                            
+            }
+        }
+        return res.json(responeError)
     }
 }
 

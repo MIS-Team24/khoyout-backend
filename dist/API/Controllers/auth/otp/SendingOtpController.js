@@ -48,7 +48,7 @@ async function OtpSentToEmailHandler(req, res, next) {
     }, res);
     //
     if (!success) {
-        res.json({
+        return res.json({
             Otp: {
                 isOtpSent: success,
                 success: false,
@@ -56,7 +56,7 @@ async function OtpSentToEmailHandler(req, res, next) {
             }
         });
     }
-    res.json({
+    return res.json({
         Otp: {
             isOtpSent: true,
             success: true,

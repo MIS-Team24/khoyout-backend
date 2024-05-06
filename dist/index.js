@@ -47,9 +47,6 @@ app.use((0, cookie_parser_1.default)());
 app.use(mainRoutes_1.apiRoutes);
 app.all("*", (req, res) => res.send("This page in not exist!"));
 //
-//handle the errors in a better way
-//app.use(errorMidllewareHandler)
-//
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

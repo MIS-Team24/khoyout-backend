@@ -1,29 +1,36 @@
 import { NextFunction, Request, Response } from "express";
-import { BadServerException } from "../../../../../Exceptions/badServer";
-import { ErrorCode } from "../../../../../Exceptions/main";
-import { BadAuthonticationException } from "../../../../../Exceptions/badAuthontication";
+import { ErrorCode, ErrorStatus } from "../../../../../Exceptions/main";
 
 export const logoutHandler = async (req : Request , res : Response ,  next : NextFunction) => {
     if(req.user){
-        req.logout((err) => {
-            if (err) { 
-                // next(new BadServerException("Internal server error!" 
-                //     , ErrorCode.SERVER_ERROR , err)); 
-                res.json({
-                    success : false, 
-                })
+        req.logout((error) => {
+            if (error) { 
+                const responeError = {
+                    error : {
+                        message : "Internal server error!",
+                        errorCode : ErrorCode.SERVER_ERROR,
+                        errorStatus : ErrorStatus.SERVER_ERROR,
+                        details : {error , isAuth : false}                            
+                    }
+                }
+                return res.json(responeError)
             }
 
-            res.json({
+            return res.json({
                 success : true, 
+                isAuth : true,
                 message:"user logged out successfully"
             })
         })
     }else{
-        res.json({
-            success : false, 
-        })
-        // next(new BadAuthonticationException("User not authonticated!" 
-        //     , ErrorCode.USER_NOT_AUTHONTICATED , {isAuth : false})); 
+        const responeError = {
+            error : {
+                message : "User not authonticated!",
+                errorCode : ErrorCode.USER_NOT_AUTHONTICATED,
+                errorStatus : ErrorStatus.UNAUTHORIZED,
+                details : {isAuth : false}                            
+            }
+        }
+        return res.json(responeError)
     }   
 }

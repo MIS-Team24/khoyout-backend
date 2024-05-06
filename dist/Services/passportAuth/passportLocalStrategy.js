@@ -7,6 +7,7 @@ exports.initializePassport = void 0;
 const localStrategy = require('passport-local').Strategy;
 const UserModel_1 = require("../../API/Models/UserModel");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const main_1 = require("../../API/Exceptions/main");
 const initializePassport = (passport) => {
     passport.use(new localStrategy({ usernameField: 'email' }, async (email, password, done) => {
         const loginBody = { email, password };
@@ -27,7 +28,16 @@ const initializePassport = (passport) => {
         if (isMatch) {
             return done(null, userReturnedToFront);
         }
-        return done(new Error("Incorrect password!"), null);
+        const errorRsponse = {
+            message: "Incorrect pasword!",
+            errorCode: main_1.ErrorCode.INCORRECT_PASSWORD,
+            errorStatus: main_1.ErrorStatus.BAD_REQUEST,
+            details: {
+                isLoggedIn: false,
+                success: false,
+            }
+        };
+        return done(errorRsponse, null);
     }));
     passport.serializeUser((user, done) => {
         return done(null, user.id);
@@ -46,13 +56,31 @@ const initializePassport = (passport) => {
             };
             //   
             if (!user) {
-                return done(new Error("User not found"), false);
+                const errorRsponse = {
+                    message: "User not found",
+                    errorCode: main_1.ErrorCode.USER_NOT_FOUND,
+                    errorStatus: main_1.ErrorStatus.BAD_REQUEST,
+                    details: {
+                        isLoggedIn: false,
+                        success: false,
+                    }
+                };
+                return done(errorRsponse, false);
             }
             return done(null, userReturnedToFront);
         }
         catch (error) {
             console.log(error);
-            return done(new Error('Internal server error!'), null);
+            const errorRsponse = {
+                message: 'Internal server error!',
+                errorCode: main_1.ErrorCode.SERVER_ERROR,
+                errorStatus: main_1.ErrorStatus.SERVER_ERROR,
+                details: {
+                    isLoggedIn: false,
+                    success: false,
+                }
+            };
+            return done(errorRsponse, null);
         }
     });
 };

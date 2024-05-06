@@ -32,7 +32,17 @@ export const initializePassport = (passport : PassportStatic) => {
                 return done(null , userReturnedToFront)
             }
 
-            return done(new Error("Incorrect password!") , null)    
+            const errorRsponse : Partial<BadRequestException> = {      
+                message : "Incorrect pasword!" ,
+                errorCode : ErrorCode.INCORRECT_PASSWORD,
+                errorStatus : ErrorStatus.BAD_REQUEST,
+                details : {
+                    isLoggedIn : false , 
+                    success : false,                    
+                }                
+            }
+
+            return done(errorRsponse , null)    
         }
     ))
 
@@ -55,14 +65,32 @@ export const initializePassport = (passport : PassportStatic) => {
             }
             //   
 
-            if(!user){           
-                return done(new Error("User not found"), false )
+            if(!user){      
+                const errorRsponse : Partial<BadServerException> = {      
+                    message : "User not found",
+                    errorCode : ErrorCode.USER_NOT_FOUND,
+                    errorStatus : ErrorStatus.BAD_REQUEST,
+                    details : {
+                        isLoggedIn : false , 
+                        success : false,                    
+                    }                
+                }     
+                return done(errorRsponse, false )
             }   
 
             return done(null , userReturnedToFront)
         } catch (error) {
             console.log(error);
-            return done(new Error('Internal server error!') , null)
+            const errorRsponse : Partial<BadServerException> = {      
+                message : 'Internal server error!' ,
+                errorCode : ErrorCode.SERVER_ERROR,
+                errorStatus : ErrorStatus.SERVER_ERROR,
+                details : {
+                    isLoggedIn : false , 
+                    success : false,                    
+                }                
+            }
+            return done(errorRsponse  , null)
         }
     })
 }
