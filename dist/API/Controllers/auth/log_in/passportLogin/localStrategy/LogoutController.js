@@ -1,14 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logoutHandler = void 0;
-const logoutHandler = async (req, res) => {
+const logoutHandler = async (req, res, next) => {
     if (req.user) {
-        req.logOut((error) => {
-            if (error)
-                return res.json({ error });
-            req.session.destroy((error) => {
-                return res.json({ error });
-            });
+        req.logout((err) => {
+            if (err) {
+                return next(err);
+            }
             return res.json({
                 success: true,
                 message: "user loged out successfully"

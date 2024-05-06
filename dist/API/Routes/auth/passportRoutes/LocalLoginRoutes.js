@@ -12,10 +12,10 @@ const GetUserController_1 = require("../../../Controllers/auth/log_in/passportLo
 const IsUserAuthController_1 = require("../../../Controllers/auth/log_in/passportLogin/localStrategy/IsUserAuthController");
 const LogoutController_1 = require("../../../Controllers/auth/log_in/passportLogin/localStrategy/LogoutController");
 const router = (0, express_1.Router)();
-router.post('/auth/login', (0, BodyValidator_1.default)({ schema: UserSchema_1.loginSchema }), LoginController_1.localLoginHandler);
+router.post('/auth/login', (0, BodyValidator_1.default)({ schema: UserSchema_1.loginSchema }), checkAuthontication_1.checkIfNotAuthonticated, LoginController_1.localLoginHandler);
 router.get('/auth/get-user', GetUserController_1.getUserHandler);
 router.get('/auth/is-logged-in', IsUserAuthController_1.isUserAuthonticatedHandler);
-router.get('/auth/logout', LogoutController_1.logoutHandler);
+router.delete('/auth/logout', LogoutController_1.logoutHandler);
 //protected route for test
 router.get("/auth/protected-route", checkAuthontication_1.checkIfAuthonticated, (req, res) => {
     return res.json({ message: "hello" });

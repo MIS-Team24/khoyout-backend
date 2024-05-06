@@ -9,7 +9,7 @@ export const checkIfAuthonticated = (req : Request , res : Response , next : Nex
 
 export const checkIfNotAuthonticated = (req : Request , res : Response , next : NextFunction) => {
     if(req.isAuthenticated()){
-        return res.json({authonticated:true})
+        return res.json({isLogged : true , authonticated : true})
     }
     next()
 }

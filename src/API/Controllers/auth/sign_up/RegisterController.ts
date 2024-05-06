@@ -37,6 +37,16 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
     const user = await addUser(newUser)
     //
 
+    //the user form returned according to the frontent desire
+    let userReturnedToFront : UserBody = {
+        id : user?.id,
+        email: user?.id,
+        emailActivated:user?.emailActivated,
+        createdAt : user?.createdAt,
+        fullName: user?.fullName
+    }
+    //
+
     //send otp and save it in the database
     //generate a random Otp from 4 numbers
     const otpServer = generateOTP(4)
@@ -72,7 +82,7 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
                 success,
                 message : "There something wrong with sending email try later!"
             },
-            user
+            user : userReturnedToFront
         })
     }
     
@@ -82,7 +92,7 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
             success,
             keyVal : newOtp.id
         },
-        user
+        user : userReturnedToFront
     });
 }
 

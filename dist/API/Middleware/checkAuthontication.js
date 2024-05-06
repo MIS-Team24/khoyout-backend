@@ -10,7 +10,7 @@ const checkIfAuthonticated = (req, res, next) => {
 exports.checkIfAuthonticated = checkIfAuthonticated;
 const checkIfNotAuthonticated = (req, res, next) => {
     if (req.isAuthenticated()) {
-        return res.json({ authonticated: true });
+        return res.json({ isLogged: true, authonticated: true });
     }
     next();
 };

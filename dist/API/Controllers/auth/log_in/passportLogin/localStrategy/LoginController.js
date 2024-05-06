@@ -12,14 +12,12 @@ const localLoginHandler = (req, res, next) => {
         if (error) {
             console.log(error);
             return res.json({
-                errorLocate: 'user',
                 isLogged: false,
                 error: error.message
             });
         }
         if (!user) {
             return res.json({
-                errorLocate: 'user',
                 isLogged: false,
                 message: 'No user found!'
             });
@@ -28,15 +26,23 @@ const localLoginHandler = (req, res, next) => {
             if (error) {
                 console.log(error);
                 return res.json({
-                    errorLocate: 'server',
                     isLogged: false,
                     error: error.message
                 });
             }
+            //the user form returned according to the frontent desire
+            let userReturnedToFront = {
+                id: user?.id,
+                email: user?.id,
+                emailActivated: user?.emailActivated,
+                createdAt: user?.createdAt,
+                fullName: user?.fullName
+            };
+            //
             return res.json({
                 isLogged: true,
                 message: 'User has logged successfully',
-                user
+                user: userReturnedToFront
             });
         });
     })(req, res, next);

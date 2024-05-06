@@ -4,8 +4,8 @@ import { Request, Response } from "express";
 //get authonticated user
 export const getUserHandler = async (req : Request , res : Response) => {
     if(req.user){
-        return res.json({user:req.user})
+        return res.json({user : req.user})
     }else{
-        return res.json({user:null})
+        return res.json({isLogged : false , user : null})
     }   
 }

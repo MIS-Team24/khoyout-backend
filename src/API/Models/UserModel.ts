@@ -9,7 +9,7 @@ export const findUserByEmail = async (email : string) => {
             email
         }
     })
-    return user  
+    return user
 }
 //
 
@@ -20,14 +20,14 @@ export const findUserById = async (id : string) => {
             id
         }
     })
-    return user  
+    return user 
 }
 //
 
 //create user
 export const addUser = async (data : Prisma.UsersCreateInput) => {
     const user : object = await prisma.users.create({data})
-    return user
+    return user as UserBody
 }
 //
 
@@ -54,6 +54,6 @@ export const verifyEmail = async (email : string) => {
             emailActivated:true
         }
     })
-    return user
+    return user 
 }
 //

@@ -1,5 +1,5 @@
 import { Router} from 'express'
-import { checkIfAuthonticated } from '../../../Middleware/checkAuthontication';
+import { checkIfAuthonticated, checkIfNotAuthonticated } from '../../../Middleware/checkAuthontication';
 import { loginSchema } from '../../../../Services/validationSchemas/UserSchema';
 import BodyValidator from '../../../Middleware/BodyValidator';
 import { localLoginHandler } from '../../../Controllers/auth/log_in/passportLogin/localStrategy/LoginController';
@@ -10,10 +10,10 @@ import { logoutHandler } from '../../../Controllers/auth/log_in/passportLogin/lo
 const router = Router()
 
 router.post('/auth/login' , BodyValidator({schema: loginSchema})
-, localLoginHandler)
+, checkIfNotAuthonticated , localLoginHandler)
 router.get('/auth/get-user' , getUserHandler)
 router.get('/auth/is-logged-in', isUserAuthonticatedHandler)
-router.get('/auth/logout' , logoutHandler)
+router.delete('/auth/logout' , logoutHandler)
 
 //protected route for test
 router.get("/auth/protected-route", checkIfAuthonticated , (req , res) => {

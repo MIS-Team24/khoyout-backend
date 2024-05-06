@@ -56,6 +56,15 @@ async function RegisterHandler(req, res, next) {
     };
     const user = await (0, UserModel_1.addUser)(newUser);
     //
+    //the user form returned according to the frontent desire
+    let userReturnedToFront = {
+        id: user?.id,
+        email: user?.id,
+        emailActivated: user?.emailActivated,
+        createdAt: user?.createdAt,
+        fullName: user?.fullName
+    };
+    //
     //send otp and save it in the database
     //generate a random Otp from 4 numbers
     const otpServer = (0, generateOTP_1.generateOTP)(4);
@@ -87,7 +96,7 @@ async function RegisterHandler(req, res, next) {
                 success,
                 message: "There something wrong with sending email try later!"
             },
-            user
+            user: userReturnedToFront
         });
     }
     res.json({
@@ -96,7 +105,7 @@ async function RegisterHandler(req, res, next) {
             success,
             keyVal: newOtp.id
         },
-        user
+        user: userReturnedToFront
     });
 }
 exports.RegisterHandler = RegisterHandler;

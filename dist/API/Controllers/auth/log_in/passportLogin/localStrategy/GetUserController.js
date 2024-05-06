@@ -8,7 +8,7 @@ const getUserHandler = async (req, res) => {
         return res.json({ user: req.user });
     }
     else {
-        return res.json({ user: null });
+        return res.json({ isLogged: false, user: null });
     }
 };
 exports.getUserHandler = getUserHandler;

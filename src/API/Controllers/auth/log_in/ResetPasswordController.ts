@@ -21,9 +21,20 @@ export async function resetPasswordHandler (req: Request, res: Response)
 
         await resetPassword({password : hashedPassword}
             , passwordResetBody.email)
-        res.json({message : "The password changed successfully"})
+
+        return res.json({
+            success : true,
+            message : "The password changed successfully"
+        })
+        
     } catch (error) {
-        res.json({error})
+        return res.json({
+            error : {
+                message : "Something went wrong, try again!",
+                errorStatus : 500,                
+                details : error
+            }
+        })
     }
 }
 
