@@ -45,7 +45,8 @@ export const initializePassport = (passport : PassportStatic) => {
                 email: user?.id,
                 emailActivated:user?.emailActivated,
                 createdAt : user?.createdAt,
-                fullName: user?.fullName
+                fullName: user?.fullName,
+                phone : user?.phone
             }
             //   
 

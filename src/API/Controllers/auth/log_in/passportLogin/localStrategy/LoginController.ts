@@ -36,7 +36,8 @@ export const localLoginHandler = (req:Request , res : Response , next : NextFunc
                 email: user?.id,
                 emailActivated:user?.emailActivated,
                 createdAt : user?.createdAt,
-                fullName: user?.fullName
+                fullName: user?.fullName,
+                phone : user?.phone
             }
             //
 

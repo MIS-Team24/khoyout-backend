@@ -43,7 +43,8 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
         email: user?.id,
         emailActivated:user?.emailActivated,
         createdAt : user?.createdAt,
-        fullName: user?.fullName
+        fullName: user?.fullName,
+        phone : user?.phone
     }
     //
 

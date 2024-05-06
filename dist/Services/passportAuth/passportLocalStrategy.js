@@ -41,7 +41,8 @@ const initializePassport = (passport) => {
                 email: user?.id,
                 emailActivated: user?.emailActivated,
                 createdAt: user?.createdAt,
-                fullName: user?.fullName
+                fullName: user?.fullName,
+                phone: user?.phone
             };
             //   
             if (!user)

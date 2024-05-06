@@ -36,7 +36,8 @@ const localLoginHandler = (req, res, next) => {
                 email: user?.id,
                 emailActivated: user?.emailActivated,
                 createdAt: user?.createdAt,
-                fullName: user?.fullName
+                fullName: user?.fullName,
+                phone: user?.phone
             };
             //
             return res.json({
