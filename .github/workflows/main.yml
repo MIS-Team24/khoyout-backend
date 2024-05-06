@@ -22,7 +22,7 @@ jobs:
         with:
               target: ezzops/khoyoutbackend:${{ github.sha }}
               tag: "slim"
-      - run: docker image push ezzops/khoyoutbackend:${{ github.sha }} --all-tags
+      - run: docker image push ezzops/khoyoutbackend:${{ github.sha }}
 
   CD:
     needs: CI
