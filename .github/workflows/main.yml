@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - emad_ezz_auth
+      - Dev-Auth
 
 jobs:
   CI:
