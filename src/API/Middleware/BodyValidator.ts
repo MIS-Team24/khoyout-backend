@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
 import { ErrorCode, ErrorStatus } from "../Exceptions/main";
+import { errorResponseTemplate } from "../../Services/responses/ErrorTemplate";
+import { BadRequestException } from "../Exceptions/badRequest";
+import { Messages } from "../../Services/responses/Messages";
+import { BadServerException } from "../Exceptions/badServer";
 
 type BodyValidatorOptions = {
     schema: z.ZodObject<any, any>
@@ -17,27 +21,17 @@ export default function BodyValidator(options: BodyValidatorOptions) {
                     message: `${issue.path.join('.')} is ${issue.message}`,
                 }));
 
-                const responeError = {
-                    error : {
-                        message : 'Invalid data' ,
-                        errorCode : ErrorCode.INVALID_DATA,
-                        errorStatus : ErrorStatus.BAD_REQUEST,
-                        details : {error : errorMessages , isDataValid : false}                            
-                    }
-                }
-
-                res.json(responeError) 
-            } else {
-                const responeError = {
-                    error : {
-                        message : 'Internal Server Error' ,
-                        errorCode : ErrorCode.SERVER_ERROR,
-                        errorStatus : ErrorStatus.SERVER_ERROR,
-                        details : {error , isDataValid : false}                            
-                    }
-                }
-
-                res.json(responeError)  
+                return res.json(errorResponseTemplate(
+                    new BadRequestException(Messages.INVALID_DATA 
+                        , ErrorCode.INVALID_DATA
+                        ,{error : errorMessages, success : false , isDataValid : false})
+                ))
+            } else { 
+                return res.json(errorResponseTemplate(
+                    new BadServerException(Messages.SERVER_ERROR 
+                        , ErrorCode.SERVER_ERROR
+                        ,{error , success : false , isDataValid : false})
+                ))
             }
         }
     }

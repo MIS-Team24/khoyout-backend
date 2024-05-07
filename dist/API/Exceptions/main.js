@@ -1,5 +1,4 @@
 "use strict";
-//message , status code , error code , details
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ErrorStatus = exports.ErrorCode = exports.HttpExceptions = void 0;
 class HttpExceptions extends Error {

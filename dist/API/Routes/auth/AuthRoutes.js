@@ -12,6 +12,7 @@ const ResetPasswordController_1 = require("../../Controllers/auth/log_in/ResetPa
 const ValidateOtp_1 = require("../../Middleware/ValidateOtp");
 const VerifyEmailController_1 = require("../../Controllers/auth/sign_up/VerifyEmailController");
 const validateOtpHandler_1 = require("../../Controllers/auth/otp/validateOtpHandler");
+const CheckAuthontication_1 = require("../../Middleware/CheckAuthontication");
 const router = express_1.default.Router();
 //sign-up
 router.post("/auth/register", (0, BodyValidator_1.default)({ schema: UserSchema_1.registerSchema }), RegisterController_1.RegisterHandler);
@@ -20,6 +21,6 @@ router.post("/auth/send-otp", (0, BodyValidator_1.default)({ schema: UserSchema_
 //
 //reset password
 router.post("/auth/validate-otp", (0, BodyValidator_1.default)({ schema: UserSchema_1.otpVerifyEmailSchema }), ValidateOtp_1.validateOtp, validateOtpHandler_1.validateOtpHandler);
-router.post("/auth/reset-password", ResetPasswordController_1.resetPasswordHandler);
+router.post("/auth/reset-password", CheckAuthontication_1.checkIfNotAuthonticated, ResetPasswordController_1.resetPasswordHandler);
 //
 exports.default = router;

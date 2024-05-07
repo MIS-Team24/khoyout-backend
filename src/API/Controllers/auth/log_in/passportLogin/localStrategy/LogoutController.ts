@@ -1,36 +1,32 @@
 import { NextFunction, Request, Response } from "express";
-import { ErrorCode, ErrorStatus } from "../../../../../Exceptions/main";
+import { ErrorCode } from "../../../../../Exceptions/main";
+import { errorResponseTemplate } from "../../../../../../Services/responses/ErrorTemplate";
+import { Messages } from "../../../../../../Services/responses/Messages";
+import { BadServerException } from "../../../../../Exceptions/badServer";
+import { BadAuthonticationException } from "../../../../../Exceptions/badAuthontication";
 
 export const logoutHandler = async (req : Request , res : Response ,  next : NextFunction) => {
     if(req.user){
         req.logout((error) => {
-            if (error) { 
-                const responeError = {
-                    error : {
-                        message : "Internal server error!",
-                        errorCode : ErrorCode.SERVER_ERROR,
-                        errorStatus : ErrorStatus.SERVER_ERROR,
-                        details : {error , isAuth : false}                            
-                    }
-                }
-                return res.json(responeError)
+            if (error) {               
+                return res.json(errorResponseTemplate(
+                    new BadServerException(Messages.SERVER_ERROR 
+                        , ErrorCode.SERVER_ERROR
+                        ,{error , isAuth : false})
+                ))
             }
 
             return res.json({
                 success : true, 
                 isAuth : true,
-                message:"user logged out successfully"
+                message: Messages.USER_LOGGED_OUT
             })
         })
     }else{
-        const responeError = {
-            error : {
-                message : "User not authonticated!",
-                errorCode : ErrorCode.USER_NOT_AUTHONTICATED,
-                errorStatus : ErrorStatus.UNAUTHORIZED,
-                details : {isAuth : false}                            
-            }
-        }
-        return res.json(responeError)
+        return res.json(errorResponseTemplate(
+            new BadAuthonticationException(Messages.USER_NOT_AUTHONTICATED 
+                , ErrorCode.USER_NOT_AUTHONTICATED
+                ,{ isAuth : false})
+        ))
     }   
 }

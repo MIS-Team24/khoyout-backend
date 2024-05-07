@@ -2,6 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const zod_1 = require("zod");
 const main_1 = require("../Exceptions/main");
+const ErrorTemplate_1 = require("../../Services/responses/ErrorTemplate");
+const badRequest_1 = require("../Exceptions/badRequest");
+const Messages_1 = require("../../Services/responses/Messages");
+const badServer_1 = require("../Exceptions/badServer");
 function BodyValidator(options) {
     return function (req, res, next) {
         try {
@@ -13,26 +17,10 @@ function BodyValidator(options) {
                 const errorMessages = error.errors.map((issue) => ({
                     message: `${issue.path.join('.')} is ${issue.message}`,
                 }));
-                const responeError = {
-                    error: {
-                        message: 'Invalid data',
-                        errorCode: main_1.ErrorCode.INVALID_DATA,
-                        errorStatus: main_1.ErrorStatus.BAD_REQUEST,
-                        details: { error: errorMessages, isDataValid: false }
-                    }
-                };
-                res.json(responeError);
+                return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.INVALID_DATA, main_1.ErrorCode.INVALID_DATA, { error: errorMessages, success: false, isDataValid: false })));
             }
             else {
-                const responeError = {
-                    error: {
-                        message: 'Internal Server Error',
-                        errorCode: main_1.ErrorCode.SERVER_ERROR,
-                        errorStatus: main_1.ErrorStatus.SERVER_ERROR,
-                        details: { error, isDataValid: false }
-                    }
-                };
-                res.json(responeError);
+                return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.SERVER_ERROR, main_1.ErrorCode.SERVER_ERROR, { error, success: false, isDataValid: false })));
             }
         }
     };

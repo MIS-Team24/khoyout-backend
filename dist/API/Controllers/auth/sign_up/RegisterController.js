@@ -33,33 +33,20 @@ const OtpEmailStructures_1 = require("../../../../Services/htmlEmailStructures/O
 const OtpModel_1 = require("../../../Models/OtpModel");
 const generateToken_1 = require("../../../../Services/generateToken");
 const main_1 = require("../../../Exceptions/main");
+const badRequest_1 = require("../../../Exceptions/badRequest");
+const Messages_1 = require("../../../../Services/responses/Messages");
+const ErrorTemplate_1 = require("../../../../Services/responses/ErrorTemplate");
 async function RegisterHandler(req, res, next) {
     const registerBody = req.body;
     //check if user already exist 
     const userTarget = await (0, UserModel_1.findUserByEmail)(registerBody.email);
     if (userTarget) {
-        const responeError = {
-            error: {
-                message: "This user is already exist!",
-                errorCode: main_1.ErrorCode.USER_ALREADY_EXIST,
-                errorStatus: main_1.ErrorStatus.BAD_REQUEST,
-                details: { isUserSaved: false, success: false }
-            }
-        };
-        return res.json(responeError);
+        return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_EXIST, main_1.ErrorCode.USER_ALREADY_EXIST, { isUserSaved: false, success: false })));
     }
     //
     //if password amd repeated password not the same
     if (registerBody.password != registerBody.repeatPassword) {
-        const responeError = {
-            error: {
-                message: "Password and repeated password are not the same!",
-                errorCode: main_1.ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD,
-                errorStatus: main_1.ErrorStatus.BAD_REQUEST,
-                details: { isUserSaved: false, success: false }
-            }
-        };
-        return res.json(responeError);
+        return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.PASS_NOT_R_PASS, main_1.ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD, { isUserSaved: false, success: false })));
     }
     //
     //add this user to database
@@ -110,19 +97,19 @@ async function RegisterHandler(req, res, next) {
     //
     if (!success) {
         return res.json({
-            message: "User has been saved successfuly!",
+            message: Messages_1.Messages.USER_SAVED,
             isUserSaved: true,
             success: true,
             user: userReturnedToFront,
             Otp: {
                 success: false,
                 isOtpSent: success,
-                message: "Not able to send email!, Make sure that your email is working!"
+                message: Messages_1.Messages.NOT_ABLE_SEND_EMAIL
             }
         });
     }
     return res.json({
-        message: "User has been saved successfuly!",
+        message: Messages_1.Messages.USER_SAVED,
         isUserSaved: true,
         success: true,
         user: userReturnedToFront,

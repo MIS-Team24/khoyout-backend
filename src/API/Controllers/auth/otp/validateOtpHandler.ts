@@ -1,4 +1,5 @@
 import {Response , Request} from "express";
+import { Messages } from "../../../../Services/responses/Messages";
 
 export async function validateOtpHandler (req: Request , res : Response)
 {
@@ -6,7 +7,7 @@ export async function validateOtpHandler (req: Request , res : Response)
         Otp :{
             success : true ,
             isOtpValid : true, 
-            message : "Otp is correct!",
+            message : Messages.OTP_VALID
         }
     })  
 }

@@ -34,7 +34,7 @@ app.use((0, express_session_1.default)({
         sameSite: true,
         httpOnly: true,
         //secure : true
-    },
+    }
 }));
 app.use(LoginController_1.passportLocal.session());
 app.use(LoginController_1.passportLocal.initialize());

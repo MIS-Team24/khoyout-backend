@@ -2,7 +2,11 @@ import { NextFunction  , Response , Request} from "express";
 import { OtpBody } from "../types/auth/auth";
 import { findOtpById } from "../Models/OtpModel";
 import * as jwt from "jsonwebtoken"
-import { ErrorCode, ErrorStatus } from "../Exceptions/main";
+import { ErrorCode } from "../Exceptions/main";
+import { errorResponseTemplate } from "../../Services/responses/ErrorTemplate";
+import { Messages } from "../../Services/responses/Messages";
+import { BadRequestException } from "../Exceptions/badRequest";
+import { BadServerException } from "../Exceptions/badServer";
 
 export async function validateOtp (req: Request, res: Response , next : NextFunction)
 {
@@ -10,15 +14,11 @@ export async function validateOtp (req: Request, res: Response , next : NextFunc
 
     const targetOtp = await findOtpById(otpBody.keyVal)
     if(!targetOtp){          
-        const responeError = {
-            error : {
-                message : "Otp is not valid!" ,
-                errorCode : ErrorCode.OTP_NOT_VALID,
-                errorStatus : ErrorStatus.BAD_REQUEST,
-                details : {isOtpValid : false , success : false}                            
-            }
-        }
-        return res.json(responeError)
+        return res.json(errorResponseTemplate(
+            new BadRequestException(Messages.OTP_NOT_VALID 
+                , ErrorCode.OTP_NOT_VALID
+                ,{isOtpValid:false, success : false})
+        ))
     } 
 
     //check the validation period token
@@ -26,44 +26,33 @@ export async function validateOtp (req: Request, res: Response , next : NextFunc
     if(token){
         jwt.verify(token,process.env.ACCESS_TOKEN_SECRET_KEY || "hello world"
             ,async (error: any) => {
-            if (error) {
-                const responeError = {
-                    error : {
-                        message : "Otp is not valid!" ,
-                        errorCode : ErrorCode.EXPIRED_DATE,
-                        errorStatus : ErrorStatus.BAD_REQUEST,
-                        details : {isOtpValid : false , success : false , error}                            
-                    }
-                }
-                return res.json(responeError)    
+            if (error) {               
+                return res.json(errorResponseTemplate(
+                    new BadRequestException(Messages.OTP_EXPIRED 
+                        , ErrorCode.EXPIRED_DATE
+                        ,{isOtpValid:false, success : false , error})
+                ))
+
             } else {               
                 //compare otp code itself
                 if(otpBody.code !== targetOtp?.code) { 
-                    const responeError = {
-                        error : {
-                            message : "Otp is not valid!" ,
-                            errorCode : ErrorCode.OTP_NOT_VALID,
-                            errorStatus : ErrorStatus.BAD_REQUEST,
-                            details : {isOtpValid : false , success : false}                            
-                        }
-                    }                   
-                    return res.json(responeError) 
+                    return res.json(errorResponseTemplate(
+                        new BadRequestException(Messages.OTP_NOT_VALID 
+                            , ErrorCode.OTP_NOT_VALID
+                            ,{isOtpValid:false, success : false})
+                    ))
                 }
                 //
 
                 next()
             }
         })
-    }else{
-        const responeError = {
-            error : {
-                message : "Otp is not valid!" ,
-                errorCode : ErrorCode.OTP_NOT_VALID,
-                errorStatus : ErrorStatus.BAD_REQUEST,
-                details : {isOtpValid : false , success : false}                            
-            }
-        }                   
-        return res.json(responeError) 
+    }else{      
+        return res.json(errorResponseTemplate(
+            new BadServerException(Messages.OTP_NOT_VALID 
+                , ErrorCode.OTP_NOT_VALID
+                ,{isOtpValid:false , success : false})
+        ))
     }
     //
 }

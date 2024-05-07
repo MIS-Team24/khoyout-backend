@@ -2,32 +2,30 @@ import { Request, Response , NextFunction } from "express";
 import passport from 'passport';
 import { initializePassport } from "../../../../../../Services/passportAuth/passportLocalStrategy";
 import { UserBody } from "../../../../../types/auth/auth";
-import { ErrorCode, ErrorStatus } from "../../../../../Exceptions/main";
+import { ErrorCode } from "../../../../../Exceptions/main";
+import { Messages } from "../../../../../../Services/responses/Messages";
+import { errorResponseTemplate } from "../../../../../../Services/responses/ErrorTemplate";
+import { BadRequestException } from "../../../../../Exceptions/badRequest";
 
 initializePassport(passport)
 
 export const localLoginHandler = (req:Request , res : Response , next : NextFunction) => {
     return passport.authenticate('local', (error : any , user : any , info: any )=>{
-        if(error){
-            console.log(error);     
-            return res.json({error})             
+        if(error){             
+            return res.json(error)
         }    
 
-        if(!user){        
-            return res.json({
-                error : {
-                    message : "User not found",
-                    errorCode : ErrorCode.USER_NOT_FOUND,
-                    errorStatus : ErrorStatus.BAD_REQUEST,
-                    details : {isLoggedIn : false , success : false}  
-                }                            
-            })   
+        if(!user){         
+            return res.json(errorResponseTemplate(
+                new BadRequestException(Messages.USER_NOT_FOUND 
+                    , ErrorCode.USER_NOT_FOUND
+                    ,{isLoggedIn : false})
+            ))
         } 
         
         req.logIn(user , (error)=>{
             if(error){
-                console.log(error);
-                return res.json({error})      
+                return res.json(error)     
             }
 
         //the user form returned according to the frontent desire
@@ -44,7 +42,7 @@ export const localLoginHandler = (req:Request , res : Response , next : NextFunc
         return res.json({
                 isLoggedIn:true,
                 success:true,
-                message:'User has logged successfully',
+                message: Messages.USER_LOGGED_IN,
                 user : userReturnedToFront
             })
         })

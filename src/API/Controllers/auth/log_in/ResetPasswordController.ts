@@ -1,25 +1,36 @@
 import { NextFunction, Request, Response } from "express";
 import * as bcrypt from "bcrypt"
 import { PasswordResetBody } from "../../../types/auth/auth";
-import { resetPassword } from "../../../Models/UserModel";
-import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
+import { findUserByEmail, resetPassword } from "../../../Models/UserModel";
+import { ErrorCode } from "../../../Exceptions/main";
+import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
+import { BadRequestException } from "../../../Exceptions/badRequest";
+import { Messages } from "../../../../Services/responses/Messages";
+import { BadServerException } from "../../../Exceptions/badServer";
 
 export async function resetPasswordHandler (req: Request, res: Response , next : NextFunction)
 {
     try {
         const passwordResetBody  = req.body as  PasswordResetBody
 
+        //check if user already exist 
+        const userTarget = await findUserByEmail(passwordResetBody.email)
+        if(!userTarget){
+            return res.json(errorResponseTemplate(
+                new BadRequestException(Messages.USER_NOT_FOUND 
+                    , ErrorCode.USER_NOT_FOUND
+                    ,{isPasswordUpdated : false , success : false})
+            ))
+        }
+        //
+
         //if password amd repeated password not the same
-        if(passwordResetBody.password != passwordResetBody.repeatPassword){
-            const responeError = {
-                error : {
-                    message : "Password and repeated password are not the same!",
-                    errorCode : ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD,
-                    errorStatus : ErrorStatus.BAD_REQUEST,
-                    details : {isPasswordUpdated : false , success : false}                            
-                }
-            }
-            return res.json(responeError)
+        if(passwordResetBody.password != passwordResetBody.repeatPassword){           
+            return res.json(errorResponseTemplate(
+                new BadRequestException(Messages.PASS_NOT_R_PASS 
+                    , ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD
+                    ,{success : false , isPasswordUpdated : false})
+            ))
         }
         //
 
@@ -34,19 +45,16 @@ export async function resetPasswordHandler (req: Request, res: Response , next :
         return res.json({
             success : true,
             isPasswordUpdated : true,
-            message : "The password changed successfully"
+            message : Messages.PASSWORD_UPDATED
         })
         
     } catch (error) {
-        const responeError = {
-            error : {
-                message : "Internal server error!",
-                errorCode : ErrorCode.SERVER_ERROR,
-                errorStatus : ErrorStatus.SERVER_ERROR,
-                details : {isPasswordUpdated : false , success : false , error}                            
-            }
-        }
-        return res.json(responeError)
+        console.log(error);        
+        return res.json(errorResponseTemplate(
+            new BadServerException(Messages.SERVER_ERROR 
+                , ErrorCode.SERVER_ERROR
+                ,{success : false , isPasswordUpdated : false , error})
+        ))
     }
 }
 

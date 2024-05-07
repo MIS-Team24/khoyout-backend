@@ -1,26 +1,25 @@
 import { Response , Request, NextFunction} from "express";
 import { OtpBody } from "../../../types/auth/auth";
 import { verifyEmail } from "../../../Models/UserModel";
-import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
+import { ErrorCode } from "../../../Exceptions/main";
+import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
+import { BadRequestException } from "../../../Exceptions/badRequest";
+import { Messages } from "../../../../Services/responses/Messages";
 
 export async function verifyEmailHandler (req: Request, res: Response , next : NextFunction)
 {
     const otpBody = req.body as OtpBody
     const user = await verifyEmail(otpBody.email)
     if(!user){
-        const responeError = {
-            error : {
-                message : "This user is not exist!" ,
-                errorCode : ErrorCode.USER_NOT_FOUND,
-                errorStatus : ErrorStatus.BAD_REQUEST,
-                details : {isEmailVerified : false , success : false}                            
-            }
-        }
-        return res.json(responeError)
+        return res.json(errorResponseTemplate(
+            new BadRequestException(Messages.USER_NOT_FOUND 
+                , ErrorCode.USER_NOT_FOUND
+                ,{isEmailVerified : false , success : false})
+        ))
     } 
 
     res.json({
-        message : "Your email has been activated successfully!",
+        message : Messages.EMAIL_ACTIVATED,
         isEmailVerified : true,
         success: true
     })

@@ -6,7 +6,10 @@ import { findUserByEmail } from "../../../Models/UserModel";
 import { EmailBody } from "../../../types/auth/auth";
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../../../Services/generateToken";
-import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
+import { ErrorCode } from "../../../Exceptions/main";
+import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
+import { BadRequestException } from "../../../Exceptions/badRequest";
+import { Messages } from "../../../../Services/responses/Messages";
 
 //recieve the email target to send an otp 
 export async function OtpSentToEmailHandler(req: Request, res: Response , next : NextFunction) {
@@ -16,15 +19,11 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
     //check if user already exist 
     const user = await findUserByEmail(emailBody.email)
     if(!user){
-        const responeError = {
-            error : {
-                message : "This user is not exist!" ,
-                errorCode : ErrorCode.USER_NOT_FOUND,
-                errorStatus : ErrorStatus.BAD_REQUEST,
-                details : {isOtpSent : false , success : false}                            
-            }
-        }
-        return res.json(responeError)
+        return res.json(errorResponseTemplate(
+            new BadRequestException(Messages.USER_NOT_FOUND 
+                , ErrorCode.USER_NOT_FOUND
+                ,{isOtpSent : false , success : false})
+        ))
     }
     //
 
@@ -55,13 +54,11 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
     //
     
     if(!success){
-        return res.json({
-            Otp : {
-                isOtpSent : success,
-                success   : false,
-                message   : "Not able to send email!, Make sure that your email is working!"
-            }
-        })
+        return res.json(errorResponseTemplate(
+            new BadRequestException(Messages.NOT_ABLE_SEND_EMAIL 
+                , ErrorCode.NOT_ABLE_SEND_EMAIL
+                ,{isOtpSent : false , success : false})
+        ))
     }
 
     return res.json({

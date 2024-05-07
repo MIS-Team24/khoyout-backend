@@ -18,7 +18,7 @@ router.get('/auth/is-logged-in', IsUserAuthController_1.isUserAuthonticatedHandl
 router.delete('/auth/logout', LogoutController_1.logoutHandler);
 //protected route for test
 router.get("/auth/protected-route", CheckAuthontication_1.checkIfAuthonticated, (req, res) => {
-    return res.json({ message: "hello" });
+    return res.json({ message: "This is a protected route for test for exampla like the profile page" });
 });
 //
 exports.default = router;

@@ -7,27 +7,21 @@ exports.passportLocal = exports.localLoginHandler = void 0;
 const passport_1 = __importDefault(require("passport"));
 const passportLocalStrategy_1 = require("../../../../../../Services/passportAuth/passportLocalStrategy");
 const main_1 = require("../../../../../Exceptions/main");
+const Messages_1 = require("../../../../../../Services/responses/Messages");
+const ErrorTemplate_1 = require("../../../../../../Services/responses/ErrorTemplate");
+const badRequest_1 = require("../../../../../Exceptions/badRequest");
 (0, passportLocalStrategy_1.initializePassport)(passport_1.default);
 const localLoginHandler = (req, res, next) => {
     return passport_1.default.authenticate('local', (error, user, info) => {
         if (error) {
-            console.log(error);
-            return res.json({ error });
+            return res.json(error);
         }
         if (!user) {
-            return res.json({
-                error: {
-                    message: "User not found",
-                    errorCode: main_1.ErrorCode.USER_NOT_FOUND,
-                    errorStatus: main_1.ErrorStatus.BAD_REQUEST,
-                    details: { isLoggedIn: false, success: false }
-                }
-            });
+            return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isLoggedIn: false })));
         }
         req.logIn(user, (error) => {
             if (error) {
-                console.log(error);
-                return res.json({ error });
+                return res.json(error);
             }
             //the user form returned according to the frontent desire
             let userReturnedToFront = {
@@ -42,7 +36,7 @@ const localLoginHandler = (req, res, next) => {
             return res.json({
                 isLoggedIn: true,
                 success: true,
-                message: 'User has logged successfully',
+                message: Messages_1.Messages.USER_LOGGED_IN,
                 user: userReturnedToFront
             });
         });

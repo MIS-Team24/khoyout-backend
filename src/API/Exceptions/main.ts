@@ -1,7 +1,5 @@
 
-//message , status code , error code , details
-
-export class HttpExceptions extends Error {
+export abstract class HttpExceptions extends Error {
     message: string
     errorCode : ErrorCode
     errorStatus : ErrorStatus    
@@ -37,3 +35,5 @@ export enum ErrorStatus {
     UNAUTHORIZED = 401,
     PAGE_NOT_FOUND = 404
 }
+
+

@@ -1,5 +1,5 @@
 import { Router} from 'express'
-import { checkIfAuthonticated, checkIfNotAuthonticated } from '../../../Middleware/checkAuthontication';
+import { checkIfAuthonticated, checkIfNotAuthonticated } from '../../../Middleware/CheckAuthontication';
 import { loginSchema } from '../../../../Services/validationSchemas/UserSchema';
 import BodyValidator from '../../../Middleware/BodyValidator';
 import { localLoginHandler } from '../../../Controllers/auth/log_in/passportLogin/localStrategy/LoginController';
@@ -17,7 +17,7 @@ router.delete('/auth/logout' , logoutHandler)
 
 //protected route for test
 router.get("/auth/protected-route", checkIfAuthonticated , (req , res) => {
-    return res.json({message : "hello"})
+    return res.json({message : "This is a protected route for test for exampla like the profile page"})
 })
 //
 
