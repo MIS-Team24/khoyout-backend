@@ -1,24 +1,52 @@
 // src/index.ts
 import express, { Request, Response } from 'express';
-import 'dotenv/config'; // To read CLERK_SECRET_KEY
-import { LooseAuthProp } from '@clerk/clerk-sdk-node';
+import 'dotenv/config';
 import {apiRoutes} from "./API/Routes/mainRoutes";
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { Pool } from 'pg';
+import session from 'express-session';
+import expressSession from 'express-session';
+import { passportLocal } from './API/Controllers/auth/log_in/passportLogin/localStrategy/LoginController';
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-let port = 3000;
+const PORT = 3005;
 
-
-declare global {
-  namespace Express {
-    interface Request extends LooseAuthProp {}
+//passport configuration steps
+const pgSession = require('connect-pg-simple')(expressSession)
+const poolInstance = new Pool({
+  connectionString: process.env.DATABASE_URL
+})
+const postgreStore = new pgSession({
+  pool: poolInstance,
+  createTableIfMissing: true,
+})
+app.use(session({
+  store: postgreStore,
+  secret: process.env.SESSION_SECRET || "secret_key",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    sameSite : true,
+    httpOnly : true,
+    //secure : true
   }
-}
+}))
+app.use(passportLocal.session())
+app.use(passportLocal.initialize())
+//
 
+app.use(cors({credentials: true}))
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+app.use(cookieParser())
+
+//routes
 app.use(apiRoutes);
+app.all( "*" , (req : Request , res : Response) => res.send("This page in not exist!"))
+//
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

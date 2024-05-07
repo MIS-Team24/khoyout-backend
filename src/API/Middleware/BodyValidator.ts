@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
+import { ErrorCode, ErrorStatus } from "../Exceptions/main";
+import { errorResponseTemplate } from "../../Services/responses/ErrorTemplate";
+import { BadRequestException } from "../Exceptions/badRequest";
+import { Messages } from "../../Services/responses/Messages";
+import { BadServerException } from "../Exceptions/badServer";
 
 type BodyValidatorOptions = {
     schema: z.ZodObject<any, any>
@@ -16,9 +21,17 @@ export default function BodyValidator(options: BodyValidatorOptions) {
                     message: `${issue.path.join('.')} is ${issue.message}`,
                 }));
 
-                res.status(400).json({ error: 'Invalid data', details: errorMessages });
-            } else {
-                res.status(500).json({ error: 'Internal Server Error' });
+                return res.json(errorResponseTemplate(
+                    new BadRequestException(Messages.INVALID_DATA 
+                        , ErrorCode.INVALID_DATA
+                        ,{error : errorMessages, success : false , isDataValid : false})
+                ))
+            } else { 
+                return res.json(errorResponseTemplate(
+                    new BadServerException(Messages.SERVER_ERROR 
+                        , ErrorCode.SERVER_ERROR
+                        ,{error , success : false , isDataValid : false})
+                ))
             }
         }
     }
