@@ -15,9 +15,9 @@ const Messages_1 = require("../../../../Services/responses/Messages");
 async function OtpSentToEmailHandler(req, res, next) {
     const emailBody = req.body;
     //check if user already exist 
-    const user = await (0, UserModel_1.findUserByEmail)(emailBody.email);
+    const user = await (0, UserModel_1.findUserBy)({ email: emailBody.email });
     if (!user) {
-        return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isOtpSent: false, success: false })));
+        return res.status(main_1.ErrorStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isOtpSent: false, success: false })));
     }
     //
     //generate a random Otp from 4 numbers
@@ -43,7 +43,7 @@ async function OtpSentToEmailHandler(req, res, next) {
     }, res);
     //
     if (!success) {
-        return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.NOT_ABLE_SEND_EMAIL, main_1.ErrorCode.NOT_ABLE_SEND_EMAIL, { isOtpSent: false, success: false })));
+        return res.status(main_1.ErrorStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.NOT_ABLE_SEND_EMAIL, main_1.ErrorCode.NOT_ABLE_SEND_EMAIL, { isOtpSent: false, success: false })));
     }
     return res.json({
         Otp: {

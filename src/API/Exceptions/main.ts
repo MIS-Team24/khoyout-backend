@@ -33,7 +33,7 @@ export enum ErrorStatus {
     SERVER_ERROR = 500,
     BAD_REQUEST = 400,
     UNAUTHORIZED = 401,
-    PAGE_NOT_FOUND = 404
+    PAGE_NOT_FOUND = 404,
 }
 
 

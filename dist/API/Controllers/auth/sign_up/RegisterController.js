@@ -39,14 +39,14 @@ const ErrorTemplate_1 = require("../../../../Services/responses/ErrorTemplate");
 async function RegisterHandler(req, res, next) {
     const registerBody = req.body;
     //check if user already exist 
-    const userTarget = await (0, UserModel_1.findUserByEmail)(registerBody.email);
+    const userTarget = await (0, UserModel_1.findUserBy)({ email: registerBody.email });
     if (userTarget) {
-        return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_EXIST, main_1.ErrorCode.USER_ALREADY_EXIST, { isUserSaved: false, success: false })));
+        return res.status(main_1.ErrorStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_EXIST, main_1.ErrorCode.USER_ALREADY_EXIST, { isUserSaved: false, success: false })));
     }
     //
     //if password amd repeated password not the same
     if (registerBody.password != registerBody.repeatPassword) {
-        return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.PASS_NOT_R_PASS, main_1.ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD, { isUserSaved: false, success: false })));
+        return res.status(main_1.ErrorStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.PASS_NOT_R_PASS, main_1.ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD, { isUserSaved: false, success: false })));
     }
     //
     //add this user to database
@@ -64,7 +64,7 @@ async function RegisterHandler(req, res, next) {
     //the user form returned according to the frontent desire
     let userReturnedToFront = {
         id: user?.id,
-        email: user?.id,
+        email: user?.email,
         emailActivated: user?.emailActivated,
         createdAt: user?.createdAt,
         fullName: user?.fullName,
@@ -99,10 +99,8 @@ async function RegisterHandler(req, res, next) {
         return res.json({
             message: Messages_1.Messages.USER_SAVED,
             isUserSaved: true,
-            success: true,
             user: userReturnedToFront,
             Otp: {
-                success: false,
                 isOtpSent: success,
                 message: Messages_1.Messages.NOT_ABLE_SEND_EMAIL
             }
@@ -111,10 +109,8 @@ async function RegisterHandler(req, res, next) {
     return res.json({
         message: Messages_1.Messages.USER_SAVED,
         isUserSaved: true,
-        success: true,
         user: userReturnedToFront,
         Otp: {
-            success: true,
             isOtpSent: success,
             keyVal: newOtp.id
         }

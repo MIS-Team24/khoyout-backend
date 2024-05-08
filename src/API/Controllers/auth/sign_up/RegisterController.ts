@@ -1,6 +1,6 @@
 import { Request, Response , NextFunction} from "express";
 import { RegisterBody, UserBody } from "../../../types/auth/auth";
-import { addUser, findUserByEmail } from "../../../Models/UserModel";
+import { addUser, findUserBy } from "../../../Models/UserModel";
 import * as bcrypt from "bcrypt"
 import 'dotenv/config';
 import { generateOTP } from "../../../../Services/generateOTP";
@@ -8,7 +8,7 @@ import { sendEmail } from "../../../../Services/sendEmail";
 import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructures";
 import { addNewOtp } from "../../../Models/OtpModel";
 import { generateToken } from "../../../../Services/generateToken";
-import { ErrorCode } from "../../../Exceptions/main";
+import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
 import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
 import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
@@ -18,9 +18,9 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
     const registerBody = req.body as RegisterBody;
 
     //check if user already exist 
-    const userTarget = await findUserByEmail(registerBody.email)
+    const userTarget = await findUserBy({email:registerBody.email})
     if(userTarget){
-        return res.json(errorResponseTemplate(
+        return res.status(ErrorStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.USER_EXIST , ErrorCode.USER_ALREADY_EXIST
                 ,{isUserSaved : false , success : false})
         ))
@@ -29,7 +29,7 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
 
     //if password amd repeated password not the same
     if(registerBody.password != registerBody.repeatPassword){
-        return res.json(errorResponseTemplate(
+        return res.status(ErrorStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.PASS_NOT_R_PASS 
                 , ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD
                 ,{isUserSaved : false , success : false})
@@ -53,7 +53,7 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
     //the user form returned according to the frontent desire
     let userReturnedToFront : UserBody = {
         id : user?.id,
-        email: user?.id,
+        email: user?.email,
         emailActivated:user?.emailActivated,
         createdAt : user?.createdAt,
         fullName: user?.fullName,
@@ -93,10 +93,8 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
         return res.json({
             message : Messages.USER_SAVED,
             isUserSaved : true,
-            success : true,
             user : userReturnedToFront,
-            Otp : {    
-                success : false,           
+            Otp : {            
                 isOtpSent : success,
                 message : Messages.NOT_ABLE_SEND_EMAIL
             }            
@@ -106,13 +104,11 @@ export async function RegisterHandler (req: Request, res: Response , next : Next
     return res.json({
         message : Messages.USER_SAVED,
         isUserSaved : true,
-        success : true,
         user : userReturnedToFront,        
         Otp : {
-            success : true, 
             isOtpSent : success,
             keyVal : newOtp.id
         }       
-    });
+    })
 }
 

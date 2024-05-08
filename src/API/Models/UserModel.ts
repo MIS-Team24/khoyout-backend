@@ -2,23 +2,10 @@ import { prisma  } from "../../Database";
 import { Prisma  } from "@prisma/client";
 import { UserBody } from "../types/auth/auth";
 
-//check if user exist and return that user (using email checking) 
-export const findUserByEmail = async (email : string) => {
+//find by unique attribute
+export const findUserBy = async (data : Prisma.UsersWhereUniqueInput) => {
     const user = await prisma.users.findUnique({
-        where : {
-            email
-        }
-    })
-    return user
-}
-//
-
-//find by id
-export const findUserById = async (id : string) => {
-    const user = await prisma.users.findUnique({
-        where : {
-            id
-        }
+        where : data
     })
     return user 
 }

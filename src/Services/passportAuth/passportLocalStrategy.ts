@@ -1,6 +1,6 @@
 const localStrategy = require('passport-local').Strategy
 import { PassportStatic } from 'passport'
-import {findUserByEmail, findUserById} from '../../API/Models/UserModel'
+import {findUserBy} from '../../API/Models/UserModel'
 import bcrypt from 'bcrypt'
 import { LoginBody, UserBody } from '../../API/types/auth/auth'
 import { BadRequestException } from '../../API/Exceptions/badRequest'
@@ -13,7 +13,7 @@ export const initializePassport = (passport : PassportStatic) => {
     passport.use(new localStrategy({ usernameField :'email'}    
     , async (email : string , password : string , done : CallableFunction)=>{       
             const loginBody = {email , password} as LoginBody;
-            const user = await findUserByEmail(loginBody.email)  
+            const user = await findUserBy({email : loginBody.email})  
 
             //the user form returned according to the frontent desire
             let userReturnedToFront : UserBody = {
@@ -49,7 +49,7 @@ export const initializePassport = (passport : PassportStatic) => {
     
     passport.deserializeUser(async (id : string, done) => {
         try {
-            const user = await findUserById(id)
+            const user = await findUserBy({id})
 
             //the user form returned according to the frontent desire
             let userReturnedToFront : UserBody = {

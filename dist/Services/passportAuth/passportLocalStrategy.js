@@ -15,7 +15,7 @@ const ErrorTemplate_1 = require("../responses/ErrorTemplate");
 const initializePassport = (passport) => {
     passport.use(new localStrategy({ usernameField: 'email' }, async (email, password, done) => {
         const loginBody = { email, password };
-        const user = await (0, UserModel_1.findUserByEmail)(loginBody.email);
+        const user = await (0, UserModel_1.findUserBy)({ email: loginBody.email });
         //the user form returned according to the frontent desire
         let userReturnedToFront = {
             id: user?.id,
@@ -41,7 +41,7 @@ const initializePassport = (passport) => {
     });
     passport.deserializeUser(async (id, done) => {
         try {
-            const user = await (0, UserModel_1.findUserById)(id);
+            const user = await (0, UserModel_1.findUserBy)({ id });
             //the user form returned according to the frontent desire
             let userReturnedToFront = {
                 id: user?.id,

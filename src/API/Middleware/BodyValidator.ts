@@ -21,13 +21,13 @@ export default function BodyValidator(options: BodyValidatorOptions) {
                     message: `${issue.path.join('.')} is ${issue.message}`,
                 }));
 
-                return res.json(errorResponseTemplate(
+                return res.status(ErrorStatus.BAD_REQUEST).json(errorResponseTemplate(
                     new BadRequestException(Messages.INVALID_DATA 
                         , ErrorCode.INVALID_DATA
                         ,{error : errorMessages, success : false , isDataValid : false})
                 ))
             } else { 
-                return res.json(errorResponseTemplate(
+                return res.status(ErrorStatus.SERVER_ERROR).json(errorResponseTemplate(
                     new BadServerException(Messages.SERVER_ERROR 
                         , ErrorCode.SERVER_ERROR
                         ,{error , success : false , isDataValid : false})

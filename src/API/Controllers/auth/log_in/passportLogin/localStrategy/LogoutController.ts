@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ErrorCode } from "../../../../../Exceptions/main";
+import { ErrorCode, ErrorStatus } from "../../../../../Exceptions/main";
 import { errorResponseTemplate } from "../../../../../../Services/responses/ErrorTemplate";
 import { Messages } from "../../../../../../Services/responses/Messages";
 import { BadServerException } from "../../../../../Exceptions/badServer";
@@ -9,7 +9,7 @@ export const logoutHandler = async (req : Request , res : Response ,  next : Nex
     if(req.user){
         req.logout((error) => {
             if (error) {               
-                return res.json(errorResponseTemplate(
+                return res.status(ErrorStatus.SERVER_ERROR).json(errorResponseTemplate(
                     new BadServerException(Messages.SERVER_ERROR 
                         , ErrorCode.SERVER_ERROR
                         ,{error , isAuth : false})
@@ -23,7 +23,7 @@ export const logoutHandler = async (req : Request , res : Response ,  next : Nex
             })
         })
     }else{
-        return res.json(errorResponseTemplate(
+        return res.status(ErrorStatus.UNAUTHORIZED).json(errorResponseTemplate(
             new BadAuthonticationException(Messages.USER_NOT_AUTHONTICATED 
                 , ErrorCode.USER_NOT_AUTHONTICATED
                 ,{ isAuth : false})

@@ -14,14 +14,14 @@ const badRequest_1 = require("../../../../../Exceptions/badRequest");
 const localLoginHandler = (req, res, next) => {
     return passport_1.default.authenticate('local', (error, user, info) => {
         if (error) {
-            return res.json(error);
+            return res.status(main_1.ErrorStatus.BAD_REQUEST).json(error);
         }
         if (!user) {
-            return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isLoggedIn: false })));
+            return res.status(main_1.ErrorStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isLoggedIn: false })));
         }
         req.logIn(user, (error) => {
             if (error) {
-                return res.json(error);
+                return res.status(main_1.ErrorStatus.BAD_REQUEST).json(error);
             }
             //the user form returned according to the frontent desire
             let userReturnedToFront = {
