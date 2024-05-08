@@ -6,9 +6,8 @@ const main_1 = require("../../../../../Exceptions/main");
 //also there is a middleware controller in the midlleware folder
 const isUserAuthonticatedHandler = (req, res) => {
     if (req.isAuthenticated()) {
-        return res.json({ isLoggedIn: true, authonticated: true });
+        return res.json({ authonticated: true });
     }
-    return res.status(main_1.ErrorStatus.UNAUTHORIZED)
-        .json({ isLoggedIn: false, authonticated: false });
+    return res.status(main_1.ResStatus.UNAUTHORIZED).json({ authonticated: false });
 };
 exports.isUserAuthonticatedHandler = isUserAuthonticatedHandler;

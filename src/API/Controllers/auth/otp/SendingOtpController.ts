@@ -6,7 +6,7 @@ import { findUserBy } from "../../../Models/UserModel";
 import { EmailBody } from "../../../types/auth/auth";
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../../../Services/generateToken";
-import { ErrorCode, ErrorStatus } from "../../../Exceptions/main";
+import { ErrorCode, ResStatus } from "../../../Exceptions/main";
 import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
@@ -19,10 +19,10 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
     //check if user already exist 
     const user = await findUserBy({email : emailBody.email})
     if(!user){
-        return res.status(ErrorStatus.BAD_REQUEST).json(errorResponseTemplate(
+        return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.USER_NOT_FOUND 
                 , ErrorCode.USER_NOT_FOUND
-                ,{isOtpSent : false , success : false})
+                ,{isOtpSent : false})
         ))
     }
     //
@@ -49,22 +49,21 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
         to      :   emailBody.email,
         subject :   "Verify your email",
         text    :   "Verify your email",
-        html    :   OtpEmailStructure(otpServer , "5m")
+        html    :   OtpEmailStructure(otpServer , "5")
     } , res)
     //
     
     if(!success){
-        return res.status(ErrorStatus.BAD_REQUEST).json(errorResponseTemplate(
+        return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.NOT_ABLE_SEND_EMAIL 
                 , ErrorCode.NOT_ABLE_SEND_EMAIL
-                ,{isOtpSent : false , success : false})
+                ,{isOtpSent : false})
         ))
     }
 
     return res.json({
         Otp : {
             isOtpSent : true,
-            success : true,
             keyVal : newOtp.id
         }
     })

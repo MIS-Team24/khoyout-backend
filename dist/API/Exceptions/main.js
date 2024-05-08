@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ErrorStatus = exports.ErrorCode = exports.HttpExceptions = void 0;
+exports.ResStatus = exports.ErrorCode = exports.HttpExceptions = void 0;
 class HttpExceptions extends Error {
     constructor(message, errorCode, errorStatus, details) {
         super(message);
@@ -25,10 +25,15 @@ var ErrorCode;
     ErrorCode[ErrorCode["USER_ALREADY_AUTHONTICATED"] = 1010] = "USER_ALREADY_AUTHONTICATED";
     ErrorCode[ErrorCode["INCORRECT_PASSWORD"] = 1011] = "INCORRECT_PASSWORD";
 })(ErrorCode || (exports.ErrorCode = ErrorCode = {}));
-var ErrorStatus;
-(function (ErrorStatus) {
-    ErrorStatus[ErrorStatus["SERVER_ERROR"] = 500] = "SERVER_ERROR";
-    ErrorStatus[ErrorStatus["BAD_REQUEST"] = 400] = "BAD_REQUEST";
-    ErrorStatus[ErrorStatus["UNAUTHORIZED"] = 401] = "UNAUTHORIZED";
-    ErrorStatus[ErrorStatus["PAGE_NOT_FOUND"] = 404] = "PAGE_NOT_FOUND";
-})(ErrorStatus || (exports.ErrorStatus = ErrorStatus = {}));
+var ResStatus;
+(function (ResStatus) {
+    ResStatus[ResStatus["I_SERVER_ERROR"] = 500] = "I_SERVER_ERROR";
+    ResStatus[ResStatus["SERICE_UNAVAILABLE"] = 503] = "SERICE_UNAVAILABLE";
+    ResStatus[ResStatus["BAD_REQUEST"] = 400] = "BAD_REQUEST";
+    ResStatus[ResStatus["UNAUTHORIZED"] = 401] = "UNAUTHORIZED";
+    ResStatus[ResStatus["PAGE_NOT_FOUND"] = 404] = "PAGE_NOT_FOUND";
+    ResStatus[ResStatus["FORBIDDEN"] = 403] = "FORBIDDEN";
+    ResStatus[ResStatus["OK"] = 200] = "OK";
+    ResStatus[ResStatus["SOURCE_CREATED"] = 201] = "SOURCE_CREATED";
+    ResStatus[ResStatus["NO_CONTENT"] = 204] = "NO_CONTENT";
+})(ResStatus || (exports.ResStatus = ResStatus = {}));

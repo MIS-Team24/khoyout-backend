@@ -19,10 +19,11 @@ const initializePassport = (passport) => {
         //the user form returned according to the frontent desire
         let userReturnedToFront = {
             id: user?.id,
-            email: user?.id,
+            email: user?.email,
             emailActivated: user?.emailActivated,
             createdAt: user?.createdAt,
-            fullName: user?.fullName
+            fullName: user?.fullName,
+            phone: user?.phone
         };
         //   
         if (!user) {
@@ -41,11 +42,10 @@ const initializePassport = (passport) => {
     });
     passport.deserializeUser(async (id, done) => {
         try {
-            const user = await (0, UserModel_1.findUserBy)({ id });
+            const user = await (0, UserModel_1.findUserBy)({ id: id });
             //the user form returned according to the frontent desire
             let userReturnedToFront = {
-                id: user?.id,
-                email: user?.id,
+                email: user?.email,
                 emailActivated: user?.emailActivated,
                 createdAt: user?.createdAt,
                 fullName: user?.fullName,
@@ -54,7 +54,7 @@ const initializePassport = (passport) => {
             //   
             if (!user) {
                 let errorRsponse;
-                errorRsponse = (0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isLoggedIn: false }));
+                errorRsponse = (0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND));
                 return done(errorRsponse, false);
             }
             return done(null, userReturnedToFront);
@@ -62,7 +62,7 @@ const initializePassport = (passport) => {
         catch (error) {
             console.log(error);
             let errorRsponse;
-            errorRsponse = (0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.SERVER_ERROR, main_1.ErrorCode.SERVER_ERROR, { isLoggedIn: false }));
+            errorRsponse = (0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.SERVER_ERROR, main_1.ErrorCode.SERVER_ERROR));
             return done(errorRsponse, null);
         }
     });

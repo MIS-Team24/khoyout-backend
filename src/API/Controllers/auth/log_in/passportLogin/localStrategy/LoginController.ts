@@ -2,36 +2,36 @@ import { Request, Response , NextFunction } from "express";
 import passport from 'passport';
 import { initializePassport } from "../../../../../../Services/passportAuth/passportLocalStrategy";
 import { UserBody } from "../../../../../types/auth/auth";
-import { ErrorCode, ErrorStatus } from "../../../../../Exceptions/main";
+import { ErrorCode, ResStatus } from "../../../../../Exceptions/main";
 import { Messages } from "../../../../../../Services/responses/Messages";
-import { errorResponseTemplate } from "../../../../../../Services/responses/ErrorTemplate";
+import { ErrorResponseType, errorResponseTemplate } from "../../../../../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../../../../../Exceptions/badRequest";
 
 initializePassport(passport)
 
 export const localLoginHandler = (req:Request , res : Response , next : NextFunction) => {
     return passport.authenticate('local', (error : any , user : any , info: any )=>{
-        if(error){             
-            return res.status(ErrorStatus.BAD_REQUEST).json(error)
+        if(error){     
+            let errRsponse  = error as  ErrorResponseType        
+            return res.status(errRsponse.error.errorStatus).json(error)
         }    
 
         if(!user){         
-            return res.status(ErrorStatus.BAD_REQUEST).json(errorResponseTemplate(
+            return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
                 new BadRequestException(Messages.USER_NOT_FOUND 
-                    , ErrorCode.USER_NOT_FOUND
-                    ,{isLoggedIn : false})
+                    , ErrorCode.USER_NOT_FOUND)                   
             ))
         } 
         
         req.logIn(user , (error)=>{
             if(error){
-                return res.status(ErrorStatus.BAD_REQUEST).json(error)     
+                let errRsponse  = error as  ErrorResponseType        
+                return res.status(errRsponse.error.errorStatus).json(error)     
             }
 
             //the user form returned according to the frontent desire
             let userReturnedToFront : UserBody = {
-                id : user?.id,
-                email: user?.id,
+                email: user?.email,
                 emailActivated:user?.emailActivated,
                 createdAt : user?.createdAt,
                 fullName: user?.fullName,
@@ -40,8 +40,6 @@ export const localLoginHandler = (req:Request , res : Response , next : NextFunc
             //
 
             return res.json({
-                        isLoggedIn:true,
-                        success:true,
                         message: Messages.USER_LOGGED_IN,
                         user : userReturnedToFront
                     })

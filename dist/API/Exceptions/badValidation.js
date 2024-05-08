@@ -4,7 +4,7 @@ exports.BadValidationException = void 0;
 const main_1 = require("./main");
 class BadValidationException extends main_1.HttpExceptions {
     constructor(message, errorCode, details) {
-        super(message, errorCode, main_1.ErrorStatus.BAD_REQUEST, details);
+        super(message, errorCode, main_1.ResStatus.BAD_REQUEST, details);
     }
 }
 exports.BadValidationException = BadValidationException;

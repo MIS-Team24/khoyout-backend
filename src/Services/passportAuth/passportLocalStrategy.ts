@@ -18,10 +18,11 @@ export const initializePassport = (passport : PassportStatic) => {
             //the user form returned according to the frontent desire
             let userReturnedToFront : UserBody = {
                 id : user?.id,
-                email: user?.id,
+                email: user?.email,
                 emailActivated:user?.emailActivated,
                 createdAt : user?.createdAt,
-                fullName: user?.fullName
+                fullName: user?.fullName,
+                phone :user?.phone
             }
             //   
 
@@ -49,12 +50,11 @@ export const initializePassport = (passport : PassportStatic) => {
     
     passport.deserializeUser(async (id : string, done) => {
         try {
-            const user = await findUserBy({id})
+            const user = await findUserBy({id:id})
 
             //the user form returned according to the frontent desire
             let userReturnedToFront : UserBody = {
-                id : user?.id,
-                email: user?.id,
+                email: user?.email,
                 emailActivated:user?.emailActivated,
                 createdAt : user?.createdAt,
                 fullName: user?.fullName,
@@ -66,7 +66,7 @@ export const initializePassport = (passport : PassportStatic) => {
                 let errorRsponse : ErrorResponseType 
                     errorRsponse = errorResponseTemplate(
                     new BadRequestException(Messages.USER_NOT_FOUND
-                    ,ErrorCode.USER_NOT_FOUND, {isLoggedIn : false})) 
+                    ,ErrorCode.USER_NOT_FOUND)) 
 
                 return done(errorRsponse, false )
             }   
@@ -78,7 +78,7 @@ export const initializePassport = (passport : PassportStatic) => {
             let errorRsponse : ErrorResponseType 
             errorRsponse = errorResponseTemplate(
                 new BadServerException(Messages.SERVER_ERROR
-                ,ErrorCode.SERVER_ERROR, {isLoggedIn : false})) 
+                ,ErrorCode.SERVER_ERROR)) 
 
             return done(errorRsponse, null)
         }

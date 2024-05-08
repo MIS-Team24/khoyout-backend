@@ -14,19 +14,20 @@ const badRequest_1 = require("../../../../../Exceptions/badRequest");
 const localLoginHandler = (req, res, next) => {
     return passport_1.default.authenticate('local', (error, user, info) => {
         if (error) {
-            return res.status(main_1.ErrorStatus.BAD_REQUEST).json(error);
+            let errRsponse = error;
+            return res.status(errRsponse.error.errorStatus).json(error);
         }
         if (!user) {
-            return res.status(main_1.ErrorStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isLoggedIn: false })));
+            return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND)));
         }
         req.logIn(user, (error) => {
             if (error) {
-                return res.status(main_1.ErrorStatus.BAD_REQUEST).json(error);
+                let errRsponse = error;
+                return res.status(errRsponse.error.errorStatus).json(error);
             }
             //the user form returned according to the frontent desire
             let userReturnedToFront = {
-                id: user?.id,
-                email: user?.id,
+                email: user?.email,
                 emailActivated: user?.emailActivated,
                 createdAt: user?.createdAt,
                 fullName: user?.fullName,
@@ -34,8 +35,6 @@ const localLoginHandler = (req, res, next) => {
             };
             //
             return res.json({
-                isLoggedIn: true,
-                success: true,
                 message: Messages_1.Messages.USER_LOGGED_IN,
                 user: userReturnedToFront
             });

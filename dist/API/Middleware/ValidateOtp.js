@@ -33,21 +33,21 @@ const badRequest_1 = require("../Exceptions/badRequest");
 const badServer_1 = require("../Exceptions/badServer");
 async function validateOtp(req, res, next) {
     const otpBody = req.body;
-    const targetOtp = await (0, OtpModel_1.findOtpById)(otpBody.keyVal);
+    const targetOtp = await (0, OtpModel_1.findOtpBy)({ id: otpBody.keyVal });
     if (!targetOtp) {
-        return res.status(main_1.ErrorStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.OTP_NOT_VALID, main_1.ErrorCode.OTP_NOT_VALID, { isOtpValid: false, success: false })));
+        return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.OTP_NOT_VALID, main_1.ErrorCode.OTP_NOT_VALID, { isOtpValid: false })));
     }
     //check the validation period token
     const token = targetOtp?.expiredAt;
     if (token) {
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY || "hello world", async (error) => {
             if (error) {
-                return res.status(main_1.ErrorStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.OTP_EXPIRED, main_1.ErrorCode.EXPIRED_DATE, { isOtpValid: false, success: false, error })));
+                return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.OTP_EXPIRED, main_1.ErrorCode.EXPIRED_DATE, { isOtpValid: false, error })));
             }
             else {
                 //compare otp code itself
                 if (otpBody.code !== targetOtp?.code) {
-                    return res.status(main_1.ErrorStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.OTP_NOT_VALID, main_1.ErrorCode.OTP_NOT_VALID, { isOtpValid: false, success: false })));
+                    return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.OTP_NOT_VALID, main_1.ErrorCode.OTP_NOT_VALID, { isOtpValid: false })));
                 }
                 //
                 next();
@@ -55,7 +55,7 @@ async function validateOtp(req, res, next) {
         });
     }
     else {
-        return res.status(main_1.ErrorStatus.SERVER_ERROR).json((0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.OTP_NOT_VALID, main_1.ErrorCode.OTP_NOT_VALID, { isOtpValid: false, success: false })));
+        return res.status(main_1.ResStatus.I_SERVER_ERROR).json((0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.OTP_NOT_VALID, main_1.ErrorCode.OTP_NOT_VALID, { isOtpValid: false })));
     }
     //
 }
