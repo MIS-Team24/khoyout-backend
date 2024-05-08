@@ -5,7 +5,6 @@ const Messages_1 = require("../../../../Services/responses/Messages");
 async function validateOtpHandler(req, res) {
     res.json({
         Otp: {
-            success: true,
             isOtpValid: true,
             message: Messages_1.Messages.OTP_VALID
         }

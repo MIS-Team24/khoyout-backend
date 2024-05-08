@@ -1,10 +1,10 @@
-import { ErrorCode, ErrorStatus, HttpExceptions } from "../../API/Exceptions/main"
+import { ErrorCode, ResStatus, HttpExceptions } from "../../API/Exceptions/main"
 
 export interface ErrorResponse {
     message : string,
     errorCode : ErrorCode,
-    errorStatus: ErrorStatus,
-    details : any
+    errorStatus : ResStatus,
+    details? : any
 }
 
 export type ErrorResponseType = {

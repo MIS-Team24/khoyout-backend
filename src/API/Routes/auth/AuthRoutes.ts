@@ -7,7 +7,7 @@ import { resetPasswordHandler } from "../../Controllers/auth/log_in/ResetPasswor
 import { validateOtp } from "../../Middleware/ValidateOtp";
 import { verifyEmailHandler } from "../../Controllers/auth/sign_up/VerifyEmailController";
 import { validateOtpHandler } from "../../Controllers/auth/otp/validateOtpHandler";
-import { checkIfNotAuthonticated } from "../../Middleware/checkAuthontication";
+import { checkIfNotAuthonticated } from "../../Middleware/CheckAuth";
 
 const router = express.Router();
 

@@ -10,17 +10,16 @@ const logoutHandler = async (req, res, next) => {
     if (req.user) {
         req.logout((error) => {
             if (error) {
-                return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.SERVER_ERROR, main_1.ErrorCode.SERVER_ERROR, { error, isAuth: false })));
+                return res.status(main_1.ResStatus.I_SERVER_ERROR).json((0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.SERVER_ERROR, main_1.ErrorCode.SERVER_ERROR, { error, authonticated: false })));
             }
             return res.json({
-                success: true,
-                isAuth: true,
+                authonticated: true,
                 message: Messages_1.Messages.USER_LOGGED_OUT
             });
         });
     }
     else {
-        return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badAuthontication_1.BadAuthonticationException(Messages_1.Messages.USER_NOT_AUTHONTICATED, main_1.ErrorCode.USER_NOT_AUTHONTICATED, { isAuth: false })));
+        return res.status(main_1.ResStatus.UNAUTHORIZED).json((0, ErrorTemplate_1.errorResponseTemplate)(new badAuthontication_1.BadAuthonticationException(Messages_1.Messages.USER_NOT_AUTHONTICATED, main_1.ErrorCode.USER_NOT_AUTHONTICATED, { authonticated: false })));
     }
 };
 exports.logoutHandler = logoutHandler;

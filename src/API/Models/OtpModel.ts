@@ -9,10 +9,10 @@ export const addNewOtp = async (data : Prisma.OtpsCreateInput) =>  {
 //
 
 //find otp by id
-export const findOtpById = async (id : string) =>  {
+export const findOtpBy = async (data : Prisma.OtpsWhereUniqueInput) =>  {
     const OtpRecord = await prisma.otps.findUnique({
         where : {
-            id
+            id : data.id
         }
     })
     return OtpRecord

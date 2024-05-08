@@ -1,6 +1,6 @@
 const localStrategy = require('passport-local').Strategy
 import { PassportStatic } from 'passport'
-import {findUserByEmail, findUserById} from '../../API/Models/UserModel'
+import {findUserBy} from '../../API/Models/UserModel'
 import bcrypt from 'bcrypt'
 import { LoginBody, UserBody } from '../../API/types/auth/auth'
 import { BadRequestException } from '../../API/Exceptions/badRequest'
@@ -13,15 +13,16 @@ export const initializePassport = (passport : PassportStatic) => {
     passport.use(new localStrategy({ usernameField :'email'}    
     , async (email : string , password : string , done : CallableFunction)=>{       
             const loginBody = {email , password} as LoginBody;
-            const user = await findUserByEmail(loginBody.email)  
+            const user = await findUserBy({email : loginBody.email})  
 
             //the user form returned according to the frontent desire
             let userReturnedToFront : UserBody = {
                 id : user?.id,
-                email: user?.id,
+                email: user?.email,
                 emailActivated:user?.emailActivated,
                 createdAt : user?.createdAt,
-                fullName: user?.fullName
+                fullName: user?.fullName,
+                phone :user?.phone
             }
             //   
 
@@ -49,12 +50,11 @@ export const initializePassport = (passport : PassportStatic) => {
     
     passport.deserializeUser(async (id : string, done) => {
         try {
-            const user = await findUserById(id)
+            const user = await findUserBy({id:id})
 
             //the user form returned according to the frontent desire
             let userReturnedToFront : UserBody = {
-                id : user?.id,
-                email: user?.id,
+                email: user?.email,
                 emailActivated:user?.emailActivated,
                 createdAt : user?.createdAt,
                 fullName: user?.fullName,
@@ -66,7 +66,7 @@ export const initializePassport = (passport : PassportStatic) => {
                 let errorRsponse : ErrorResponseType 
                     errorRsponse = errorResponseTemplate(
                     new BadRequestException(Messages.USER_NOT_FOUND
-                    ,ErrorCode.USER_NOT_FOUND, {isLoggedIn : false})) 
+                    ,ErrorCode.USER_NOT_FOUND)) 
 
                 return done(errorRsponse, false )
             }   
@@ -78,7 +78,7 @@ export const initializePassport = (passport : PassportStatic) => {
             let errorRsponse : ErrorResponseType 
             errorRsponse = errorResponseTemplate(
                 new BadServerException(Messages.SERVER_ERROR
-                ,ErrorCode.SERVER_ERROR, {isLoggedIn : false})) 
+                ,ErrorCode.SERVER_ERROR)) 
 
             return done(errorRsponse, null)
         }

@@ -35,14 +35,14 @@ async function resetPasswordHandler(req, res, next) {
     try {
         const passwordResetBody = req.body;
         //check if user already exist 
-        const userTarget = await (0, UserModel_1.findUserByEmail)(passwordResetBody.email);
+        const userTarget = await (0, UserModel_1.findUserBy)({ email: passwordResetBody.email });
         if (!userTarget) {
-            return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isPasswordUpdated: false, success: false })));
+            return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isPasswordUpdated: false })));
         }
         //
         //if password amd repeated password not the same
         if (passwordResetBody.password != passwordResetBody.repeatPassword) {
-            return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.PASS_NOT_R_PASS, main_1.ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD, { success: false, isPasswordUpdated: false })));
+            return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.PASS_NOT_R_PASS, main_1.ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD, { isPasswordUpdated: false })));
         }
         //
         //hash password
@@ -51,14 +51,13 @@ async function resetPasswordHandler(req, res, next) {
         //
         await (0, UserModel_1.resetPassword)({ password: hashedPassword }, passwordResetBody.email);
         return res.json({
-            success: true,
             isPasswordUpdated: true,
             message: Messages_1.Messages.PASSWORD_UPDATED
         });
     }
     catch (error) {
         console.log(error);
-        return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.SERVER_ERROR, main_1.ErrorCode.SERVER_ERROR, { success: false, isPasswordUpdated: false, error })));
+        return res.status(main_1.ResStatus.I_SERVER_ERROR).json((0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.SERVER_ERROR, main_1.ErrorCode.SERVER_ERROR, { isPasswordUpdated: false, error })));
     }
 }
 exports.resetPasswordHandler = resetPasswordHandler;

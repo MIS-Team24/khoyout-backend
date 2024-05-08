@@ -5,7 +5,6 @@ export async function validateOtpHandler (req: Request , res : Response)
 {
     res.json({
         Otp :{
-            success : true ,
             isOtpValid : true, 
             message : Messages.OTP_VALID
         }

@@ -2,11 +2,11 @@ import { generateOTP } from "../../../../Services/generateOTP";
 import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructures";
 import { sendEmail } from "../../../../Services/sendEmail";
 import { addNewOtp } from "../../../Models/OtpModel";
-import { findUserByEmail } from "../../../Models/UserModel";
+import { findUserBy } from "../../../Models/UserModel";
 import { EmailBody } from "../../../types/auth/auth";
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../../../Services/generateToken";
-import { ErrorCode } from "../../../Exceptions/main";
+import { ErrorCode, ResStatus } from "../../../Exceptions/main";
 import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
@@ -17,12 +17,12 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
     const emailBody = req.body as EmailBody;
 
     //check if user already exist 
-    const user = await findUserByEmail(emailBody.email)
+    const user = await findUserBy({email : emailBody.email})
     if(!user){
-        return res.json(errorResponseTemplate(
+        return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.USER_NOT_FOUND 
                 , ErrorCode.USER_NOT_FOUND
-                ,{isOtpSent : false , success : false})
+                ,{isOtpSent : false})
         ))
     }
     //
@@ -49,22 +49,21 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
         to      :   emailBody.email,
         subject :   "Verify your email",
         text    :   "Verify your email",
-        html    :   OtpEmailStructure(otpServer , "5m")
+        html    :   OtpEmailStructure(otpServer , "5")
     } , res)
     //
     
     if(!success){
-        return res.json(errorResponseTemplate(
+        return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.NOT_ABLE_SEND_EMAIL 
                 , ErrorCode.NOT_ABLE_SEND_EMAIL
-                ,{isOtpSent : false , success : false})
+                ,{isOtpSent : false})
         ))
     }
 
     return res.json({
         Otp : {
             isOtpSent : true,
-            success : true,
             keyVal : newOtp.id
         }
     })

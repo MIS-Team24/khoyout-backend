@@ -17,10 +17,10 @@ function BodyValidator(options) {
                 const errorMessages = error.errors.map((issue) => ({
                     message: `${issue.path.join('.')} is ${issue.message}`,
                 }));
-                return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.INVALID_DATA, main_1.ErrorCode.INVALID_DATA, { error: errorMessages, success: false, isDataValid: false })));
+                return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.INVALID_DATA, main_1.ErrorCode.INVALID_DATA, { isDataValid: false, error: errorMessages })));
             }
             else {
-                return res.json((0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.SERVER_ERROR, main_1.ErrorCode.SERVER_ERROR, { error, success: false, isDataValid: false })));
+                return res.status(main_1.ResStatus.I_SERVER_ERROR).json((0, ErrorTemplate_1.errorResponseTemplate)(new badServer_1.BadServerException(Messages_1.Messages.SERVER_ERROR, main_1.ErrorCode.SERVER_ERROR, { isDataValid: false, error })));
             }
         }
     };

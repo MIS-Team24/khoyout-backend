@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, z } from "zod";
-import { ErrorCode, ErrorStatus } from "../Exceptions/main";
+import { ErrorCode, ResStatus } from "../Exceptions/main";
 import { errorResponseTemplate } from "../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../Exceptions/badRequest";
 import { Messages } from "../../Services/responses/Messages";
@@ -21,16 +21,16 @@ export default function BodyValidator(options: BodyValidatorOptions) {
                     message: `${issue.path.join('.')} is ${issue.message}`,
                 }));
 
-                return res.json(errorResponseTemplate(
+                return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
                     new BadRequestException(Messages.INVALID_DATA 
                         , ErrorCode.INVALID_DATA
-                        ,{error : errorMessages, success : false , isDataValid : false})
+                        ,{isDataValid : false , error : errorMessages})
                 ))
             } else { 
-                return res.json(errorResponseTemplate(
+                return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
                     new BadServerException(Messages.SERVER_ERROR 
                         , ErrorCode.SERVER_ERROR
-                        ,{error , success : false , isDataValid : false})
+                        ,{isDataValid : false , error})
                 ))
             }
         }
