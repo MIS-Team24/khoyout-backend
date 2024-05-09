@@ -14,20 +14,60 @@ datasource db {
 }
 
 model Users {
-  id        String   @id @default(uuid())
-  fullName  String
-  email     String   @unique
-  emailActivated Boolean @default(false)
-  password  String   @unique
-  phone     String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(uuid())
+  fullName        String
+  email           String   @unique
+  emailActivated  Boolean  @default(false)
+  password        String   @unique
+  phone           String?  @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Otps {
-  id        String   @id @default(uuid())
-  email     String   
-  code      String   @unique
-  expiredAt String   @unique
-  createdAt DateTime @default(now())
+  id              String   @id @default(uuid())
+  email           String   
+  code            String   @unique
+  expiredAt       String   @unique
+  createdAt       DateTime @default(now())
+}
+
+model Designer {
+  id              Int         @id @default(autoincrement())
+  name            String
+  address         String
+  about           String
+  workingDays     Json
+  avatarUrl       String?
+  services        Service[]
+  teamMembers     TeamMember[]
+  reviews         Review[]
+}
+
+model Service {
+  id              Int      @id @default(autoincrement())
+  designerId      Int
+  title           String
+  description     String
+  price           Int
+  designer        Designer @relation(fields: [designerId], references: [id])
+}
+
+model TeamMember {
+  id              Int      @id @default(autoincrement())
+  designerId      Int
+  name            String
+  role            String
+  avatarUrl       String?
+  designer        Designer @relation(fields: [designerId], references: [id])
+}
+
+model Review {
+  id              Int      @id @default(autoincrement())
+  designerId      Int
+  customerName    String
+  rating          Int
+  comment         String
+  postedOn        DateTime
+  designer        Designer @relation(fields: [designerId], references: [id])
 }
