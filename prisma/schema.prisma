@@ -39,6 +39,8 @@ model Designer {
   about           String
   workingDays     Json
   avatarUrl       String?
+  ordersFinished  Int
+  yearsExperience Int
   services        Service[]
   teamMembers     TeamMember[]
   reviews         Review[]
@@ -70,4 +72,12 @@ model Review {
   comment         String
   postedOn        DateTime
   designer        Designer @relation(fields: [designerId], references: [id])
+}
+model Media {
+  id          Int      @id @default(autoincrement())
+  designerId  Int
+  mediaType   String
+  mediaKey    String   // Key to access media in storage
+  description String?
+  designer    Designer @relation(fields: [designerId], references: [id])
 }
