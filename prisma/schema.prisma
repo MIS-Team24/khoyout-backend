@@ -16,24 +16,24 @@ datasource db {
 model Users {
   id                  String              @id @default(uuid())
   fullName            String  
-  firstName           String              // Changed from fullName for individual name components
-  lastName            String              // Added for last name
+  firstName           String              
+  lastName            String              
   email               String              @unique
   emailActivated      Boolean             @default(false)
   password            String
   phone               String?             @unique
-  age                 Int?                // Added to store the user's age
-  gender              Gender?             // Added enum for gender
-  country             String?             // Added to store the user's country
-  city                String?             // Added to store the city
-  bodyMeasurements    BodyMeasurements?   @relation(fields: [bodyMeasurementsId], references: [id]) // Relation to body measurements
-  stylePreferences    StylePreferences?   @relation(fields: [stylePreferencesId], references: [id]) // Relation to style preferences
-  bodyMeasurementsId  Int?                // Foreign key for body measurements
-  stylePreferencesId  Int?                // Foreign key for style preferences
+  age                 Int?                
+  gender              Gender?             
+  country             String?             
+  city                String?             
+  bodyMeasurements    BodyMeasurements?
+  stylePreferences    StylePreferences?
+  notificationPreferences NotificationPreferences?
+  bodyMeasurementsId  Int?
+  stylePreferencesId  Int?
+  notificationPreferencesId Int?
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
-  notificationPreferences NotificationPreferences? @relation(fields: [notificationPreferencesId], references: [id])
-  notificationPreferencesId Int?  
 }
 
 enum Gender {
@@ -58,20 +58,24 @@ model BodyMeasurements {
   belowKnee           Float?
   calf                Float?
   user                Users               @relation(fields: [userId], references: [id])
-  userId              String
+  userId              String              @unique
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
 }
 
 model StylePreferences {
   id                  Int                 @id @default(autoincrement())
-  preferences         Json                // JSON field to store various style preferences like "Casual", "Formal", etc.
+  preferences         Json                
   user                Users               @relation(fields: [userId], references: [id])
-  userId              String
+  userId              String              @unique
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
 }
 
 model NotificationPreferences {
   id        Int      @id @default(autoincrement())
-  userId    String
   user      Users    @relation(fields: [userId], references: [id])
+  userId    String   @unique
   textAppointmentNotifications Boolean @default(true)
   textOffersNotifications Boolean @default(true)
 }
@@ -100,7 +104,7 @@ model Designer {
   services            Service[]
   teamMembers         TeamMember[]
   reviews             Review[]
-  categories          Category[]          @relation(references: [id])
+  categories          Category[]         
 }
 
 model Service {
@@ -131,17 +135,8 @@ model Review {
   designer            Designer            @relation(fields: [designerId], references: [id])
 }
 
-model Media {
-  id                  Int                 @id @default(autoincrement())
-  designerId          Int
-  mediaType           String
-  mediaKey            String              // Key to access media in storage
-  description         String?
-  designer            Designer            @relation(fields: [designerId], references: [id])
-}
-
 model Category {
   id                  Int                 @id @default(autoincrement())
   name                String
-  designers           Designer[]          @relation(references: [id])
+  designers           Designer[]          
 }
