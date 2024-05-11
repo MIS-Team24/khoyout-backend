@@ -32,6 +32,7 @@ model Users {
   bodyMeasurementsId  Int?
   stylePreferencesId  Int?
   notificationPreferencesId Int?
+  avatarUrl           String?             // Added avatarUrl field
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
 }
