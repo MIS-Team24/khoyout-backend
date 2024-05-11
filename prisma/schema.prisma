@@ -95,11 +95,6 @@ model Designer {
   services        Service[]    @relation("ServiceToDesigner")
   teamMembers     TeamMember[] @relation("TeamMemeberToDesigner")
   categories      Category[]   @relation("CategoryToDesigner")
-  portfolio       Portfolio[]  @relation("PortfolioToDesigner")
-}
-
-model Service {
-  id          String   @id @default(uuid())
   designerId  String
   title       String
   description String
@@ -108,16 +103,7 @@ model Service {
 }
 
 model TeamMember {
-  id         String   @id @default(uuid())
-  designerId String
-  name       String
-  role       String
-  avatarUrl  String?
-  designer   Designer @relation("TeamMemeberToDesigner", fields: [designerId], references: [id])
-}
 
-model Review {
-  id           String   @id @default(uuid())
   designerId   String
   customerName String
   rating       Int
@@ -143,3 +129,4 @@ enum Gender {
   Male
   Female
 }
+
