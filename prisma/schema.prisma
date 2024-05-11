@@ -32,7 +32,7 @@ model Users {
 }
 
 model BodyMeasurements {
-  id            String       @id @default(uuid())
+  id            Int      @id @default(autoincrement())
   weight        Float?
   length        Float?
   shoulderWidth Float?
@@ -54,7 +54,7 @@ model BodyMeasurements {
 }
 
 model StylePreferences {
-  id          String      @id @default(uuid())
+  id          Int      @id @default(autoincrement())
   preferences Json
   userId      String   @unique
   createdAt   DateTime @default(now())
@@ -63,7 +63,7 @@ model StylePreferences {
 }
 
 model NotificationPreferences {
-  id                           String     @id @default(uuid())
+  id                           Int     @id @default(autoincrement())
   userId                       String  @unique
   textAppointmentNotifications Boolean @default(true)
   textOffersNotifications      Boolean @default(true)
@@ -79,7 +79,7 @@ model Otps {
 }
 
 model Designer {
-  id              String       @id @default(uuid())
+  id              String                   @id @default(uuid())
   name            String
   location        String?
   gender          Gender?
@@ -91,38 +91,45 @@ model Designer {
   ordersFinished  Int
   rating          Int
   ratingCount     Int?
-  reviews         Review[]     @relation("ReviewToDesigner")
-  services        Service[]    @relation("ServiceToDesigner")
-  teamMembers     TeamMember[] @relation("TeamMemeberToDesigner")
+  reviews         Review[]
+  services        Service[]
+  teamMembers     TeamMember[]
   categories      Category[]   @relation("CategoryToDesigner")
+  portfolios      Portfolio[]  @relation("PortfolioToDesigner")
+}
+
+model Service {
+  id          String                   @id @default(uuid())
   designerId  String
   title       String
   description String
   price       Int
-  designer    Designer @relation("ServiceToDesigner", fields: [designerId], references: [id])
+  designer    Designer @relation(fields: [designerId], references: [id])
 }
 
 model TeamMember {
+  id          String                   @id @default(uuid())
+  designerId  String
+  name        String
+  role        String
+  avatarUrl   String?
+  designer    Designer @relation(fields: [designerId], references: [id])
+}
 
+model Review {
+  id          String                   @id @default(uuid())
   designerId   String
   customerName String
   rating       Int
   comment      String
   postedOn     DateTime
-  designer     Designer @relation("ReviewToDesigner", fields: [designerId], references: [id])
+  designer     Designer @relation(fields: [designerId], references: [id])
 }
 
 model Category {
-  id        String     @id @default(uuid())
-  name      String
-  designers Designer[] @relation("CategoryToDesigner")
-}
-
-model Portfolio {
-  id         String   @id @default(uuid())
-  designerId String
-  designer   Designer @relation("PortfolioToDesigner", fields: [designerId], references: [id])
-  url        String
+  id          String                   @id @default(uuid())
+  name        String
+  designers   Designer[] @relation("CategoryToDesigner")
 }
 
 enum Gender {
@@ -130,3 +137,9 @@ enum Gender {
   Female
 }
 
+model Portfolio {
+  id          String                   @id @default(uuid())
+  designerId  String
+  url         String
+  designer    Designer @relation(fields: [designerId], references: [id], name: "PortfolioToDesigner")
+}
