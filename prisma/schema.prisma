@@ -32,7 +32,7 @@ model Users {
 }
 
 model BodyMeasurements {
-  id            Int      @id @default(autoincrement())
+  id            String       @id @default(uuid())
   weight        Float?
   length        Float?
   shoulderWidth Float?
@@ -54,7 +54,7 @@ model BodyMeasurements {
 }
 
 model StylePreferences {
-  id          Int      @id @default(autoincrement())
+  id          String      @id @default(uuid())
   preferences Json
   userId      String   @unique
   createdAt   DateTime @default(now())
@@ -63,7 +63,7 @@ model StylePreferences {
 }
 
 model NotificationPreferences {
-  id                           Int     @id @default(autoincrement())
+  id                           String     @id @default(uuid())
   userId                       String  @unique
   textAppointmentNotifications Boolean @default(true)
   textOffersNotifications      Boolean @default(true)
