@@ -29,9 +29,9 @@ app.use(session({
   saveUninitialized: false,
   cookie: { 
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    sameSite : 'none',
+    sameSite : true,
     httpOnly : true,
-    secure : false
+    //secure : true
   }
 }))
 app.use(passportLocal.session())
@@ -39,7 +39,7 @@ app.use(passportLocal.initialize())
 //
 
 app.use(cors({credentials: true, origin: "http://localhost:5173"}))
-app.use(express.json()) 
+app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 
