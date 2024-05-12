@@ -4,7 +4,7 @@ import { ErrorCode , ResStatus } from "../../Exceptions/main";
 import { errorResponseTemplate } from "../../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../../Exceptions/badRequest";
 import { Messages } from "../../../Services/responses/Messages";
-import { updateBodyMeasurement } from "../../Models/BodyMeasurements";
+import { updateBodyMeasurement } from "../../Models/BodyMeasurementsModel";
 
 export const updateBodyMeasurementData = async (req : Request , res : Response) => {
     const user = req?.user as UserBody

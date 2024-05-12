@@ -4,7 +4,7 @@ import { ErrorCode , ResStatus } from "../../Exceptions/main";
 import { errorResponseTemplate } from "../../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../../Exceptions/badRequest";
 import { Messages } from "../../../Services/responses/Messages";
-import { updateStylePreference } from "../../Models/StylePreferences";
+import { updateStylePreference } from "../../Models/StylePreferencesModel";
 
 export const updateStylePreferenceData = async (req : Request , res : Response) => {
     const user = req?.user as UserBody

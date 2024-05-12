@@ -6,7 +6,7 @@ import 'dotenv/config';
 import { generateOTP } from "../../../../Services/generateOTP";
 import { sendEmail } from "../../../../Services/sendEmail";
 import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructures";
-import { addNewOtp } from "../../../Models/OtpModel";
+import { addNewOtp } from "../../../Models/OtpModelModel";
 import { generateToken } from "../../../../Services/generateToken";
 import { ErrorCode, ResStatus } from "../../../Exceptions/main";
 import { BadRequestException } from "../../../Exceptions/badRequest";
