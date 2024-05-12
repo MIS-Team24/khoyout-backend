@@ -38,7 +38,7 @@ app.use(passportLocal.session())
 app.use(passportLocal.initialize())
 //
 
-app.use(cors({credentials: true, origin: "http://localhost:5173"}))
+app.use(cors({credentials: true}))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
