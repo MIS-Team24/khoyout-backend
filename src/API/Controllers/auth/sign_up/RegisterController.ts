@@ -31,18 +31,14 @@ export async function RegisterHandler(req: Request, res: Response, next: NextFun
         ));
     }
 
-    // Split fullName into firstName and lastName
-    const { firstName, lastName } = splitName(registerBody.fullName);
-
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(registerBody.password, salt);
 
-    // Add this user to the database
+    // Add this user to the database with fullName
     const newUser = {
         email: registerBody.email,
-        firstName: firstName,
-        lastName: lastName,
+        fullName: registerBody.fullName, // Directly using fullName here
         password: hashedPassword
     };
     const user = await addUser(newUser);
@@ -99,12 +95,4 @@ export async function RegisterHandler(req: Request, res: Response, next: NextFun
             keyVal: newOtp.id
         }
     });
-}
-
-// Helper function to split fullName
-function splitName(fullName: string): { firstName: string, lastName: string } {
-    const names = fullName.trim().split(' ');
-    const firstName = names.shift() || '';
-    const lastName = names.join(' ') || '';
-    return { firstName, lastName };
 }
