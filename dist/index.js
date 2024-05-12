@@ -25,6 +25,10 @@ const postgreStore = new pgSession({
     pool: poolInstance,
     createTableIfMissing: true,
 });
+app.use((0, cookie_parser_1.default)());
+app.use((0, cors_1.default)({ credentials: true }));
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, express_session_1.default)({
     store: postgreStore,
     secret: process.env.SESSION_SECRET || "secret_key",
@@ -34,16 +38,12 @@ app.use((0, express_session_1.default)({
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         sameSite: true,
         httpOnly: true,
-        //secure : true
+        secure: true
     }
 }));
 app.use(LoginController_1.passportLocal.session());
 app.use(LoginController_1.passportLocal.initialize());
 //
-app.use((0, cors_1.default)({ credentials: true }));
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: true }));
-app.use((0, cookie_parser_1.default)());
 //routes
 app.use(mainRoutes_1.apiRoutes);
 app.all("*", (req, res) => res.status(main_1.ResStatus.PAGE_NOT_FOUND).send("This page in not found!"));
