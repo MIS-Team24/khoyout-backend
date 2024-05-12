@@ -1,0 +1,14 @@
+rating
+// from 1 to 5
+
+gender
+// male or Female
+
+years of experience
+// from 1 to 10 
+
+categories
+- Formal 
+- Casual 
+- Sourie 
+- classic

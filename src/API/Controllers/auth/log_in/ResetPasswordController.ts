@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as bcrypt from "bcrypt"
-import { PasswordResetBody } from "../../../types/auth/auth";
-import { findUserBy, resetPassword } from "../../../Models/UserModel";
+import { PasswordResetBody } from "../../../types/auth";
+import { findUserBy, updateUser } from "../../../Models/UserModel";
 import { ErrorCode, ResStatus } from "../../../Exceptions/main";
 import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../../../Exceptions/badRequest";
@@ -39,8 +39,7 @@ export async function resetPasswordHandler (req: Request, res: Response , next :
         const hashedPassword = await bcrypt.hash(passwordResetBody.password , salt)
         //
 
-        await resetPassword({password : hashedPassword}
-            , passwordResetBody.email)
+        await updateUser({email : passwordResetBody.email},{password : hashedPassword})
 
         return res.json({
             isPasswordUpdated : true,

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.otpVerifyEmailSchema = exports.sendToEmailSchema = exports.registerSchema = exports.loginSchema = void 0;
+exports.cahngePasswordSchema = exports.resetPasswordSchema = exports.otpVerifyEmailSchema = exports.emailSchema = exports.registerSchema = exports.loginSchema = void 0;
 const zod_1 = require("zod");
 exports.loginSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
@@ -12,11 +12,20 @@ exports.registerSchema = zod_1.z.object({
     password: zod_1.z.string().min(8),
     repeatPassword: zod_1.z.string().min(8)
 });
-exports.sendToEmailSchema = zod_1.z.object({
-    email: zod_1.z.string().email(),
+exports.emailSchema = zod_1.z.object({
+    email: zod_1.z.string().email()
 });
 exports.otpVerifyEmailSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
     code: zod_1.z.string(),
     keyVal: zod_1.z.string()
+});
+exports.resetPasswordSchema = zod_1.z.object({
+    email: zod_1.z.string().email(),
+    password: zod_1.z.string().min(8),
+    repeatPassword: zod_1.z.string().min(8)
+});
+exports.cahngePasswordSchema = zod_1.z.object({
+    password: zod_1.z.string().min(8),
+    repeatPassword: zod_1.z.string().min(8)
 });

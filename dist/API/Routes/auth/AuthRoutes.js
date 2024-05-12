@@ -17,10 +17,10 @@ const router = express_1.default.Router();
 //sign-up
 router.post("/auth/register", (0, BodyValidator_1.default)({ schema: UserSchema_1.registerSchema }), RegisterController_1.RegisterHandler);
 router.post("/auth/verify-email", (0, BodyValidator_1.default)({ schema: UserSchema_1.otpVerifyEmailSchema }), ValidateOtp_1.validateOtp, VerifyEmailController_1.verifyEmailHandler);
-router.post("/auth/send-otp", (0, BodyValidator_1.default)({ schema: UserSchema_1.sendToEmailSchema }), SendingOtpController_1.OtpSentToEmailHandler);
+router.post("/auth/send-otp", (0, BodyValidator_1.default)({ schema: UserSchema_1.emailSchema }), SendingOtpController_1.OtpSentToEmailHandler);
 //
 //reset password
 router.post("/auth/validate-otp", (0, BodyValidator_1.default)({ schema: UserSchema_1.otpVerifyEmailSchema }), ValidateOtp_1.validateOtp, validateOtpHandler_1.validateOtpHandler);
-router.post("/auth/reset-password", CheckAuth_1.checkIfNotAuthonticated, ResetPasswordController_1.resetPasswordHandler);
+router.put("/auth/reset-password", CheckAuth_1.checkIfNotAuthonticated, (0, BodyValidator_1.default)({ schema: UserSchema_1.resetPasswordSchema }), ResetPasswordController_1.resetPasswordHandler);
 //
 exports.default = router;

@@ -13,7 +13,7 @@ export const checkIfAuthonticated = (req : Request , res : Response , next : Nex
                 , {authonticated:false})
         ))
     }
-
+    
     next()
 }
 

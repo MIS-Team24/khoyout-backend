@@ -1,9 +1,9 @@
 import { generateOTP } from "../../../../Services/generateOTP";
 import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructures";
 import { sendEmail } from "../../../../Services/sendEmail";
-import { addNewOtp } from "../../../Models/OtpModel";
+import { addNewOtp } from "../../../Models/OtpModelModel";
 import { findUserBy } from "../../../Models/UserModel";
-import { EmailBody } from "../../../types/auth/auth";
+import { EmailBody } from "../../../types/auth";
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../../../Services/generateToken";
 import { ErrorCode, ResStatus } from "../../../Exceptions/main";

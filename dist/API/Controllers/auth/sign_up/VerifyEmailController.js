@@ -8,7 +8,7 @@ const badRequest_1 = require("../../../Exceptions/badRequest");
 const Messages_1 = require("../../../../Services/responses/Messages");
 async function verifyEmailHandler(req, res, next) {
     const otpBody = req.body;
-    const user = await (0, UserModel_1.verifyEmail)(otpBody.email);
+    const user = await (0, UserModel_1.updateUser)({ email: otpBody.email }, { emailActivated: true });
     if (!user) {
         return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_NOT_FOUND, main_1.ErrorCode.USER_NOT_FOUND, { isEmailVerified: false })));
     }

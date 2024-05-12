@@ -6,8 +6,7 @@ const main_1 = require("../../../../../Exceptions/main");
 //get authonticated user
 const getUserHandler = async (req, res) => {
     if (req?.user) {
-        return res.json({ authonticated: true, user: req?.user,
-            sessionId: req.sessionID }); //200 default status
+        return res.json({ authonticated: true, user: req?.user }); //200 default status
     }
     else {
         return res.status(main_1.ResStatus.UNAUTHORIZED)

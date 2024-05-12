@@ -45,6 +45,7 @@ const initializePassport = (passport) => {
             const user = await (0, UserModel_1.findUserBy)({ id: id });
             //the user form returned according to the frontent desire
             let userReturnedToFront = {
+                id: user?.id,
                 email: user?.email,
                 emailActivated: user?.emailActivated,
                 createdAt: user?.createdAt,

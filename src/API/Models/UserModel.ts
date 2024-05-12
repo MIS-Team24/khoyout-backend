@@ -1,6 +1,6 @@
 import { prisma  } from "../../Database";
 import { Prisma  } from "@prisma/client";
-import { UserBody } from "../types/auth/auth";
+import { UserBody } from "../types/auth";
 
 //find by unique attribute
 export const findUserBy = async (data : Prisma.UsersWhereUniqueInput) => {
@@ -13,32 +13,38 @@ export const findUserBy = async (data : Prisma.UsersWhereUniqueInput) => {
 
 //create user
 export const addUser = async (data : Prisma.UsersCreateInput) => {
-    const user : object = await prisma.users.create({data})
+    const user = await prisma.users.create({data})
     return user as UserBody
 }
 //
 
-//reset password
-export const resetPassword = async (data : Prisma.UsersUpdateInput , email : string) => {
-    return await prisma.users.update({
-        where : {
-            email
-        },
-        data : {
-            password : data.password
-        }
+//update user data
+export const updateUser = async ( uniqueData : Prisma.UsersWhereUniqueInput , data? : Prisma.UsersUpdateInput) => {
+    const user = await prisma.users.update({
+        where : uniqueData,
+        data : {...data}
     })
+    return user 
 }
 //
 
-//verify email
-export const verifyEmail = async (email : string) => {
-    const user : object = await prisma.users.update({
-        where : {
-            email
-        },
-        data : {
-            emailActivated:true
+//update user data
+export const deleteUser = async (data : Prisma.UsersWhereUniqueInput) => {
+    const user = await prisma.users.delete({
+        where : data
+    })
+    return user 
+}
+//
+
+//read all user data
+export const readUser = async (data : Prisma.UsersWhereUniqueInput) => {
+    const user  = await prisma.users.findUnique({
+        where : data,
+        include : {
+            bodyMeasurements : true,
+            stylePreferences : true,
+            notificationPreferences : true
         }
     })
     return user 

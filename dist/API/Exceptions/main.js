@@ -24,6 +24,7 @@ var ErrorCode;
     ErrorCode[ErrorCode["USER_NOT_AUTHONTICATED"] = 1009] = "USER_NOT_AUTHONTICATED";
     ErrorCode[ErrorCode["USER_ALREADY_AUTHONTICATED"] = 1010] = "USER_ALREADY_AUTHONTICATED";
     ErrorCode[ErrorCode["INCORRECT_PASSWORD"] = 1011] = "INCORRECT_PASSWORD";
+    ErrorCode[ErrorCode["INVALID_FILE"] = 1012] = "INVALID_FILE";
 })(ErrorCode || (exports.ErrorCode = ErrorCode = {}));
 var ResStatus;
 (function (ResStatus) {
