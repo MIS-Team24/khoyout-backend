@@ -54,6 +54,7 @@ export const initializePassport = (passport : PassportStatic) => {
 
             //the user form returned according to the frontent desire
             let userReturnedToFront : UserBody = {
+                id : user?.id,
                 email: user?.email,
                 emailActivated:user?.emailActivated,
                 createdAt : user?.createdAt,

@@ -16,5 +16,9 @@ export enum Messages {
     PASSWORD_UPDATED = "Password changed successfully!",
     USER_LOGGED_OUT = "user logged out successfully!",
     USER_LOGGED_IN = 'User logged in successfully!',
-    INCORRECT_PASSWORD = "Incorrect password!"
+    INCORRECT_PASSWORD = "Incorrect password!",
+    INVALID_FILE = "Invalid file!, please upload a valid file!",
+    FILE_UPLOADED = "File uploaded successfully!",
+    USER_UPDATED = "User updated successfully!",
+    USER_DELETED = "User account deleted successfully!"
 }

@@ -13,7 +13,7 @@ router.post('/auth/login' , BodyValidator({schema: loginSchema})
 , checkIfNotAuthonticated , localLoginHandler)
 router.get('/auth/get-user' , getUserHandler)
 router.get('/auth/is-logged-in', isUserAuthonticatedHandler)
-router.delete('/auth/logout' , logoutHandler)
+router.delete('/auth/logout', checkIfAuthonticated , logoutHandler)
 
 //protected route for test
 router.get("/auth/protected-route", checkIfAuthonticated , (req , res) => {

@@ -15,7 +15,7 @@ const router = (0, express_1.Router)();
 router.post('/auth/login', (0, BodyValidator_1.default)({ schema: UserSchema_1.loginSchema }), CheckAuth_1.checkIfNotAuthonticated, LoginController_1.localLoginHandler);
 router.get('/auth/get-user', GetUserController_1.getUserHandler);
 router.get('/auth/is-logged-in', IsUserAuthController_1.isUserAuthonticatedHandler);
-router.delete('/auth/logout', LogoutController_1.logoutHandler);
+router.delete('/auth/logout', CheckAuth_1.checkIfAuthonticated, LogoutController_1.logoutHandler);
 //protected route for test
 router.get("/auth/protected-route", CheckAuth_1.checkIfAuthonticated, (req, res) => {
     return res.json({ message: "This is a protected route for test for exampla like the profile page" });

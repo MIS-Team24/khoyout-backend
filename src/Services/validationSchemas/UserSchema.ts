@@ -12,8 +12,8 @@ export const registerSchema = z.object({
     repeatPassword: z.string().min(8)
 });
 
-export const sendToEmailSchema = z.object({
-    email: z.string().email(),
+export const emailSchema = z.object({
+    email: z.string().email()
 });
 
 export const otpVerifyEmailSchema = z.object({

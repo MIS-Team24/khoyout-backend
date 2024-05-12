@@ -43,4 +43,22 @@ export const verifyEmail = async (email : string) => {
     })
     return user 
 }
+
+//update user data
+export const updateUser = async ( uniqueData : Prisma.UsersWhereUniqueInput , data? : Prisma.UsersUpdateInput) => {
+    const user : object = await prisma.users.update({
+        where : uniqueData,
+        data : {...data}
+    })
+    return user 
+}
+//
+
+//update user data
+export const deleteUser = async (data : Prisma.UsersWhereUniqueInput) => {
+    const user : object = await prisma.users.delete({
+        where : data
+    })
+    return user 
+}
 //
