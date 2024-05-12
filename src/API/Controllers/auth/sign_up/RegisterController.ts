@@ -1,15 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response , NextFunction} from "express";
 import { RegisterBody, UserBody } from "../../../types/auth";
 import { addUser, findUserBy } from "../../../Models/UserModel";
 import * as bcrypt from "bcrypt";
 import 'dotenv/config';
 import { generateOTP } from "../../../../Services/generateOTP";
 import { sendEmail } from "../../../../Services/sendEmail";
-import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructure";
-import { addNewOtp } from "../../../Models/OtpModel";
+import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructures";
+import { addNewOtp } from "../../../Models/OtpModelModel";
 import { generateToken } from "../../../../Services/generateToken";
 import { ErrorCode, ResStatus } from "../../../Exceptions/main";
-import { BadRequestException } from "../../../Exceptions/BadRequest";
+import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
 import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
 
