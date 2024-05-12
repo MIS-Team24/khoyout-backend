@@ -13,6 +13,14 @@ import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
 import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
 
+// Helper function to split fullName
+function splitName(fullName: string): { firstName: string, lastName: string } {
+    const names = fullName.trim().split(' ');
+    const firstName = names.shift() || ''; // First element as first name
+    const lastName = names.join(' ') || ''; // Rest as last name
+    return { firstName, lastName };
+}
+
 export async function RegisterHandler(req: Request, res: Response, next: NextFunction) {
     const registerBody = req.body as RegisterBody;
 
@@ -31,15 +39,21 @@ export async function RegisterHandler(req: Request, res: Response, next: NextFun
         ));
     }
 
+    // Split fullName into firstName and lastName
+    const { firstName, lastName } = splitName(registerBody.fullName);
+
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(registerBody.password, salt);
 
-    // Add this user to the database with fullName
+    // Add this user to the database
     const newUser = {
         email: registerBody.email,
-        fullName: registerBody.fullName, // Directly using fullName here
-        password: hashedPassword
+        fullName: registerBody.fullName,
+        firstName: firstName,
+        lastName: lastName,
+        password: hashedPassword,
+        emailActivated: false // Setting default values based on your schema
     };
     const user = await addUser(newUser);
 
