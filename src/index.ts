@@ -31,7 +31,7 @@ app.use(session({
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     sameSite : 'none',
     httpOnly : true,
-    secure : true
+    secure : false
   }
 }))
 app.use(passportLocal.session())
