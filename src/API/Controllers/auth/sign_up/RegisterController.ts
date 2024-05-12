@@ -1,5 +1,5 @@
 import { Request, Response , NextFunction} from "express";
-import { RegisterBody, UserBody } from "../../../types/auth/auth";
+import { RegisterBody, UserBody } from "../../../types/auth";
 import { addUser, findUserBy } from "../../../Models/UserModel";
 import * as bcrypt from "bcrypt"
 import 'dotenv/config';

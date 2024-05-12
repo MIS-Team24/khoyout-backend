@@ -49,7 +49,7 @@ async function resetPasswordHandler(req, res, next) {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(passwordResetBody.password, salt);
         //
-        await (0, UserModel_1.resetPassword)({ password: hashedPassword }, passwordResetBody.email);
+        await (0, UserModel_1.updateUser)({ email: passwordResetBody.email }, { password: hashedPassword });
         return res.json({
             isPasswordUpdated: true,
             message: Messages_1.Messages.PASSWORD_UPDATED

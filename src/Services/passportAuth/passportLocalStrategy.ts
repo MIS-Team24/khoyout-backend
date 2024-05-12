@@ -2,7 +2,7 @@ const localStrategy = require('passport-local').Strategy
 import { PassportStatic } from 'passport'
 import {findUserBy} from '../../API/Models/UserModel'
 import bcrypt from 'bcrypt'
-import { LoginBody, UserBody } from '../../API/types/auth/auth'
+import { LoginBody, UserBody } from '../../API/types/auth'
 import { BadRequestException } from '../../API/Exceptions/badRequest'
 import { ErrorCode } from '../../API/Exceptions/main'
 import { BadServerException } from '../../API/Exceptions/badServer'

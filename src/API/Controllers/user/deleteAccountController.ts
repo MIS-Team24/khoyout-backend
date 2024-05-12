@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UserBody } from "../../types/auth/auth";
+import { UserBody } from "../../types/auth";
 import { deleteUser } from "../../Models/UserModel";
 import { ErrorCode, ResStatus } from "../../Exceptions/main";
 import { errorResponseTemplate } from "../../../Services/responses/ErrorTemplate";

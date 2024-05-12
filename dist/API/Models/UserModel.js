@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.verifyEmail = exports.resetPassword = exports.addUser = exports.findUserBy = void 0;
+exports.readUser = exports.deleteUser = exports.updateUser = exports.addUser = exports.findUserBy = void 0;
 const Database_1 = require("../../Database");
 //find by unique attribute
 const findUserBy = async (data) => {
@@ -18,32 +18,6 @@ const addUser = async (data) => {
 };
 exports.addUser = addUser;
 //
-//reset password
-const resetPassword = async (data, email) => {
-    return await Database_1.prisma.users.update({
-        where: {
-            email
-        },
-        data: {
-            password: data.password
-        }
-    });
-};
-exports.resetPassword = resetPassword;
-//
-//verify email
-const verifyEmail = async (email) => {
-    const user = await Database_1.prisma.users.update({
-        where: {
-            email
-        },
-        data: {
-            emailActivated: true
-        }
-    });
-    return user;
-};
-exports.verifyEmail = verifyEmail;
 //update user data
 const updateUser = async (uniqueData, data) => {
     const user = await Database_1.prisma.users.update({
@@ -62,4 +36,13 @@ const deleteUser = async (data) => {
     return user;
 };
 exports.deleteUser = deleteUser;
+//
+//read all user data
+const readUser = async (data) => {
+    const user = await Database_1.prisma.users.findUnique({
+        where: data
+    });
+    return user;
+};
+exports.readUser = readUser;
 //

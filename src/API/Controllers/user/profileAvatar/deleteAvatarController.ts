@@ -6,7 +6,7 @@ import { BadRequestException } from "../../../Exceptions/badRequest"
 import { Messages } from "../../../../Services/responses/Messages"
 import { BadServerException } from "../../../Exceptions/badServer"
 import { findUserBy, updateUser } from "../../../Models/UserModel"
-import { UserBody } from "../../../types/auth/auth"
+import { UserBody } from "../../../types/auth"
 
 export const deleteAvatarController = async (req : Request , res : Response) =>{
     try {

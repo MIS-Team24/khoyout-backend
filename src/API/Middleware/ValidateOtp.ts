@@ -1,5 +1,5 @@
 import { NextFunction  , Response , Request} from "express";
-import { OtpBody } from "../types/auth/auth";
+import { OtpBody } from "../types/auth";
 import { findOtpBy } from "../Models/OtpModel";
 import * as jwt from "jsonwebtoken"
 import { ErrorCode, ResStatus } from "../Exceptions/main";
