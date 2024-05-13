@@ -4,7 +4,7 @@ on:
   push:
     branches:
 
-      - fixingAuth
+      - main
 
 
 jobs:
@@ -19,21 +19,21 @@ jobs:
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ezzops --password-stdin
           docker push ezzops/khoyoutbackend:${{ github.sha }}
 
-  # CD:
-  #   needs: CI
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: SSH to server and execute commands
-  #       uses: appleboy/ssh-action@master
-  #       with:
-  #           host: oniverse.xyz
-  #           username: root
-  #           password: ${{ secrets.Node_Pass }}
-  #           script: |
-  #             container_id=$(docker ps --format "{{.ID}}")
-  #             docker logs $container_id > logs__khoyoutbackend$(date +%Y%m%d).log
-  #             docker stop $(docker ps -aq)
-  #             docker rm $(docker ps -aq)
-  #             docker rmi $(docker images -q)
-  #             docker run -d --restart=unless-stopped -p 3005:3005 ezzops/khoyoutbackend:${{ github.sha }}
-  #             docker run -d --restart=unless-stopped --net=host -it -e NGROK_AUTHTOKEN=2ZHD9jIsD64TAdsRufwzJiAn9g0_3tfmUazFkEeVG6scCWNuB ngrok/ngrok:latest http --domain=highly-true-possum.ngrok-free.app 3005 &
+  CD:
+    needs: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH to server and execute commands
+        uses: appleboy/ssh-action@master
+        with:
+            host: oniverse.xyz
+            username: root
+            password: ${{ secrets.Node_Pass }}
+            script: |
+              container_id=$(docker ps --format "{{.ID}}")
+              docker logs $container_id > logs__khoyoutbackend$(date +%Y%m%d).log
+              docker stop $(docker ps -aq)
+              docker rm $(docker ps -aq)
+              docker rmi $(docker images -q)
+              docker run -d --restart=unless-stopped -p 3005:3005 ezzops/khoyoutbackend:${{ github.sha }}
+              docker run -d --restart=unless-stopped --net=host -it -e NGROK_AUTHTOKEN=2ZHD9jIsD64TAdsRufwzJiAn9g0_3tfmUazFkEeVG6scCWNuB ngrok/ngrok:latest http --domain=highly-true-possum.ngrok-free.app 3005 &
