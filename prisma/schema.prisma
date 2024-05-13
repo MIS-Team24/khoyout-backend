@@ -29,6 +29,8 @@ model Users {
   bodyMeasurements          BodyMeasurements?
   notificationPreferences   NotificationPreferences?
   stylePreferences          StylePreferences?
+
+  sessions Sessions[]
 }
 
 model BodyMeasurements {
@@ -79,7 +81,7 @@ model Otps {
 }
 
 model Designer {
-  id              String                   @id @default(uuid())
+  id              String       @id @default(uuid())
   name            String
   location        String?
   gender          Gender?
@@ -94,12 +96,12 @@ model Designer {
   reviews         Review[]
   services        Service[]
   teamMembers     TeamMember[]
-  categories      Category[] @relation("CategoryToDesigner")
+  categories      Category[]   @relation("CategoryToDesigner")
   portfolios      Portfolio[]  @relation("PortfolioToDesigner")
 }
 
 model Service {
-  id          String                   @id @default(uuid())
+  id          String   @id @default(uuid())
   designerId  String
   title       String
   description String
@@ -108,16 +110,16 @@ model Service {
 }
 
 model TeamMember {
-  id          String                   @id @default(uuid())
-  designerId  String
-  name        String
-  role        String
-  avatarUrl   String?
-  designer    Designer @relation(fields: [designerId], references: [id])
+  id         String   @id @default(uuid())
+  designerId String
+  name       String
+  role       String
+  avatarUrl  String?
+  designer   Designer @relation(fields: [designerId], references: [id])
 }
 
 model Review {
-  id          String                   @id @default(uuid())
+  id           String   @id @default(uuid())
   designerId   String
   customerName String
   rating       Int
@@ -127,9 +129,16 @@ model Review {
 }
 
 model Category {
-  id          String                   @id @default(uuid())
-  name        String
-  designers   Designer[] @relation("CategoryToDesigner")
+  id        String     @id @default(uuid())
+  name      String
+  designers Designer[] @relation("CategoryToDesigner")
+}
+
+model Sessions {
+  token      String   @id
+  userId     String   @unique
+  ExpiryDate DateTime
+  user       Users    @relation(fields: [userId], references: [id])
 }
 
 enum Gender {
@@ -138,8 +147,8 @@ enum Gender {
 }
 
 model Portfolio {
-  id          String                   @id @default(uuid())
-  designerId  String
-  url         String
-  designer    Designer @relation(fields: [designerId], references: [id], name: "PortfolioToDesigner")
+  id         String   @id @default(uuid())
+  designerId String
+  url        String
+  designer   Designer @relation(fields: [designerId], references: [id], name: "PortfolioToDesigner")
 }

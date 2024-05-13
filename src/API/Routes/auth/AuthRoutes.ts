@@ -7,7 +7,7 @@ import { resetPasswordHandler } from "../../Controllers/auth/log_in/ResetPasswor
 import { validateOtp } from "../../Middleware/ValidateOtp";
 import { verifyEmailHandler } from "../../Controllers/auth/sign_up/VerifyEmailController";
 import { validateOtpHandler } from "../../Controllers/auth/otp/validateOtpHandler";
-import { checkIfNotAuthonticated } from "../../Middleware/CheckAuth";
+import { checkIfNotAuthenticated } from "../../Middleware/CheckAuth";
 
 const router = express.Router();
 
@@ -21,10 +21,8 @@ router.post("/auth/send-otp", BodyValidator({schema: emailSchema})
 //
 
 //reset password
-router.post("/auth/validate-otp", BodyValidator({schema: otpVerifyEmailSchema})
-, validateOtp , validateOtpHandler);
-router.put("/auth/reset-password", checkIfNotAuthonticated
-,BodyValidator({schema: resetPasswordSchema}), resetPasswordHandler);
+router.post("/auth/validate-otp", BodyValidator({schema: otpVerifyEmailSchema}), validateOtp , validateOtpHandler);
+router.put("/auth/reset-password", checkIfNotAuthenticated ,BodyValidator({schema: resetPasswordSchema}), resetPasswordHandler);
 //
 
 export default router;

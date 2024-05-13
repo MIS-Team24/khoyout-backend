@@ -1,5 +1,5 @@
 import { Router} from 'express'
-import { checkIfAuthonticated, checkIfNotAuthonticated } from '../../../Middleware/CheckAuth';
+import { checkIfAuthenticated, checkIfNotAuthenticated } from '../../../Middleware/CheckAuth';
 import { loginSchema } from '../../../../Services/validationSchemas/UserSchema';
 import BodyValidator from '../../../Middleware/BodyValidator';
 import { localLoginHandler } from '../../../Controllers/auth/log_in/passportLogin/localStrategy/LoginController';
@@ -9,14 +9,13 @@ import { logoutHandler } from '../../../Controllers/auth/log_in/passportLogin/lo
 
 const router = Router()
 
-router.post('/auth/login' , BodyValidator({schema: loginSchema})
-, checkIfNotAuthonticated , localLoginHandler)
+router.post('/auth/login' , BodyValidator({schema: loginSchema}) , localLoginHandler)
 router.get('/auth/get-user' , getUserHandler)
 router.get('/auth/is-logged-in', isUserAuthonticatedHandler)
-router.delete('/auth/logout', checkIfAuthonticated , logoutHandler)
+router.delete('/auth/logout', checkIfAuthenticated , logoutHandler)
 
 //protected route for test
-router.get("/auth/protected-route", checkIfAuthonticated , (req , res) => {
+router.get("/auth/protected-route", checkIfAuthenticated , (req , res) => {
     return res.json({message : "This is a protected route for test for exampla like the profile page"})
 })
 //

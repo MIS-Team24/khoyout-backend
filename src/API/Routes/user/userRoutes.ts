@@ -2,7 +2,7 @@ import express from "express";
 import { uploadUpdateAvatarController } from "../../Controllers/user/profileAvatar/uploadUpdateAvatarController";
 import { upload } from "../../../Services/multer";
 import { deleteAvatarController } from "../../Controllers/user/profileAvatar/deleteAvatarController";
-import { checkIfAuthonticated } from "../../Middleware/CheckAuth";
+import { checkIfAuthenticated } from "../../Middleware/CheckAuth";
 import { deleteUserAccount } from "../../Controllers/user/deleteAccountController";
 import { updateUserData } from "../../Controllers/user/updateDataController";
 import { updateBodyMeasurementData } from "../../Controllers/user/updateBodyMeasurementController";
@@ -15,17 +15,14 @@ import BodyValidator from "../../Middleware/BodyValidator";
 const router = express.Router();
 
 //user avatar
-router.post("/upload-update-avatar" , checkIfAuthonticated 
-    , upload.single("file") , uploadUpdateAvatarController)
-router.delete("/delete-avatar",checkIfAuthonticated , deleteAvatarController)
+router.post("/upload-update-avatar", checkIfAuthenticated, upload.single("file") , uploadUpdateAvatarController)
+router.delete("/delete-avatar",checkIfAuthenticated , deleteAvatarController)
 //
-
-router.get("/read-user" , checkIfAuthonticated , readUserData)
-router.put("/change-password" ,checkIfAuthonticated 
-    , BodyValidator({schema: cahngePasswordSchema}) , changeUserPassword)
-router.put("/update-data" , checkIfAuthonticated , updateUserData)
-router.put("/body-measurement-update-data" , checkIfAuthonticated , updateBodyMeasurementData)
-router.put("/style-preference-update-data" , checkIfAuthonticated , updateStylePreferenceData)
-router.delete("/delete-account" , checkIfAuthonticated ,  deleteUserAccount)
+router.get("/read-user" , checkIfAuthenticated , readUserData)
+router.put("/change-password" ,checkIfAuthenticated, BodyValidator({schema: cahngePasswordSchema}) , changeUserPassword)
+router.put("/update-data" , checkIfAuthenticated , updateUserData)
+router.put("/body-measurement-update-data" , checkIfAuthenticated , updateBodyMeasurementData)
+router.put("/style-preference-update-data" , checkIfAuthenticated , updateStylePreferenceData)
+router.delete("/delete-account" , checkIfAuthenticated ,  deleteUserAccount)
 
 export default router;
