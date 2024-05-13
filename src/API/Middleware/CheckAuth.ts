@@ -29,7 +29,7 @@ export async function checkIfAuthenticated (req : Request, res : Response , next
         if (authHeader.startsWith("Bearer ")) {
             const Token = authHeader.substring(7, authHeader.length);
             const user = await getUserByToken(Token);
-            
+
             if (user) {
                 console.log(user);
 
@@ -40,7 +40,7 @@ export async function checkIfAuthenticated (req : Request, res : Response , next
     }
 
     if(!isAuthed)
-        return res.status(ResStatus.UNAUTHORIZED).json(errorResponseTemplate(new BadAuthonticationException(Messages.USER_NOT_AUTHONTICATED, ErrorCode.USER_NOT_AUTHONTICATED)));
+        return res.status(ResStatus.UNAUTHORIZED).json(errorResponseTemplate(new BadAuthonticationException(Messages.USER_NOT_AUTHENTICATED, ErrorCode.USER_NOT_AUTHENTICATED)));
 
     next();
 }
@@ -61,7 +61,7 @@ export async function checkIfNotAuthenticated (req : Request, res : Response , n
     }
 
     if(isAuthed)
-        return res.status(ResStatus.UNAUTHORIZED).json(errorResponseTemplate(new BadAuthonticationException(Messages.USER_ALREADY_AUTHONTICATED, ErrorCode.USER_ALREADY_AUTHONTICATED)));
+        return res.status(ResStatus.UNAUTHORIZED).json(errorResponseTemplate(new BadAuthonticationException(Messages.USER_ALREADY_AUTHENTICATED, ErrorCode.USER_ALREADY_AUTHENTICATED)));
 
     next();
 }

@@ -5,7 +5,6 @@ import { ResStatus } from "../../../../../Exceptions/main";
 
 export const logoutHandler = async (req : Request , res : Response) => {
     const Token = req.headers.authorization?.split(" ")[1]?? "";
-    
     const success = await deleteUserDbSession(Token);
 
     if (success)
