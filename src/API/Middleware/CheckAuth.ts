@@ -29,10 +29,11 @@ export async function checkIfAuthenticated (req : Request, res : Response , next
         if (authHeader.startsWith("Bearer ")) {
             const Token = authHeader.substring(7, authHeader.length);
             const user = await getUserByToken(Token);
+            
             if (user) {
-                // @ts-ignore
-                req.authedUser = user;
+                console.log(user);
 
+                req.user = user;
                 isAuthed = true;
             }
         }
@@ -53,9 +54,7 @@ export async function checkIfNotAuthenticated (req : Request, res : Response , n
             const Token = authHeader.substring(7, authHeader.length);
             const user = await getUserByToken(Token);
             if (user) {
-                // @ts-ignore
-                req.authedUser = user;
-
+                req.user = user;
                 isAuthed = true;
             }
         }

@@ -36,11 +36,12 @@ export async function getUserByToken(token: string, evenIfExpired = false)
 
     if (!result) return null;
 
-    if (!evenIfExpired) {
+    if (evenIfExpired === false) {
         const UTCNow = getUTCTime();
         const ExpiryDate = result.ExpiryDate;
 
         if (UTCNow > ExpiryDate) {
+            await deleteUserDbSession(token);
             return null;
         }
     }
@@ -62,6 +63,36 @@ export async function initiateUserDbSession(token: string, userId: string, expir
         return true;
     }
     catch (error) {
+        return false;
+    }
+}
+
+export async function deleteUserDbSession(token: string) : Promise<boolean>
+{
+    try
+    {
+        await prisma.sessions.delete({
+            where: {
+                token: token
+            }
+        });
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+export async function deleteAllUserSessionsFromDb(userId: string) : Promise<boolean>
+{
+    try
+    {
+        await prisma.sessions.deleteMany({
+            where: {
+                userId: userId
+            }
+        });
+        return true;
+    } catch (error) {
         return false;
     }
 }

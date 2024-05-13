@@ -1,5 +1,4 @@
 import { Request, Response , NextFunction } from "express";
-import passport from 'passport';
 import { UserBody } from "../../../../../types/auth";
 import { ErrorCode, ResStatus } from "../../../../../Exceptions/main";
 import { Messages } from "../../../../../../Services/responses/Messages";
@@ -56,5 +55,3 @@ export async function localLoginHandler (req: Request , res :Response , next :Ne
                 access_token: token
             })
 }
-
-export const passportLocal = passport

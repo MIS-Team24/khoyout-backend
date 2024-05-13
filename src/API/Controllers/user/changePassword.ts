@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserBody } from "../../types/auth";
-import { updateUser } from "../../Models/UserModel";
+import { deleteAllUserSessionsFromDb, deleteUserDbSession, updateUser } from "../../Models/UserModel";
 import { ErrorCode , ResStatus } from "../../Exceptions/main";
 import { errorResponseTemplate } from "../../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../../Exceptions/badRequest";
@@ -8,7 +8,7 @@ import { Messages } from "../../../Services/responses/Messages";
 import { ChangePasswordBody } from "../../types/user";
 import * as bcrypt from "bcrypt"
 
-export const changeUserPassword = async (req : Request , res : Response) => {
+export const changeUserPassword = async (req: Request, res : Response) => {
     const user = req?.user as UserBody
     const changePasswordBody  = req.body as ChangePasswordBody
     
@@ -35,18 +35,21 @@ export const changeUserPassword = async (req : Request , res : Response) => {
         ))  
     }
 
-    req.logout((error) => {
-        if (error) {               
+
+    const userId = user?.id;
+    if (userId) {
+        const success = await deleteAllUserSessionsFromDb(userId);
+
+        if (success) {               
             return res.status(ResStatus.OK).json({
                 message: Messages.PASSWORD_UPDATED,
                 isPasswordUpdated : true,
-                errorLogout : error
+            })
+        } else {
+            return res.status(ResStatus.OK).json({
+                message: Messages.INCORRECT_PASSWORD,
+                isPasswordUpdated : false,
             })
         }
-
-        return res.status(ResStatus.OK).json({
-            isPasswordUpdated : true,
-            message : Messages.PASSWORD_UPDATED
-        })
-    })
+    }
 }

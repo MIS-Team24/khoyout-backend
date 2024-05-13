@@ -9,10 +9,10 @@ import { logoutHandler } from '../../../Controllers/auth/log_in/passportLogin/lo
 
 const router = Router()
 
-router.post('/auth/login' , BodyValidator({schema: loginSchema}) , localLoginHandler)
-router.get('/auth/get-user' , getUserHandler)
-router.get('/auth/is-logged-in', isUserAuthonticatedHandler)
-router.delete('/auth/logout', checkIfAuthenticated , logoutHandler)
+router.post('/auth/login', BodyValidator({schema: loginSchema}) , localLoginHandler)
+router.get('/auth/get-user', checkIfAuthenticated, getUserHandler)
+router.get('/auth/is-logged-in', checkIfAuthenticated, isUserAuthonticatedHandler)
+router.delete('/auth/logout', checkIfAuthenticated, logoutHandler)
 
 //protected route for test
 router.get("/auth/protected-route", checkIfAuthenticated , (req , res) => {

@@ -1,44 +1,21 @@
-import { NextFunction, Request, Response } from "express";
-import { ErrorCode, ResStatus } from "../../../../../Exceptions/main";
-import { errorResponseTemplate } from "../../../../../../Services/responses/ErrorTemplate";
+import { Request, Response } from "express";
 import { Messages } from "../../../../../../Services/responses/Messages";
-import { BadServerException } from "../../../../../Exceptions/badServer";
-import { BadAuthonticationException } from "../../../../../Exceptions/badAuthontication";
+import { deleteUserDbSession } from "../../../../../Models/UserModel";
+import { ResStatus } from "../../../../../Exceptions/main";
 
 export const logoutHandler = async (req : Request , res : Response) => {
-    req.logout((error) => {
-        if (error) {               
-            return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
-                new BadServerException(Messages.SERVER_ERROR 
-                    , ErrorCode.SERVER_ERROR
-                    ,{error})
-            ))
-        }
-        return res.json({
-            authonticated : true,
-            message: Messages.USER_LOGGED_OUT
-        })
-    })
-    // if(req.user){
-    //     req.logout((error) => {
-    //         if (error) {               
-    //             return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
-    //                 new BadServerException(Messages.SERVER_ERROR 
-    //                     , ErrorCode.SERVER_ERROR
-    //                     ,{error , authonticated : false})
-    //             ))
-    //         }
+    const Token = req.headers.authorization?.split(" ")[1]?? "";
+    
+    const success = await deleteUserDbSession(Token);
 
-    //         return res.json({
-    //             authonticated : true,
-    //             message: Messages.USER_LOGGED_OUT
-    //         })
-    //     })
-    // }else{
-    //     return res.status(ResStatus.UNAUTHORIZED).json(errorResponseTemplate(
-    //         new BadAuthonticationException(Messages.USER_NOT_AUTHONTICATED 
-    //             , ErrorCode.USER_NOT_AUTHONTICATED
-    //             ,{ authonticated : false})
-    //     ))
-    // }   
+    if (success)
+    {
+        return res.status(ResStatus.OK).json({
+            message: Messages.USER_LOGGED_OUT
+        });
+    } else {
+        return res.status(ResStatus.UNAUTHORIZED).json({
+            message: Messages.USER_LOGGED_OUT
+        });
+    }
 }

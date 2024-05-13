@@ -5,7 +5,6 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import { Pool } from 'pg';
-import { passportLocal } from './API/Controllers/auth/log_in/passportLogin/localStrategy/LoginController';
 import { ResStatus } from './API/Exceptions/main';
 const connectPgSimple = require('connect-pg-simple');
 
