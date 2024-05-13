@@ -33,9 +33,9 @@ app.use(session({
   saveUninitialized: false,
   cookie: { 
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    sameSite : true,
+    //sameSite : true,
     httpOnly : true,
-    secure : true
+    //secure : true
   }
 }))
 app.use(passportLocal.session())
