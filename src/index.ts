@@ -21,19 +21,19 @@ const store = new pgSession({
   createTableIfMissing: true,
 });
 
-// CORS configuration with dynamic origin checking
+// Correcting TypeScript errors with explicit types for 'origin' and 'callback'
 const allowedOrigins = [
     'https://5173-misteam24-khoyoutfronte-kfuj7jrx19c.ws-eu111.gitpod.io',
     // Additional domains can be added here
 ];
 
-const corsOptions = {
+const corsOptions: cors.CorsOptions = {
   credentials: true,
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error('Not allowed by CORS'), false);
     }
   }
 };
@@ -43,7 +43,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session configuration with secure cookie settings
+// Correcting the sameSite setting for cookie configuration
 app.use(session({
   store: store,
   secret: SESSION_SECRET,
@@ -51,8 +51,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    sameSite: 'None', // Necessary for third-party cookies
-    secure: true, // Necessary when sameSite is None
+    sameSite: 'none', // Lowercase 'none' is correct
+    secure: true,
     httpOnly: true
   }
 }));
