@@ -21,14 +21,29 @@ const store = new pgSession({
   createTableIfMissing: true,
 });
 
-// Middleware configuration
-app.use(cors({
+// CORS configuration with dynamic origin checking
+const allowedOrigins = [
+    'https://5173-misteam24-khoyoutfronte-kfuj7jrx19c.ws-eu111.gitpod.io',
+    // Additional domains can be added here
+];
+
+const corsOptions = {
   credentials: true,
-  origin: ['https://5173-misteam24-khoyoutfronte-kfuj7jrx19c.ws-eu111.gitpod.io'] // Adjust based on your front-end deployment
-}));
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Session configuration with secure cookie settings
 app.use(session({
   store: store,
   secret: SESSION_SECRET,
@@ -36,10 +51,12 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    sameSite: 'lax', // Adjust according to your requirements
+    sameSite: 'None', // Necessary for third-party cookies
+    secure: true, // Necessary when sameSite is None
     httpOnly: true
   }
 }));
+
 app.use(passportLocal.initialize());
 app.use(passportLocal.session());
 
