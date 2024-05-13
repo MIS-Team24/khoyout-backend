@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateOtp = void 0;
-const OtpModel_1 = require("../Models/OtpModel");
+const OtpModelModel_1 = require("../Models/OtpModelModel");
 const jwt = __importStar(require("jsonwebtoken"));
 const main_1 = require("../Exceptions/main");
 const ErrorTemplate_1 = require("../../Services/responses/ErrorTemplate");
@@ -33,7 +33,7 @@ const badRequest_1 = require("../Exceptions/badRequest");
 const badServer_1 = require("../Exceptions/badServer");
 async function validateOtp(req, res, next) {
     const otpBody = req.body;
-    const targetOtp = await (0, OtpModel_1.findOtpBy)({ id: otpBody.keyVal });
+    const targetOtp = await (0, OtpModelModel_1.findOtpBy)({ id: otpBody.keyVal });
     if (!targetOtp) {
         return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.OTP_NOT_VALID, main_1.ErrorCode.OTP_NOT_VALID, { isOtpValid: false })));
     }

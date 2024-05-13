@@ -30,38 +30,46 @@ require("dotenv/config");
 const generateOTP_1 = require("../../../../Services/generateOTP");
 const sendEmail_1 = require("../../../../Services/sendEmail");
 const OtpEmailStructures_1 = require("../../../../Services/htmlEmailStructures/OtpEmailStructures");
-const OtpModel_1 = require("../../../Models/OtpModel");
+const OtpModelModel_1 = require("../../../Models/OtpModelModel");
 const generateToken_1 = require("../../../../Services/generateToken");
 const main_1 = require("../../../Exceptions/main");
 const badRequest_1 = require("../../../Exceptions/badRequest");
 const Messages_1 = require("../../../../Services/responses/Messages");
 const ErrorTemplate_1 = require("../../../../Services/responses/ErrorTemplate");
+// Helper function to split fullName
+function splitName(fullName) {
+    const names = fullName.trim().split(' ');
+    const firstName = names.shift() || ''; // First element as first name
+    const lastName = names.join(' ') || ''; // Rest as last name
+    return { firstName, lastName };
+}
 async function RegisterHandler(req, res, next) {
     const registerBody = req.body;
-    //check if user already exist 
+    // Check if user already exists
     const userTarget = await (0, UserModel_1.findUserBy)({ email: registerBody.email });
     if (userTarget) {
         return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.USER_EXIST, main_1.ErrorCode.USER_ALREADY_EXIST, { isUserSaved: false })));
     }
-    //
-    //if password amd repeated password not the same
-    if (registerBody.password != registerBody.repeatPassword) {
+    // If password and repeated password are not the same
+    if (registerBody.password !== registerBody.repeatPassword) {
         return res.status(main_1.ResStatus.BAD_REQUEST).json((0, ErrorTemplate_1.errorResponseTemplate)(new badRequest_1.BadRequestException(Messages_1.Messages.PASS_NOT_R_PASS, main_1.ErrorCode.PASSWORD_NOT_REPEATED_PASSWORD, { isUserSaved: false })));
     }
-    //
-    //add this user to database
-    //hash password
+    // Split fullName into firstName and lastName
+    const { firstName, lastName } = splitName(registerBody.fullName);
+    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(registerBody.password, salt);
-    //
+    // Add this user to the database
     const newUser = {
         email: registerBody.email,
         fullName: registerBody.fullName,
-        password: hashedPassword
+        firstName: firstName,
+        lastName: lastName,
+        password: hashedPassword,
+        emailActivated: false // Setting default values based on your schema
     };
     const user = await (0, UserModel_1.addUser)(newUser);
-    //
-    //the user form returned according to the frontent desire
+    // User form returned according to the frontend desire
     let userReturnedToFront = {
         email: user?.email,
         emailActivated: user?.emailActivated,
@@ -69,22 +77,17 @@ async function RegisterHandler(req, res, next) {
         fullName: user?.fullName,
         phone: user?.phone
     };
-    //
-    //send otp and save it in the database
-    //generate a random Otp from 4 numbers
+    // Generate a random OTP from 4 numbers
     const otpServer = (0, generateOTP_1.generateOTP)(4);
-    //
-    //create token to control the validtion time of the otp
-    const validtionPeriod = (0, generateToken_1.generateToken)({}, "5m");
-    //
-    //save it
-    const newOtp = await (0, OtpModel_1.addNewOtp)({
+    // Create token to control the validation time of the OTP
+    const validationPeriod = (0, generateToken_1.generateToken)({}, "5m");
+    // Save OTP in the database
+    const newOtp = await (0, OtpModelModel_1.addNewOtp)({
         email: registerBody.email,
         code: otpServer,
-        expiredAt: validtionPeriod
+        expiredAt: validationPeriod
     });
-    //
-    //send it
+    // Send OTP
     const success = await (0, sendEmail_1.sendEmail)({
         from: process.env.OWNER_USER_APP,
         to: registerBody.email,
@@ -92,8 +95,6 @@ async function RegisterHandler(req, res, next) {
         text: "Verify your email",
         html: (0, OtpEmailStructures_1.OtpEmailStructure)(otpServer, "5")
     }, res);
-    //
-    //
     if (!success) {
         return res.status(main_1.ResStatus.SOURCE_CREATED).json({
             message: Messages_1.Messages.USER_SAVED,

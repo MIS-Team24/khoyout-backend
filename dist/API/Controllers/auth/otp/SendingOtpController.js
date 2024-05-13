@@ -4,7 +4,7 @@ exports.OtpSentToEmailHandler = void 0;
 const generateOTP_1 = require("../../../../Services/generateOTP");
 const OtpEmailStructures_1 = require("../../../../Services/htmlEmailStructures/OtpEmailStructures");
 const sendEmail_1 = require("../../../../Services/sendEmail");
-const OtpModel_1 = require("../../../Models/OtpModel");
+const OtpModelModel_1 = require("../../../Models/OtpModelModel");
 const UserModel_1 = require("../../../Models/UserModel");
 const generateToken_1 = require("../../../../Services/generateToken");
 const main_1 = require("../../../Exceptions/main");
@@ -27,7 +27,7 @@ async function OtpSentToEmailHandler(req, res, next) {
     const validtionPeriod = (0, generateToken_1.generateToken)({}, "5m");
     //
     //save it
-    const newOtp = await (0, OtpModel_1.addNewOtp)({
+    const newOtp = await (0, OtpModelModel_1.addNewOtp)({
         email: emailBody.email,
         code: otpServer,
         expiredAt: validtionPeriod

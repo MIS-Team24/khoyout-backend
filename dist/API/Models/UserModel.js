@@ -40,7 +40,12 @@ exports.deleteUser = deleteUser;
 //read all user data
 const readUser = async (data) => {
     const user = await Database_1.prisma.users.findUnique({
-        where: data
+        where: data,
+        include: {
+            bodyMeasurements: true,
+            stylePreferences: true,
+            notificationPreferences: true
+        }
     });
     return user;
 };
