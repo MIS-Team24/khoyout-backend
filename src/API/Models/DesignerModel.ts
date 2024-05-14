@@ -8,7 +8,6 @@ interface DesignerFilters {
   location?: string;
   minRating?: number;
   yearsOfExperience?: number;
-  gender?: Gender;
   page?: number;
   limit?: number;
   sortBy?: keyof Prisma.DesignerProfileOrderByWithRelationInput;
@@ -17,14 +16,13 @@ interface DesignerFilters {
 
 // Get all designers with pagination, filtering, and sorting
 export const readAllDesigners = async (filters: DesignerFilters) => {
-  const { location, minRating, yearsOfExperience, gender, page = 1, limit = 10, sortBy = 'id', sortOrder = 'asc' } = filters;
+  const { location, minRating, yearsOfExperience, page = 1, limit = 10, sortBy = 'id', sortOrder = 'asc' } = filters;
   const offset = (page - 1) * limit;
 
   const designers = await prisma.designerProfile.findMany({
     where: {
       address: location ? { contains: location } : undefined,
       yearsExperience: yearsOfExperience ? { gte: yearsOfExperience } : undefined,
-      gender: gender || undefined,
       reviews: minRating ? { some: { rating: { gte: minRating } } } : undefined
     },
     skip: offset,
@@ -34,12 +32,6 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     },
     select: {
       id: true,
-      userAccount: {
-        select: {
-          name: true,
-          avatarUrl: true
-        }
-      },
       ordersFinished: true,
       address: true,
       yearsExperience: true,
@@ -53,12 +45,10 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
 
   return designers.map(designer => ({
     id: designer.id,
-    name: designer.userAccount.name,
-    avatarUrl: designer.userAccount.avatarUrl,
     ordersFinished: designer.ordersFinished,
     location: designer.address,
     yearsExperience: designer.yearsExperience,
-    rating: designer.reviews.length ? designer.reviews.reduce((sum, review) => sum + review.rating, 0) / designer.reviews.length : null,
+    rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : null,
   }));
 };
 
@@ -68,12 +58,6 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
     where: data,
     select: {
       id: true,
-      userAccount: {
-        select: {
-          name: true,
-          avatarUrl: true
-        }
-      },
       ordersFinished: true,
       address: true,
       yearsExperience: true,
@@ -81,13 +65,12 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       workingDays: true,
       reviews: {
         select: {
-          customerId: true,
           rating: true,
           comment: true,
           postedOn: true,
           user: {
             select: {
-              name: true
+              id: true // Assuming you want the user ID, add other fields if needed
             }
           }
         }
