@@ -8,14 +8,14 @@ datasource db {
 }
 
 model Users {
-  id                        String                   @id @default(uuid())
+  id                        String   @id @default(uuid())
   fullName                  String
   firstName                 String
   lastName                  String
-  email                     String                   @unique
-  emailActivated            Boolean                  @default(false)
+  email                     String   @unique
+  emailActivated            Boolean  @default(false)
   password                  String
-  phone                     String?                  @unique
+  phone                     String?  @unique
   age                       Int?
   gender                    Gender?
   country                   String?
@@ -23,12 +23,19 @@ model Users {
   bodyMeasurementsId        Int?
   stylePreferencesId        Int?
   notificationPreferencesId Int?
-  createdAt                 DateTime                 @default(now())
-  updatedAt                 DateTime                 @updatedAt
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
   avatarUrl                 String?
-  bodyMeasurements          BodyMeasurements?
-  notificationPreferences   NotificationPreferences?
-  stylePreferences          StylePreferences?
+
+  bodyMeasurements        BodyMeasurements?
+  notificationPreferences NotificationPreferences?
+  stylePreferences        StylePreferences?
+
+  designerProfile       DesignerProfile?
+  sessions              Sessions[]
+  sentNotifications     Notification[]   @relation("notificationSender")
+  receivedNotifications Notification[]   @relation("notificationReceiver")
+  Reviews               Review[]
 }
 
 model BodyMeasurements {
@@ -78,58 +85,71 @@ model Otps {
   createdAt DateTime @default(now())
 }
 
-model Designer {
-  id              String                   @id @default(uuid())
-  name            String
-  location        String?
-  gender          Gender?
+model DesignerProfile {
+  id  String @id @unique
+  uid String @unique @default(uuid())
+
+  address    String
+  latitude   Decimal
+  longtitude Decimal
+
   yearsExperience Int
-  address         String
   about           String
   workingDays     Json
-  avatarUrl       String?
   ordersFinished  Int
-  rating          Int
-  ratingCount     Int?
-  reviews         Review[]
-  services        Service[]
-  teamMembers     TeamMember[]
-  categories      Category[] @relation("CategoryToDesigner")
-  portfolios      Portfolio[]  @relation("PortfolioToDesigner")
+
+  reviews  Review[]
+  services Service[]
+
+  teamMembers TeamMember[]
+  categories  Category[]   @relation("CategoryToDesigner")
+  portfolios  Portfolio[]  @relation("PortfolioToDesigner")
+
+  userAccount Users @relation(fields: [uid], references: [id])
 }
 
 model Service {
-  id          String                   @id @default(uuid())
+  id          String          @id @default(uuid())
   designerId  String
   title       String
   description String
   price       Int
-  designer    Designer @relation(fields: [designerId], references: [id])
+  designer    DesignerProfile @relation(fields: [designerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model TeamMember {
-  id          String                   @id @default(uuid())
-  designerId  String
-  name        String
-  role        String
-  avatarUrl   String?
-  designer    Designer @relation(fields: [designerId], references: [id])
+  id         String          @id @default(uuid())
+  designerId String
+  name       String
+  role       String
+  avatarUrl  String?
+  designer   DesignerProfile @relation(fields: [designerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Review {
-  id          String                   @id @default(uuid())
-  designerId   String
-  customerName String
-  rating       Int
-  comment      String
-  postedOn     DateTime
-  designer     Designer @relation(fields: [designerId], references: [id])
+  id         String @id @default(uuid())
+  designerId String
+  customerId String
+
+  rating   Int
+  comment  String
+  postedOn DateTime
+
+  user     Users           @relation(fields: [customerId], references: [id])
+  designer DesignerProfile @relation(fields: [designerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Category {
-  id          String                   @id @default(uuid())
-  name        String
-  designers   Designer[] @relation("CategoryToDesigner")
+  id        String            @id @default(uuid())
+  name      String
+  designers DesignerProfile[] @relation("CategoryToDesigner")
+}
+
+model Sessions {
+  token      String   @id
+  userId     String   @unique
+  ExpiryDate DateTime
+  user       Users    @relation(fields: [userId], references: [id])
 }
 
 enum Gender {
@@ -138,8 +158,34 @@ enum Gender {
 }
 
 model Portfolio {
-  id          String                   @id @default(uuid())
-  designerId  String
-  url         String
-  designer    Designer @relation(fields: [designerId], references: [id], name: "PortfolioToDesigner")
+  id         String          @id @default(uuid())
+  designerId String
+  url        String
+  designer   DesignerProfile @relation(fields: [designerId], references: [uid], name: "PortfolioToDesigner")
+}
+
+enum NotificationType {
+  RescheduleRequest
+  BookingConfirmed
+  Ideas
+}
+
+enum NotificationSenderType {
+  User
+  System
+}
+
+model Notification {
+  id         Int              @id @default(autoincrement())
+  type       NotificationType
+  read       Boolean          @default(false)
+  details    Json?
+  created_at DateTime         @default(now())
+
+  senderType NotificationSenderType
+  senderId   String?
+  sender     Users?                 @relation(fields: [senderId], references: [id], name: "notificationSender")
+
+  receiverId String
+  receiver   Users  @relation(fields: [receiverId], references: [id], name: "notificationReceiver")
 }

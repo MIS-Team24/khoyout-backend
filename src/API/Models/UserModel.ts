@@ -1,6 +1,7 @@
 import { prisma  } from "../../Database";
 import { Prisma  } from "@prisma/client";
 import { UserBody } from "../types/auth";
+import { getUTCTime } from "../../Utilities/Time";
 
 //find by unique attribute
 export const findUserBy = async (data : Prisma.UsersWhereUniqueInput) => {
@@ -9,6 +10,103 @@ export const findUserBy = async (data : Prisma.UsersWhereUniqueInput) => {
     })
     return user 
 }
+
+export async function getUserLoginData(email: string) {
+    const result = await prisma.users.findUnique({
+        where: {
+            email: email
+        },
+        select: {
+            email: true,
+            password: true,
+            id: true
+        }
+    });
+    return result;
+}
+
+export async function getUserByToken(token: string, evenIfExpired = false)
+{
+    const result = await prisma.sessions.findFirst({where: {
+        token: token
+    }, select: {
+        user: true,
+        ExpiryDate: true
+    }});
+
+    if (!result) return null;
+
+    if (evenIfExpired === false) {
+        const UTCNow = getUTCTime();
+        const ExpiryDate = result.ExpiryDate;
+
+        if (UTCNow > ExpiryDate) {
+            await deleteUserDbSession(token);
+            return null;
+        }
+    }
+
+    return result.user;
+}
+
+export async function initiateUserDbSession(token: string, userId: string, expiryDateUTC: Date): Promise<boolean>
+{
+    try
+    {
+        await prisma.sessions.create({
+            data: {
+                token: token,
+                userId: userId,
+                ExpiryDate: expiryDateUTC
+            }
+        });
+        return true;
+    }
+    catch (error) {
+        return false;
+    }
+}
+
+export async function deleteUserDbSession(token: string) : Promise<boolean>
+{
+    try
+    {
+        await prisma.sessions.delete({
+            where: {
+                token: token
+            }
+        });
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+export async function deleteAllUserSessionsFromDb(userId: string) : Promise<boolean>
+{
+    try
+    {
+        await prisma.sessions.deleteMany({
+            where: {
+                userId: userId
+            }
+        });
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+export async function getUserById(userId: string) {
+    const result = await prisma.users.findFirst({
+        where: {
+            id: userId
+        }
+    });
+
+    return result;
+}
+
 //
 
 //create user
