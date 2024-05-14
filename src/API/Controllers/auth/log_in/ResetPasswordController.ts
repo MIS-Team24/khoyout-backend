@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as bcrypt from "bcrypt"
 import { PasswordResetBody } from "../../../types/auth";
-import { findUserBy, updateUser } from "../../../Models/UserModel";
+import { changeUserPasswordThroughEmailDb, findUserBy, getUserByEmail, updateUser } from "../../../Models/UserModel";
 import { ErrorCode, ResStatus } from "../../../Exceptions/main";
 import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../../../Exceptions/badRequest";
@@ -14,7 +14,7 @@ export async function resetPasswordHandler (req: Request, res: Response , next :
         const passwordResetBody  = req.body as  PasswordResetBody
 
         //check if user already exist 
-        const userTarget = await findUserBy({email : passwordResetBody.email})
+        const userTarget = await getUserByEmail(passwordResetBody.email);
         if(!userTarget){
             return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
                 new BadRequestException(Messages.USER_NOT_FOUND 
@@ -39,7 +39,7 @@ export async function resetPasswordHandler (req: Request, res: Response , next :
         const hashedPassword = await bcrypt.hash(passwordResetBody.password , salt)
         //
 
-        await updateUser({email : passwordResetBody.email},{password : hashedPassword})
+        await changeUserPasswordThroughEmailDb(passwordResetBody.email, hashedPassword);
 
         return res.json({
             isPasswordUpdated : true,

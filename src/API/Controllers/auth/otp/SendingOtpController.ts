@@ -2,7 +2,7 @@ import { generateOTP } from "../../../../Services/generateOTP";
 import { OtpEmailStructure } from "../../../../Services/htmlEmailStructures/OtpEmailStructures";
 import { sendEmail } from "../../../../Services/sendEmail";
 import { addNewOtp } from "../../../Models/OtpModelModel";
-import { findUserBy } from "../../../Models/UserModel";
+import { findUserBy, getUserByEmail } from "../../../Models/UserModel";
 import { EmailBody } from "../../../types/auth";
 import { NextFunction, Request, Response } from "express";
 import { generateToken } from "../../../../Services/generateToken";
@@ -17,7 +17,7 @@ export async function OtpSentToEmailHandler(req: Request, res: Response , next :
     const emailBody = req.body as EmailBody;
 
     //check if user already exist 
-    const user = await findUserBy({email : emailBody.email})
+    const user = await getUserByEmail(emailBody.email);
     if(!user){
         return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.USER_NOT_FOUND 

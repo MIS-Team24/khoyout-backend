@@ -41,11 +41,11 @@ export async function localLoginHandler (req: Request , res :Response , next :Ne
     await initiateUserDbSession(token, user.id, addHoursToDate(getUTCTime(), 1)); // expires in an hour.
 
     //the user form returned according to the frontent desire
-    let userReturnedToFront : UserBody = {
+    const userReturnedToFront = {
         email: fullUser.email,
         emailActivated:fullUser.emailActivated,
         createdAt : fullUser.createdAt,
-        fullName: fullUser.fullName,
+        fullName: fullUser.firstName + " " + fullUser.lastName,
         phone : fullUser.phone
     }
 

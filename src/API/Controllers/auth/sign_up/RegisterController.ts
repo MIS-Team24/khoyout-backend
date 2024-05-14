@@ -1,6 +1,6 @@
 import { Request, Response , NextFunction} from "express";
 import { RegisterBody, UserBody } from "../../../types/auth";
-import { addUser, findUserBy } from "../../../Models/UserModel";
+import { addUser, findUserBy, getUserByEmail } from "../../../Models/UserModel";
 import * as bcrypt from "bcrypt";
 import 'dotenv/config';
 import { generateOTP } from "../../../../Services/generateOTP";
@@ -25,7 +25,7 @@ export async function RegisterHandler(req: Request, res: Response, next: NextFun
     const registerBody = req.body as RegisterBody;
 
     // Check if user already exists
-    const userTarget = await findUserBy({ email: registerBody.email });
+    const userTarget = await getUserByEmail(registerBody.email);
     if (userTarget) {
         return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.USER_EXIST, ErrorCode.USER_ALREADY_EXIST, { isUserSaved: false })
@@ -55,15 +55,17 @@ export async function RegisterHandler(req: Request, res: Response, next: NextFun
         password: hashedPassword,
         emailActivated: false // Setting default values based on your schema
     };
-    const user = await addUser(newUser);
+
+    const user = await addUser(newUser.email, newUser.firstName, newUser.lastName, newUser.password);
 
     // User form returned according to the frontend desire
     let userReturnedToFront: UserBody = {
-        email: user?.email,
-        emailActivated: user?.emailActivated,
-        createdAt: user?.createdAt,
-        fullName: user?.fullName,
-        phone: user?.phone
+        email: user.baseAccount.email,
+        emailActivated: false,
+        createdAt: user.baseAccount.createdAt,
+        firstName: user.baseAccount.firstName,
+        lastName: user.baseAccount.lastName,
+        phone: user.baseAccount.phone
     };
 
     // Generate a random OTP from 4 numbers

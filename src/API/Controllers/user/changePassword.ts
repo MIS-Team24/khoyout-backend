@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserBody } from "../../types/auth";
-import { deleteAllUserSessionsFromDb, deleteUserDbSession, updateUser } from "../../Models/UserModel";
+import { changeUserPasswordDb, deleteAllUserSessionsFromDb, deleteUserDbSession, updateUser } from "../../Models/UserModel";
 import { ErrorCode , ResStatus } from "../../Exceptions/main";
 import { errorResponseTemplate } from "../../../Services/responses/ErrorTemplate";
 import { BadRequestException } from "../../Exceptions/badRequest";
@@ -23,11 +23,12 @@ export const changeUserPassword = async (req: Request, res : Response) => {
     //
 
     //hash password
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(changePasswordBody.password , salt)
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(changePasswordBody.password , salt);
     //
 
-    const userUpdated = await updateUser({id : user?.id} , {password : hashedPassword})
+    const userUpdated = await changeUserPasswordDb( user?.id?? "", hashedPassword);
+    
     if(!userUpdated){
         return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.USER_NOT_FOUND 
