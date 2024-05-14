@@ -31,8 +31,6 @@ export async function checkIfAuthenticated (req : Request, res : Response , next
             const user = await getUserByToken(Token);
 
             if (user) {
-                console.log(user);
-
                 req.user = user;
                 isAuthed = true;
             }

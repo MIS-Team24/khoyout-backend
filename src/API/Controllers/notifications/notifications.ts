@@ -16,6 +16,7 @@ export async function GetUserNotificationsController(req: Request, res: Response
     
     const mappedNotifications = allNotifications.map((notif) => {
         return {
+            id: notif.id,
             read: notif.read,
             type: notif.type,
             time: notif.created_at,
