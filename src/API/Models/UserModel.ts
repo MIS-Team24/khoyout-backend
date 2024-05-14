@@ -11,8 +11,18 @@ export const findUserBy = async (data : Prisma.UsersWhereUniqueInput) => {
     return user 
 }
 
+export async function getUserByEmail(email: string)
+{
+    const user = await prisma.baseAccount.findFirst({
+        where: {
+            email: email
+        }
+    })
+    return user;
+}
+
 export async function getUserLoginData(email: string) {
-    const result = await prisma.users.findUnique({
+    const result = await prisma.baseAccount.findUnique({
         where: {
             email: email
         },
@@ -30,7 +40,7 @@ export async function getUserByToken(token: string, evenIfExpired = false)
     const result = await prisma.sessions.findFirst({where: {
         token: token
     }, select: {
-        user: true,
+        baseAccount: true,
         ExpiryDate: true
     }});
 
@@ -46,7 +56,7 @@ export async function getUserByToken(token: string, evenIfExpired = false)
         }
     }
 
-    return result.user;
+    return result.baseAccount;
 }
 
 export async function initiateUserDbSession(token: string, userId: string, expiryDateUTC: Date): Promise<boolean>
@@ -56,7 +66,7 @@ export async function initiateUserDbSession(token: string, userId: string, expir
         await prisma.sessions.create({
             data: {
                 token: token,
-                userId: userId,
+                accountId: userId,
                 ExpiryDate: expiryDateUTC
             }
         });
@@ -88,7 +98,7 @@ export async function deleteAllUserSessionsFromDb(userId: string) : Promise<bool
     {
         await prisma.sessions.deleteMany({
             where: {
-                userId: userId
+                accountId: userId
             }
         });
         return true;
@@ -98,7 +108,7 @@ export async function deleteAllUserSessionsFromDb(userId: string) : Promise<bool
 }
 
 export async function getUserById(userId: string) {
-    const result = await prisma.users.findFirst({
+    const result = await prisma.baseAccount.findFirst({
         where: {
             id: userId
         }
@@ -107,18 +117,89 @@ export async function getUserById(userId: string) {
     return result;
 }
 
+export async function changeUserPasswordDb(baseAccountId: string, password: string) {
+    try {
+        await prisma.baseAccount.update({
+            where: {
+                id: baseAccountId
+            },
+            data: {
+                password: password
+            }
+        });
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+export async function changeUserPasswordThroughEmailDb(email: string, password: string) {
+    try {
+        await prisma.baseAccount.update({
+            where: {
+                email: email
+            },
+            data: {
+                password: password
+            }
+        });
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+export async function verifyEmailDb(email: string)
+{
+    try {
+        await prisma.baseAccount.update({
+            where: {
+                email: email
+            },
+            data: {
+                emailActivated: true
+            }
+        });
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
 //
 
 //create user
-export const addUser = async (data : Prisma.UsersCreateInput) => {
-    const user = await prisma.users.create({data})
-    return user as UserBody
+// export const addUser = async (data : Prisma.UsersCreateInput) => {
+//     const user = await prisma.users.create({data})
+//     return user as UserBody
+// }
+
+export async function addUser (email: string, firstName: string, lastName: string, password: string)
+{
+    const user = await prisma.users.create({
+        data: {
+            baseAccount: {
+                create: {
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+                    password: password,
+                    emailActivated: false,
+                }
+            }
+        },
+        select: {
+            baseAccount: true,
+        }
+    });
+
+    return user;
 }
 //
 
 //update user data
-export const updateUser = async ( uniqueData : Prisma.UsersWhereUniqueInput , data? : Prisma.UsersUpdateInput) => {
-    const user = await prisma.users.update({
+export const updateUser = async ( uniqueData : Prisma.BaseAccountWhereUniqueInput , data? : Prisma.BaseAccountUpdateInput) => {
+    const user = await prisma.baseAccount.update({
         where : uniqueData,
         data : {...data}
     })

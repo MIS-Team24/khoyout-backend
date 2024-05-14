@@ -10,7 +10,7 @@ import { supabase } from "../../../Services/supabaseStorage";
 export const deleteUserAccount = async (req : Request , res : Response) => {
     const user = req?.user as UserBody
     const userId = user?.id?? "";
-    const userDeleted = await deleteUser({id : user?.id})
+    const userDeleted = await deleteUser({baseAccountId : user?.id})
     if(!userDeleted){
         return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(new BadRequestException(Messages.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND)));
     }

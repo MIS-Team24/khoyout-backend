@@ -17,7 +17,8 @@ export type EmailBody = {
 
 export type UserBody = {
     id?      : string,
-    fullName?  : string,
+    firstName?  : string,
+    lastName?   : string,
     email?     : string,
     phone?    : string | null,
     createdAt? : Date,

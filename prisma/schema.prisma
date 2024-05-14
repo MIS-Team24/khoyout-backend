@@ -7,35 +7,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model BaseAccount {
+  id String @id @default(uuid())
+
+  firstName      String
+  lastName       String
+  email          String    @unique
+  emailActivated Boolean   @default(false)
+  password       String
+  phone          String?   @unique
+  gender         Gender?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  avatarUrl      String?
+  BirthDate      DateTime?
+
+  sessions Sessions[]
+
+  user                 Users?
+  designer             DesignerProfile?
+  receivedNotification Notification[]   @relation(name: "notificationReceiver")
+  sentNotification     Notification[]   @relation(name: "notificationSender")
+}
+
 model Users {
-  id                        String   @id @default(uuid())
-  fullName                  String
-  firstName                 String
-  lastName                  String
-  email                     String   @unique
-  emailActivated            Boolean  @default(false)
-  password                  String
-  phone                     String?  @unique
+  baseAccountId String @id @unique
+
+  country String?
+  city    String?
+
   age                       Int?
-  gender                    Gender?
-  country                   String?
-  city                      String?
   bodyMeasurementsId        Int?
   stylePreferencesId        Int?
   notificationPreferencesId Int?
-  createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @updatedAt
-  avatarUrl                 String?
 
   bodyMeasurements        BodyMeasurements?
   notificationPreferences NotificationPreferences?
   stylePreferences        StylePreferences?
+  Reviews                 Review[]
 
-  designerProfile       DesignerProfile?
-  sessions              Sessions[]
-  sentNotifications     Notification[]   @relation("notificationSender")
-  receivedNotifications Notification[]   @relation("notificationReceiver")
-  Reviews               Review[]
+  baseAccount BaseAccount @relation(fields: [baseAccountId], references: [id])
 }
 
 model BodyMeasurements {
@@ -57,7 +68,7 @@ model BodyMeasurements {
   userId        String   @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  user          Users    @relation(fields: [userId], references: [id])
+  user          Users    @relation(fields: [userId], references: [baseAccountId])
 }
 
 model StylePreferences {
@@ -66,7 +77,7 @@ model StylePreferences {
   userId      String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  user        Users    @relation(fields: [userId], references: [id])
+  user        Users    @relation(fields: [userId], references: [baseAccountId])
 }
 
 model NotificationPreferences {
@@ -74,7 +85,7 @@ model NotificationPreferences {
   userId                       String  @unique
   textAppointmentNotifications Boolean @default(true)
   textOffersNotifications      Boolean @default(true)
-  user                         Users   @relation(fields: [userId], references: [id])
+  user                         Users   @relation(fields: [userId], references: [baseAccountId])
 }
 
 model Otps {
@@ -86,8 +97,7 @@ model Otps {
 }
 
 model DesignerProfile {
-  id  String @id @unique
-  uid String @unique @default(uuid())
+  baseAccountId String @id @unique
 
   address    String
   latitude   Decimal
@@ -98,14 +108,13 @@ model DesignerProfile {
   workingDays     Json
   ordersFinished  Int
 
-  reviews  Review[]
-  services Service[]
-
+  reviews     Review[]
+  services    Service[]
   teamMembers TeamMember[]
-  categories  Category[]   @relation("CategoryToDesigner")
-  portfolios  Portfolio[]  @relation("PortfolioToDesigner")
+  categories  DesignersCategories[]
+  portfolios  Portfolio[]
 
-  userAccount Users @relation(fields: [uid], references: [id])
+  baseAccount BaseAccount @relation(fields: [baseAccountId], references: [id])
 }
 
 model Service {
@@ -114,7 +123,7 @@ model Service {
   title       String
   description String
   price       Int
-  designer    DesignerProfile @relation(fields: [designerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  designer    DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model TeamMember {
@@ -123,7 +132,7 @@ model TeamMember {
   name       String
   role       String
   avatarUrl  String?
-  designer   DesignerProfile @relation(fields: [designerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Review {
@@ -135,21 +144,32 @@ model Review {
   comment  String
   postedOn DateTime
 
-  user     Users           @relation(fields: [customerId], references: [id])
-  designer DesignerProfile @relation(fields: [designerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user     Users           @relation(fields: [customerId], references: [baseAccountId])
+  designer DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Category {
-  id        String            @id @default(uuid())
+  id        String                @id @default(uuid())
   name      String
-  designers DesignerProfile[] @relation("CategoryToDesigner")
+  designers DesignersCategories[]
+}
+
+model DesignersCategories {
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+  designerId String
+
+  Category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@id([designerId, categoryId])
 }
 
 model Sessions {
   token      String   @id
-  userId     String   @unique
+  accountId  String   @unique
   ExpiryDate DateTime
-  user       Users    @relation(fields: [userId], references: [id])
+
+  baseAccount BaseAccount @relation(fields: [accountId], references: [id])
 }
 
 enum Gender {
@@ -161,7 +181,7 @@ model Portfolio {
   id         String          @id @default(uuid())
   designerId String
   url        String
-  designer   DesignerProfile @relation(fields: [designerId], references: [uid], name: "PortfolioToDesigner")
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
 }
 
 enum NotificationType {
@@ -176,16 +196,14 @@ enum NotificationSenderType {
 }
 
 model Notification {
-  id         Int              @id @default(autoincrement())
+  id         Int                    @id @default(autoincrement())
   type       NotificationType
-  read       Boolean          @default(false)
+  read       Boolean                @default(false)
   details    Json?
-  created_at DateTime         @default(now())
-
+  created_at DateTime               @default(now())
   senderType NotificationSenderType
-  senderId   String?
-  sender     Users?                 @relation(fields: [senderId], references: [id], name: "notificationSender")
-
   receiverId String
-  receiver   Users  @relation(fields: [receiverId], references: [id], name: "notificationReceiver")
+  receiver   BaseAccount            @relation(fields: [receiverId], references: [id], name: "notificationReceiver")
+  senderId   String?
+  sender     BaseAccount?           @relation(fields: [senderId], references: [id], name: "notificationSender")
 }
