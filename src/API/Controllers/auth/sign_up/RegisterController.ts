@@ -12,6 +12,7 @@ import { ErrorCode, ResStatus } from "../../../Exceptions/main";
 import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
 import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
+import { UserType } from "../../../types/user";
 
 // Helper function to split fullName
 function splitName(fullName: string): { firstName: string, lastName: string } {
@@ -65,7 +66,8 @@ export async function RegisterHandler(req: Request, res: Response, next: NextFun
         createdAt: user.baseAccount.createdAt,
         firstName: user.baseAccount.firstName,
         lastName: user.baseAccount.lastName,
-        phone: user.baseAccount.phone
+        phone: user.baseAccount.phone,
+        type: UserType.User
     };
 
     // Generate a random OTP from 4 numbers

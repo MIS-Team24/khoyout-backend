@@ -2,6 +2,7 @@ import { prisma  } from "../../Database";
 import { Prisma  } from "@prisma/client";
 import { UserBody } from "../types/auth";
 import { getUTCTime } from "../../Utilities/Time";
+import { UserType } from "../types/user";
 
 //find by unique attribute
 export const findUserBy = async (data : Prisma.UsersWhereUniqueInput) => {
@@ -35,12 +36,24 @@ export async function getUserLoginData(email: string) {
     return result;
 }
 
-export async function getUserByToken(token: string, evenIfExpired = false)
+export async function getUserByToken(token: string, evenIfExpired = false) : Promise<UserBody | null>
 {
     const result = await prisma.sessions.findFirst({where: {
         token: token
     }, select: {
-        baseAccount: true,
+        baseAccount: {
+            select: {
+                id: true,
+                email: true,
+                emailActivated: true,
+                firstName: true,
+                lastName: true,
+                createdAt: true,
+                phone: true,
+                designer: true,
+                user: true,               
+            }
+        },
         ExpiryDate: true
     }});
 
@@ -56,7 +69,18 @@ export async function getUserByToken(token: string, evenIfExpired = false)
         }
     }
 
-    return result.baseAccount;
+    const baseAccount = result.baseAccount;
+
+    return {
+        id: baseAccount.id,
+        email: baseAccount.email,
+        emailActivated: baseAccount.emailActivated,
+        firstName: baseAccount.firstName,
+        lastName: baseAccount.lastName,
+        createdAt: new Date(baseAccount.createdAt),
+        phone: baseAccount.phone,
+        type: baseAccount.user !== null? UserType.User : UserType.Designer
+    };
 }
 
 export async function initiateUserDbSession(token: string, userId: string, expiryDateUTC: Date): Promise<boolean>

@@ -20,7 +20,7 @@ model BaseAccount {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   avatarUrl      String?
-  birthDate      DateTime?
+  BirthDate      DateTime?
 
   sessions Sessions[]
 
@@ -46,7 +46,9 @@ model Users {
   stylePreferences        StylePreferences?
   Reviews                 Review[]
 
-  baseAccount BaseAccount @relation(fields: [baseAccountId], references: [id])
+  baseAccount     BaseAccount      @relation(fields: [baseAccountId], references: [id])
+  appointments    Appointment[]
+  bookingRequests BookingRequest[]
 }
 
 model BodyMeasurements {
@@ -92,26 +94,95 @@ model Otps {
   id        String   @id @default(uuid())
   email     String
   code      String   @unique
-  expiredAt DateTime
+  expiredAt String   @unique
   createdAt DateTime @default(now())
 }
 
 model DesignerProfile {
   baseAccountId String @id @unique
-  address String
-  latitude Decimal
+
+  address    String
+  latitude   Decimal
   longtitude Decimal
+
   yearsExperience Int
-  about String
-  workingDays Json
-  location String
-  ordersFinished Int
-  reviews Review[]
-  services Service[]
+  about           String
+  workingDays     Json
+  ordersFinished  Int
+
+  timeZone String @default("Etc/UTC")
+
+  reviews     Review[]
+  services    Service[]
   teamMembers TeamMember[]
-  categories DesignersCategories[]
-  portfolios Portfolio[]
-  baseAccount BaseAccount @relation(fields: [baseAccountId], references: [id])
+  categories  DesignersCategories[]
+  portfolios  Portfolio[]
+
+  baseAccount       BaseAccount        @relation(fields: [baseAccountId], references: [id])
+  availabilityTimes AvailabilityTime[]
+  appointments      Appointment[]
+  bookingRequests   BookingRequest[]
+}
+
+model AvailabilityTime {
+  id Int @id @unique
+
+  dayOfWeek DayOfWeek
+  startTime String
+  endTime   String
+
+  designerId String
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+}
+
+enum BookingRequestStatus {
+  Accepted
+  Waiting
+  Expired
+}
+
+model BookingRequest {
+  id Int @id @unique @default(autoincrement())
+
+  status        BookingRequestStatus
+  startDateTime DateTime
+  endDateTime   DateTime
+
+  userId     String
+  user       Users           @relation(fields: [userId], references: [baseAccountId])
+  designerId String
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+}
+
+enum AppointmentStatus {
+  Booked
+  OnGoing
+  Finished
+  Missed
+}
+
+model Appointment {
+  id Int @id @default(autoincrement())
+
+  startDateTime DateTime
+  endDateTime   DateTime
+
+  status AppointmentStatus
+
+  userId     String
+  user       Users           @relation(fields: [userId], references: [baseAccountId])
+  designerId String
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
 }
 
 model Service {
@@ -133,16 +204,16 @@ model TeamMember {
 }
 
 model Review {
-  id String @id @default(uuid())
+  id         String @id @default(uuid())
   designerId String
-  customerName String
-  avatarUrl     String?
-  rating Int
-  comment String
+  customerId String
+
+  rating   Int
+  comment  String
   postedOn DateTime
+
+  user     Users           @relation(fields: [customerId], references: [baseAccountId])
   designer DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
-  Users Users? @relation(fields: [usersBaseAccountId], references: [baseAccountId])
-  usersBaseAccountId String?
 }
 
 model Category {
@@ -155,7 +226,7 @@ model DesignersCategories {
   designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
   designerId String
 
-  category   Category @relation(fields: [categoryId], references: [id])
+  Category   Category @relation(fields: [categoryId], references: [id])
   categoryId String
 
   @@id([designerId, categoryId])
