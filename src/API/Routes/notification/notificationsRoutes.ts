@@ -10,7 +10,7 @@ const markAsReadSchema = z.object({
     ids: z.array(z.number().int())
 });
 
-router.get("/list", checkIfAuthenticated, GetUserNotificationsController);
-router.post("/mark-as-read", checkIfAuthenticated, BodyValidator({schema: markAsReadSchema}), MarkUsersNotificationsAsRead);
+router.get("/list", checkIfAuthenticated(), GetUserNotificationsController);
+router.post("/mark-as-read", checkIfAuthenticated(), BodyValidator({schema: markAsReadSchema}), MarkUsersNotificationsAsRead);
 
 export default router;

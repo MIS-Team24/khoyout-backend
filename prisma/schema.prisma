@@ -46,7 +46,9 @@ model Users {
   stylePreferences        StylePreferences?
   Reviews                 Review[]
 
-  baseAccount BaseAccount @relation(fields: [baseAccountId], references: [id])
+  baseAccount     BaseAccount      @relation(fields: [baseAccountId], references: [id])
+  appointments    Appointment[]
+  bookingRequests BookingRequest[]
 }
 
 model BodyMeasurements {
@@ -108,13 +110,79 @@ model DesignerProfile {
   workingDays     Json
   ordersFinished  Int
 
+  timeZone String @default("Etc/UTC")
+
   reviews     Review[]
   services    Service[]
   teamMembers TeamMember[]
   categories  DesignersCategories[]
   portfolios  Portfolio[]
 
-  baseAccount BaseAccount @relation(fields: [baseAccountId], references: [id])
+  baseAccount       BaseAccount        @relation(fields: [baseAccountId], references: [id])
+  availabilityTimes AvailabilityTime[]
+  appointments      Appointment[]
+  bookingRequests   BookingRequest[]
+}
+
+model AvailabilityTime {
+  id Int @id @unique
+
+  dayOfWeek DayOfWeek
+  startTime String
+  endTime   String
+
+  designerId String
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+}
+
+enum BookingRequestStatus {
+  Accepted
+  Waiting
+  Expired
+}
+
+model BookingRequest {
+  id Int @id @unique @default(autoincrement())
+
+  status        BookingRequestStatus
+  startDateTime DateTime
+  endDateTime   DateTime
+
+  userId     String
+  user       Users           @relation(fields: [userId], references: [baseAccountId])
+  designerId String
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+}
+
+enum AppointmentStatus {
+  Booked
+  OnGoing
+  Finished
+  Missed
+}
+
+model Appointment {
+  id Int @id @default(autoincrement())
+
+  startDateTime DateTime
+  endDateTime   DateTime
+
+  status AppointmentStatus
+
+  userId     String
+  user       Users           @relation(fields: [userId], references: [baseAccountId])
+  designerId String
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
 }
 
 model Service {

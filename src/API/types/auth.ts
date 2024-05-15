@@ -1,3 +1,5 @@
+import { UserType } from "./user"
+
 export type LoginBody = {
     email: string,
     password: string
@@ -17,12 +19,13 @@ export type EmailBody = {
 
 export type UserBody = {
     id?      : string,
+    type: UserType,
     firstName?  : string,
     lastName?   : string,
     email?     : string,
     phone?    : string | null,
     createdAt? : Date,
-    emailActivated? : Boolean
+    emailActivated? : Boolean,
 }
 
 //reset password 
