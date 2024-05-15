@@ -150,15 +150,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
           avatarUrl: true
         }
       },
-      categories: {
-        select: {
-          Category: {
-            select: {
-              name: true
-            }
-          }
-        }
-      },
+
       portfolios: {
         select: {
           url: true
