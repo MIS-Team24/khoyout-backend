@@ -5,3 +5,7 @@ export type ChangePasswordBody = {
 }
 //
 
+export enum UserType {
+    User,
+    Designer
+}

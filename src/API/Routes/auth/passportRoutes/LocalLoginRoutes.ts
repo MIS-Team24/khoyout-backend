@@ -10,12 +10,12 @@ import { logoutHandler } from '../../../Controllers/auth/log_in/passportLogin/lo
 const router = Router()
 
 router.post('/auth/login', BodyValidator({schema: loginSchema}) , localLoginHandler)
-router.get('/auth/get-user', checkIfAuthenticated, getUserHandler)
-router.get('/auth/is-logged-in', checkIfAuthenticated, isUserAuthonticatedHandler)
-router.delete('/auth/logout', checkIfAuthenticated, logoutHandler)
+router.get('/auth/get-user', checkIfAuthenticated(), getUserHandler)
+router.get('/auth/is-logged-in', checkIfAuthenticated(), isUserAuthonticatedHandler)
+router.delete('/auth/logout', checkIfAuthenticated(), logoutHandler)
 
 //protected route for test
-router.get("/auth/protected-route", checkIfAuthenticated , (req , res) => {
+router.get("/auth/protected-route", checkIfAuthenticated() , (req , res) => {
     return res.json({message : "This is a protected route for test for exampla like the profile page"})
 })
 //
