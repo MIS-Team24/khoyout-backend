@@ -46,7 +46,8 @@ model Users {
   stylePreferences        StylePreferences?
   Reviews                 Review[]
 
-  baseAccount BaseAccount @relation(fields: [baseAccountId], references: [id])
+  baseAccount  BaseAccount   @relation(fields: [baseAccountId], references: [id])
+  appointments Appointment[]
 }
 
 model BodyMeasurements {
@@ -107,6 +108,7 @@ model DesignerProfile {
   about           String
   workingDays     Json
   ordersFinished  Int
+  timeZone        String
 
   reviews     Review[]
   services    Service[]
@@ -114,7 +116,42 @@ model DesignerProfile {
   categories  DesignersCategories[]
   portfolios  Portfolio[]
 
-  baseAccount BaseAccount @relation(fields: [baseAccountId], references: [id])
+  baseAccount       BaseAccount        @relation(fields: [baseAccountId], references: [id])
+  availabilityTimes AvailabilityTime[]
+  appointments      Appointment[]
+}
+
+model AvailabilityTime {
+  id Int @id @unique
+
+  dayOfWeek DayOfWeek
+  startTime String
+  endTime   String
+
+  designerId String
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+}
+
+model Appointment {
+  id Int @id @default(autoincrement())
+
+  startDateTime DateTime
+  endDateTime   DateTime
+
+  userId     String
+  user       Users           @relation(fields: [userId], references: [baseAccountId])
+  designerId String
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
 }
 
 model Service {
