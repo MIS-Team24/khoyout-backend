@@ -113,7 +113,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       baseAccountId: true,
       ordersFinished: true,
       latitude: true,
-      longitude: true,
+      longtitude: true,
       address: true,
       yearsExperience: true,
       about: true,
@@ -129,7 +129,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
           comment: true,
           postedOn: true,
           avatarUrl: true,
-          Users: {
+          user: {
             select: {
               baseAccountId: true
             }
@@ -152,7 +152,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       },
       categories: {
         select: {
-          category: {
+          Category: {
             select: {
               name: true
             }
@@ -172,7 +172,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
     const { open, openUntil } = isOpenNow(workingDays);
     return {
       ...designer,
-      avatarUrl: designer.baseAccount.avatarUrl,
+      avatarUrl: designer.baseAccountId.avatarUrl,
       openNow: open,
       openUntil: open ? openUntil : null,
       workingDays: formatWorkingDays(workingDays) // Format working days for readability

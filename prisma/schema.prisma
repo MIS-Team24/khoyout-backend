@@ -104,7 +104,7 @@ model DesignerProfile {
   address    String
   latitude   Decimal
   longtitude Decimal
-
+  location   String
   yearsExperience Int
   about           String
   workingDays     Json
@@ -207,6 +207,7 @@ model Review {
   id         String @id @default(uuid())
   designerId String
   customerId String
+  avatarUrl  String?
 
   rating   Int
   comment  String
