@@ -97,7 +97,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       ordersFinished: designer.ordersFinished,
       location: designer.location, // Include location instead of address
       yearsExperience: designer.yearsExperience,
-      rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : null,
+      rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
       avatarUrl: designer.baseAccount.avatarUrl,
       openNow: open,
       openUntil: open ? openUntil : null
@@ -167,7 +167,8 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       avatarUrl: designer.baseAccount.avatarUrl,
       openNow: open,
       openUntil: open ? openUntil : null,
-      workingDays: formatWorkingDays(workingDays) // Format working days for readability
+      workingDays: formatWorkingDays(workingDays), // Format working days for readability
+      rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0
     };
   }
 
