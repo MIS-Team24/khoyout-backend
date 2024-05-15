@@ -428,24 +428,31 @@ async function main() {
       }
     });
 
+    const user = await prisma.users.create({
+      data: {
+        baseAccountId: baseAccount.id
+      }
+    });
+
     await prisma.designerProfile.create({
       data: {
         baseAccountId: baseAccount.id,
         address: designer.address,
         latitude: designer.latitude,
+        avatarUrl: avatarUrl[i % avatarUrl.length],
         location: designer.location,
         longtitude: designer.longitude,
         yearsExperience: designer.yearsExperience,
         about: designer.about,
-        workingDays: JSON.stringify(getFormattedWorkingHours()), // Convert to JSON-compatible format
+        workingDays: JSON.stringify(getFormattedWorkingHours()),
         ordersFinished: Math.floor(Math.random() * 15),
         reviews: {
           create: getRandomItems(predefinedReviewers, 2, 4).map((reviewer, index) => ({
             rating: Math.floor(Math.random() * 5) + 1,
             comment: reviewTexts[index] || "Default review comment.",
-            customerName: reviewer,
             postedOn: new Date(),
-            avatarUrl: avatarUrl[(i + index) % avatarUrl.length] // Add avatarUrl here
+            avatarUrl: avatarUrl[(i + index) % avatarUrl.length],
+            customerId: user.baseAccountId // Ensure customerId is set correctly
           }))
         },
         services: {
@@ -455,11 +462,13 @@ async function main() {
           create: getRandomItems(teamMemberNames, 2, 4).map((name, index) => ({
             name: name,
             role: teamMemberRoles[index % teamMemberRoles.length],
-            avatarUrl: avatarUrl[(i + index) % avatarUrl.length] // Add avatarUrl here
+            avatarUrl: avatarUrl[(i + index) % avatarUrl.length]
           }))
         },
         categories: {
-          create: getRandomItems(createdCategories, 2, 4).map(category => ({ category: { connect: { id: category.id } } }))
+          create: getRandomItems(createdCategories, 2, 4).map(category => ({
+            Category: { connect: { id: category.id } }
+          }))
         }
       }
     });

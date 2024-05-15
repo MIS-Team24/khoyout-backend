@@ -59,7 +59,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
 
   const designers = await prisma.designerProfile.findMany({
     where: {
-      location: location ? { contains: location } : undefined,
+      address: location ? { contains: location } : undefined,
       yearsExperience: yearsOfExperience ? { gte: yearsOfExperience } : undefined,
       reviews: minRating ? { some: { rating: { gte: minRating } } } : undefined
     },
@@ -71,8 +71,9 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     select: {
       baseAccountId: true,
       ordersFinished: true,
-      location: true, // Ensure location is selected
+      address: true,
       yearsExperience: true,
+      location: true, // Ensure location is selected
       workingDays: true,
       reviews: {
         select: {
@@ -114,7 +115,6 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       latitude: true,
       longtitude: true,
       address: true,
-      location: true,
       yearsExperience: true,
       about: true,
       workingDays: true,
