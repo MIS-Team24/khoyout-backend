@@ -1,7 +1,5 @@
 import { prisma } from "../../Database";
-import { Prisma, Gender } from "@prisma/client";
-
-const exampleGender: Gender = Gender.Female;
+import { Prisma } from "@prisma/client";
 
 // Define the filters interface
 interface DesignerFilters {
@@ -14,9 +12,49 @@ interface DesignerFilters {
   sortOrder?: 'asc' | 'desc';
 }
 
-// Get all designers with pagination, filtering, and sorting
+interface WorkingHour {
+  start: {
+    display: string;
+    compare: string;
+  };
+  end: {
+    display: string;
+    compare: string;
+  };
+}
+
+type WorkingHours = { [key: string]: WorkingHour };
+
+const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: string } => {
+  const currentDay = new Date().getDay().toString(); // Convert to string to match JSON keys
+  const currentTime = new Date().toTimeString().slice(0, 5); // Get current time in HH:mm format
+
+  const todayWorkingHours = workingDays?.[currentDay];
+  if (!todayWorkingHours || todayWorkingHours.start.compare === "") return { open: false };
+
+  if (currentTime >= todayWorkingHours.start.compare && currentTime <= todayWorkingHours.end.compare) {
+    return { open: true, openUntil: todayWorkingHours.end.display };
+  }
+
+  return { open: false };
+};
+
+const formatWorkingDays = (workingDays: WorkingHours): string[] => {
+  return Object.entries(workingDays).map(([day, hours]) => {
+    const dayName = daysOfWeek[parseInt(day)];
+    if (hours.start.display === "Closed") {
+      return `${dayName} Closed`;
+    } else {
+      return `${dayName} ${hours.start.display} - ${hours.end.display}`;
+    }
+  });
+};
+
+// Function to get all designers with updated logic
 export const readAllDesigners = async (filters: DesignerFilters) => {
-  const { location, minRating, yearsOfExperience, page = 1, limit = 10, sortBy = 'id', sortOrder = 'asc' } = filters;
+  const { location, minRating, yearsOfExperience, page = 1, limit = 10, sortBy = 'baseAccountId', sortOrder = 'asc' } = filters;
   const offset = (page - 1) * limit;
 
   const designers = await prisma.designerProfile.findMany({
@@ -31,46 +69,69 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       [sortBy]: sortOrder,
     },
     select: {
-      id: true,
+      baseAccountId: true,
       ordersFinished: true,
       address: true,
       yearsExperience: true,
+      location: true, // Ensure location is selected
+      workingDays: true,
       reviews: {
         select: {
           rating: true
+        }
+      },
+      baseAccount: {
+        select: {
+          avatarUrl: true
         }
       }
     }
   });
 
-  return designers.map(designer => ({
-    id: designer.id,
-    ordersFinished: designer.ordersFinished,
-    location: designer.address,
-    yearsExperience: designer.yearsExperience,
-    rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : null,
-  }));
+  return designers.map(designer => {
+    const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
+    const { open, openUntil } = isOpenNow(workingDays);
+
+    return {
+      baseAccountId: designer.baseAccountId,
+      ordersFinished: designer.ordersFinished,
+      location: designer.location, // Include location instead of address
+      yearsExperience: designer.yearsExperience,
+      rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : null,
+      avatarUrl: designer.baseAccount.avatarUrl,
+      openNow: open,
+      openUntil: open ? openUntil : null
+    };
+  });
 };
 
-// Get a specific designer by unique attribute
+// Function to find a specific designer by unique attribute
 export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInput) => {
   const designer = await prisma.designerProfile.findUnique({
     where: data,
     select: {
-      id: true,
+      baseAccountId: true,
       ordersFinished: true,
+      latitude: true,
+      longitude: true,
       address: true,
       yearsExperience: true,
       about: true,
       workingDays: true,
+      baseAccount: {
+        select: {
+          avatarUrl: true
+        }
+      },
       reviews: {
         select: {
           rating: true,
           comment: true,
           postedOn: true,
-          user: {
+          avatarUrl: true,
+          Users: {
             select: {
-              id: true // Assuming you want the user ID, add other fields if needed
+              baseAccountId: true
             }
           }
         }
@@ -91,7 +152,11 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       },
       categories: {
         select: {
-          name: true
+          category: {
+            select: {
+              name: true
+            }
+          }
         }
       },
       portfolios: {
@@ -101,5 +166,18 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       }
     }
   });
+
+  if (designer) {
+    const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
+    const { open, openUntil } = isOpenNow(workingDays);
+    return {
+      ...designer,
+      avatarUrl: designer.baseAccount.avatarUrl,
+      openNow: open,
+      openUntil: open ? openUntil : null,
+      workingDays: formatWorkingDays(workingDays) // Format working days for readability
+    };
+  }
+
   return designer;
 };

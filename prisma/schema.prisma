@@ -20,7 +20,7 @@ model BaseAccount {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   avatarUrl      String?
-  BirthDate      DateTime?
+  birthDate      DateTime?
 
   sessions Sessions[]
 
@@ -92,28 +92,25 @@ model Otps {
   id        String   @id @default(uuid())
   email     String
   code      String   @unique
-  expiredAt String   @unique
+  expiredAt DateTime
   createdAt DateTime @default(now())
 }
 
 model DesignerProfile {
   baseAccountId String @id @unique
-
-  address    String
-  latitude   Decimal
+  address String
+  latitude Decimal
   longtitude Decimal
-
   yearsExperience Int
-  about           String
-  workingDays     Json
-  ordersFinished  Int
-
-  reviews     Review[]
-  services    Service[]
+  about String
+  workingDays Json
+  location String
+  ordersFinished Int
+  reviews Review[]
+  services Service[]
   teamMembers TeamMember[]
-  categories  DesignersCategories[]
-  portfolios  Portfolio[]
-
+  categories DesignersCategories[]
+  portfolios Portfolio[]
   baseAccount BaseAccount @relation(fields: [baseAccountId], references: [id])
 }
 
@@ -136,16 +133,16 @@ model TeamMember {
 }
 
 model Review {
-  id         String @id @default(uuid())
+  id String @id @default(uuid())
   designerId String
-  customerId String
-
-  rating   Int
-  comment  String
+  customerName String
+  avatarUrl     String?
+  rating Int
+  comment String
   postedOn DateTime
-
-  user     Users           @relation(fields: [customerId], references: [baseAccountId])
   designer DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
+  Users Users? @relation(fields: [usersBaseAccountId], references: [baseAccountId])
+  usersBaseAccountId String?
 }
 
 model Category {
@@ -158,7 +155,7 @@ model DesignersCategories {
   designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
   designerId String
 
-  Category   Category @relation(fields: [categoryId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
   categoryId String
 
   @@id([designerId, categoryId])
