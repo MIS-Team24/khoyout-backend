@@ -22,4 +22,5 @@ export enum Messages {
     USER_UPDATED = "User updated successfully!",
     USER_DELETED = "User account deleted successfully!",
     APPOINTMENT_REQUEST_SENT = "Successfully Sent Appointment Request!",
+    REQUEST_DAYOFWEEK_AND_DATE_NOT_MATCHING = "The date sent and the picked available time must be matching for the day of the week.",
 }

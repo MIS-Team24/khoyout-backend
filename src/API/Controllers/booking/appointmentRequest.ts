@@ -6,7 +6,7 @@ import { BadRequestException } from "../../Exceptions/badRequest";
 import { errorResponseTemplate } from "../../../Services/responses/ErrorTemplate";
 import { ErrorCode, ResStatus } from "../../Exceptions/main";
 import { Messages } from "../../../Services/responses/Messages";
-import { convertFromTimezoneToUTC, updateDateKeepTime } from "../../../Utilities/Time";
+import { convertFromTimezoneToUTC, getDayOfWeek, getUTCTime, updateDateKeepTime } from "../../../Utilities/Time";
 import { deployNotification } from "../../Models/Notifications";
 
 type AppointmentBookingBody = {
@@ -33,10 +33,17 @@ export default async function handleSendingAppointmentRequestToDesigner(req: Req
         const typedAssertedBody = req.body as AppointmentBookingBody;
 
         const AvailabilityTimeRequested = await getAvailableTimeById(typedAssertedBody.availableTimeId, result.designerId);
-        
+        const dayOfWeekSent = getDayOfWeek(typedAssertedBody.date);
+
         if (!AvailabilityTimeRequested) {
             return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
                 new BadRequestException(Messages.INVALID_DATA, ErrorCode.INVALID_DATA)
+            ))
+        }
+        
+        if (AvailabilityTimeRequested.dayOfWeek !== dayOfWeekSent) {
+            return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
+                new BadRequestException(Messages.REQUEST_DAYOFWEEK_AND_DATE_NOT_MATCHING, ErrorCode.INVALID_DATA)
             ))
         }
 
@@ -44,7 +51,14 @@ export default async function handleSendingAppointmentRequestToDesigner(req: Req
         const convertedEndTime = convertFromTimezoneToUTC(typedAssertedBody.date, AvailabilityTimeRequested.endTime, AvailabilityTimeRequested.designer.timeZone);
         const startTimeUTC = updateDateKeepTime(convertedStartTime, typedAssertedBody.date);
         const endTimeUTC = updateDateKeepTime(convertedEndTime, typedAssertedBody.date);
-        
+        const UTCNow = getUTCTime();
+
+        if (UTCNow >= startTimeUTC) {
+            return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
+                new BadRequestException(Messages.REQUEST_DAYOFWEEK_AND_DATE_NOT_MATCHING, ErrorCode.INVALID_DATA)
+            ))
+        }
+
         await createAppointmentRequest(user.id, result.designerId, startTimeUTC, endTimeUTC, result.requestDescription);
         await deployNotification({from: "User", notification: "AppointmentRequest" }, result.designerId, {}, user.id);
 

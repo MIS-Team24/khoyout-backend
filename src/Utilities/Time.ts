@@ -1,3 +1,4 @@
+import { DayOfWeek } from '@prisma/client';
 import { format, parse } from 'date-fns';
 import { toZonedTime, fromZonedTime,  } from 'date-fns-tz';
 
@@ -36,4 +37,14 @@ export function updateDateKeepTime(date: Date, dateString: string): Date {
     const updatedDate = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
     
     return updatedDate;
-  }
+}
+
+export function getDayOfWeek(dateInput: string | Date): DayOfWeek {
+    const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+
+    const daysOfWeek: DayOfWeek[] = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+
+    const dayIndex = date.getDay();
+
+    return daysOfWeek[dayIndex];
+}

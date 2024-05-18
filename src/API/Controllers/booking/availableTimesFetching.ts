@@ -8,7 +8,6 @@ export async function handleFetchingDesignerTimes(req: Request, res: Response)
 {
     const designerId = req.params.designerId as string;
     const inTimezoneOf = req.query?.timezone? req.query.timezone as string : "Etc/UTC";
-
     
     const AvailableTimes = await getDesignerAllAvailableTimes(designerId);
     const timezone = await getDesignerTimezone(designerId);
