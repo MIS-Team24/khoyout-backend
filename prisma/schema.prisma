@@ -100,11 +100,11 @@ model Otps {
 
 model DesignerProfile {
   baseAccountId String @id @unique
-
-  address    String
-  latitude   Decimal
-  longtitude Decimal
-
+  avatarUrl       String
+  address         String
+  latitude        Decimal
+  longtitude      Decimal
+  location        String
   yearsExperience Int
   about           String
   workingDays     Json
@@ -212,12 +212,11 @@ model TeamMember {
 model Review {
   id         String @id @default(uuid())
   designerId String
+  avatarUrl  String
   customerId String
-
   rating   Int
   comment  String
   postedOn DateTime
-
   user     Users           @relation(fields: [customerId], references: [baseAccountId])
   designer DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
 }
@@ -231,10 +230,8 @@ model Category {
 model DesignersCategories {
   designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
   designerId String
-
   Category   Category @relation(fields: [categoryId], references: [id])
   categoryId String
-
   @@id([designerId, categoryId])
 }
 

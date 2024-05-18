@@ -36,4 +36,4 @@ export const getDesignerById = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({ error: error as any });
     }
-}
+};
