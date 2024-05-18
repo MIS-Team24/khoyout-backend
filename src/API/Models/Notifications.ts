@@ -6,7 +6,7 @@ type NotificationBodySettings = {
     notification: NotificationType
 }
 
-export async function sendNotificationToDesigner(settings: NotificationBodySettings, receiverUserID: string, meta: Object, senderUserId: string | undefined)
+export async function deployNotification(settings: NotificationBodySettings, receiverUserID: string, meta: Object, senderUserId: string | undefined)
 {
     try
     {
@@ -24,7 +24,6 @@ export async function sendNotificationToDesigner(settings: NotificationBodySetti
                 senderId: senderUserId,
                 senderType: settings.from,
                 type: settings.notification,
-                details: details,
             }
         });
         return true;

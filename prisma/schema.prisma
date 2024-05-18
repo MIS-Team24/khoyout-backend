@@ -142,16 +142,20 @@ enum BookingRequestStatus {
 }
 
 model BookingRequest {
-  id Int @id @unique @default(autoincrement())
+  id           Int      @id @unique @default(autoincrement())
+  created_at   DateTime @default(now())
+  last_updated DateTime @default(now())
 
-  status        BookingRequestStatus
-  startDateTime DateTime
-  endDateTime   DateTime
+  status             BookingRequestStatus
+  startDateTime      DateTime
+  endDateTime        DateTime
+  requestDescription String
 
-  userId     String
-  user       Users           @relation(fields: [userId], references: [baseAccountId])
-  designerId String
-  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+  userId      String
+  user        Users           @relation(fields: [userId], references: [baseAccountId])
+  designerId  String
+  designer    DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+  Appointment Appointment?
 }
 
 enum AppointmentStatus {
@@ -169,6 +173,8 @@ model Appointment {
 
   status AppointmentStatus
 
+  requestId  Int             @unique
+  request    BookingRequest  @relation(fields: [requestId], references: [id])
   userId     String
   user       Users           @relation(fields: [userId], references: [baseAccountId])
   designerId String
@@ -256,6 +262,7 @@ enum NotificationType {
   RescheduleRequest
   BookingConfirmed
   Ideas
+  AppointmentRequest
 }
 
 enum NotificationSenderType {

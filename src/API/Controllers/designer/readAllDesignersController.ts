@@ -27,7 +27,7 @@ export const getAllDesigners = async (req: Request, res: Response) => {
 
 export const getDesignerById = async (req: Request, res: Response) => {
     try {
-        const designer = await findDesignerBy({ id: req.params.id });
+        const designer = await findDesignerBy({ baseAccountId: req.params.id });
         if (designer) {
             res.json(designer);
         } else {

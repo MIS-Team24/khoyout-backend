@@ -20,5 +20,6 @@ export enum Messages {
     INVALID_FILE = "Invalid file!, please upload a valid file!",
     FILE_UPLOADED = "File uploaded successfully!",
     USER_UPDATED = "User updated successfully!",
-    USER_DELETED = "User account deleted successfully!"
+    USER_DELETED = "User account deleted successfully!",
+    APPOINTMENT_REQUEST_SENT = "Successfully Sent Appointment Request!",
 }

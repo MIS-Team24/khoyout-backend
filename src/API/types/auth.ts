@@ -18,14 +18,14 @@ export type EmailBody = {
 }
 
 export type UserBody = {
-    id?      : string,
+    id      : string,
     type: UserType,
-    firstName?  : string,
-    lastName?   : string,
-    email?     : string,
-    phone?    : string | null,
-    createdAt? : Date,
-    emailActivated? : Boolean,
+    firstName  : string,
+    lastName   : string,
+    email     : string,
+    phone    : string | null,
+    createdAt : Date,
+    emailActivated : Boolean,
 }
 
 //reset password 

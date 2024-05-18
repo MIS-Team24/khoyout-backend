@@ -31,7 +31,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       [sortBy]: sortOrder,
     },
     select: {
-      id: true,
+      baseAccountId: true,
       ordersFinished: true,
       address: true,
       yearsExperience: true,
@@ -44,7 +44,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
   });
 
   return designers.map(designer => ({
-    id: designer.id,
+    id: designer.baseAccountId,
     ordersFinished: designer.ordersFinished,
     location: designer.address,
     yearsExperience: designer.yearsExperience,
@@ -57,7 +57,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
   const designer = await prisma.designerProfile.findUnique({
     where: data,
     select: {
-      id: true,
+      baseAccountId: true,
       ordersFinished: true,
       address: true,
       yearsExperience: true,
@@ -70,7 +70,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
           postedOn: true,
           user: {
             select: {
-              id: true // Assuming you want the user ID, add other fields if needed
+              baseAccountId: true // Assuming you want the user ID, add other fields if needed
             }
           }
         }
@@ -91,7 +91,11 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       },
       categories: {
         select: {
-          name: true
+          Category: {
+            select: {
+              name: true
+            }
+          }
         }
       },
       portfolios: {
