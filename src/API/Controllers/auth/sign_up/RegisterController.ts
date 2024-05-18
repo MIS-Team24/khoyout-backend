@@ -61,6 +61,7 @@ export async function RegisterHandler(req: Request, res: Response, next: NextFun
 
     // User form returned according to the frontend desire
     let userReturnedToFront: UserBody = {
+        id: user.baseAccount.id,
         email: user.baseAccount.email,
         emailActivated: false,
         createdAt: user.baseAccount.createdAt,

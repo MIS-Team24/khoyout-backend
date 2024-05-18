@@ -88,6 +88,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     }
   });
 
+
   return designers.map(designer => {
     const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
     const { open, openUntil } = isOpenNow(workingDays);
@@ -131,7 +132,8 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
           avatarUrl: true,
           user: {
             select: {
-              baseAccountId: true
+              baseAccountId: true // Assuming you want the user ID, add other fields if needed
+
             }
           }
         }
@@ -148,6 +150,15 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
           name: true,
           role: true,
           avatarUrl: true
+        }
+      },
+      categories: {
+        select: {
+          Category: {
+            select: {
+              name: true
+            }
+          }
         }
       },
 
