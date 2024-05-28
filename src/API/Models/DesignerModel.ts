@@ -104,7 +104,8 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
         select: {
           avatarUrl: true,
           gender: true,
-          firstName: true
+          firstName: true,
+          lastName: true
         }
       }
     }
@@ -121,6 +122,8 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       yearsExperience: designer.yearsExperience,
       rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
       avatarUrl: designer.baseAccount.avatarUrl,
+      gender: designer.baseAccount.gender,
+      name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
       openNow: open,
       openUntil: open ? openUntil : null
     };
@@ -149,7 +152,10 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       workingDays: true,
       baseAccount: {
         select: {
-          avatarUrl: true
+          avatarUrl: true,
+          gender: true,
+          firstName: true,
+          lastName: true
         }
       },
       reviews: {
@@ -202,6 +208,8 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
     return {
       ...designer,
       avatarUrl: designer.baseAccount.avatarUrl,
+      gender: designer.baseAccount.gender,
+      name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
       openNow: open,
       openUntil: open ? openUntil : null,
       workingDays: formatWorkingDays(workingDays), // Format working days for readability
