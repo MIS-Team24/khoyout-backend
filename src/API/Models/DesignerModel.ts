@@ -1,11 +1,16 @@
-import { prisma } from "../../Database";
-import { Prisma } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
+import Joi from "joi";
+
+const prisma = new PrismaClient();
 
 // Define the filters interface
 interface DesignerFilters {
   location?: string;
   minRating?: number;
+  gender?: 'Male' | 'Female';
   yearsOfExperience?: number;
+  openNow?: boolean;
+  name?: string;
   page?: number;
   limit?: number;
   sortBy?: keyof Prisma.DesignerProfileOrderByWithRelationInput;
@@ -54,15 +59,36 @@ const formatWorkingDays = (workingDays: WorkingHours): string[] => {
 
 // Function to get all designers with updated logic
 export const readAllDesigners = async (filters: DesignerFilters) => {
-  const { location, minRating, yearsOfExperience, page = 1, limit = 10, sortBy = 'baseAccountId', sortOrder = 'asc' } = filters;
+  const {
+    location,
+    minRating,
+    gender,
+    yearsOfExperience,
+    openNow,
+    name,
+    page = 1,
+    limit = 10,
+    sortBy = 'baseAccountId',
+    sortOrder = 'asc'
+  } = filters;
   const offset = (page - 1) * limit;
 
-  const designers = await prisma.designerProfile.findMany({
-    where: {
-      address: location ? { contains: location } : undefined,
-      yearsExperience: yearsOfExperience ? { gte: yearsOfExperience } : undefined,
-      reviews: minRating ? { some: { rating: { gte: minRating } } } : undefined
+  const queryConditions: Prisma.DesignerProfileWhereInput = {
+    location: location ? { contains: location } : undefined,
+    yearsExperience: yearsOfExperience ? { gte: yearsOfExperience } : undefined,
+    baseAccount: {
+      OR: [
+        { firstName: name ? { contains: name } : undefined },
+        { lastName: name ? { contains: name } : undefined }
+      ],
+      gender: gender ? { equals: gender } : undefined
     },
+    reviews: minRating ? { some: { rating: { gte: minRating } } } : undefined
+  };
+
+  // Add pagination, sorting, and selection to the query
+  const designers = await prisma.designerProfile.findMany({
+    where: queryConditions,
     skip: offset,
     take: limit,
     orderBy: {
@@ -73,7 +99,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       ordersFinished: true,
       address: true,
       yearsExperience: true,
-      location: true, // Ensure location is selected
+      location: true,
       workingDays: true,
       reviews: {
         select: {
@@ -82,28 +108,53 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       },
       baseAccount: {
         select: {
-          avatarUrl: true
+          avatarUrl: true,
+          gender: true,
+          firstName: true,
+          lastName: true
         }
       }
     }
   });
 
-
-  return designers.map(designer => {
+  const filteredDesigners = designers.map(designer => {
     const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
     const { open, openUntil } = isOpenNow(workingDays);
 
     return {
       baseAccountId: designer.baseAccountId,
       ordersFinished: designer.ordersFinished,
-      location: designer.location, // Include location instead of address
+      location: designer.location,
       yearsExperience: designer.yearsExperience,
       rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
       avatarUrl: designer.baseAccount.avatarUrl,
+      gender: designer.baseAccount.gender,
+      name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
       openNow: open,
       openUntil: open ? openUntil : null
     };
   });
+
+  const openFilteredDesigners = openNow !== undefined
+    ? filteredDesigners.filter(designer => designer.openNow === openNow)
+    : filteredDesigners;
+
+  const totalFilteredCount = await prisma.designerProfile.count({
+    where: queryConditions
+  });
+
+  const totalPages = Math.ceil(totalFilteredCount / limit);
+
+  return {
+    designers: openFilteredDesigners.length ? openFilteredDesigners : null,
+    pagination: {
+      current_page: page,
+      total_pages: totalPages,
+      entry_counts: totalFilteredCount,
+      next_page: page < totalPages ? page + 1 : null,
+      prev_page: page > 1 ? page - 1 : null
+    }
+  };
 };
 
 // Function to find a specific designer by unique attribute
@@ -121,7 +172,10 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       workingDays: true,
       baseAccount: {
         select: {
-          avatarUrl: true
+          avatarUrl: true,
+          gender: true,
+          firstName: true,
+          lastName: true
         }
       },
       reviews: {
@@ -133,7 +187,6 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
           user: {
             select: {
               baseAccountId: true // Assuming you want the user ID, add other fields if needed
-
             }
           }
         }
@@ -161,7 +214,6 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
           }
         }
       },
-
       portfolios: {
         select: {
           url: true
@@ -176,6 +228,8 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
     return {
       ...designer,
       avatarUrl: designer.baseAccount.avatarUrl,
+      gender: designer.baseAccount.gender,
+      name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
       openNow: open,
       openUntil: open ? openUntil : null,
       workingDays: formatWorkingDays(workingDays), // Format working days for readability
@@ -184,4 +238,22 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
   }
 
   return designer;
+};
+
+// Validation schema using Joi
+const designerFilterSchema = Joi.object({
+  location: Joi.string().optional(),
+  minRating: Joi.number().min(1).max(5).optional(),
+  gender: Joi.string().valid('Male', 'Female').optional(),
+  yearsOfExperience: Joi.number().integer().min(0).optional(),
+  openNow: Joi.boolean().optional(),
+  name: Joi.string().optional(),
+  page: Joi.number().integer().min(1).optional(),
+  limit: Joi.number().integer().min(1).optional(),
+  sortBy: Joi.string().optional(),
+  sortOrder: Joi.string().valid('asc', 'desc').optional()
+});
+
+export const validateFilters = (filters: DesignerFilters) => {
+  return designerFilterSchema.validate(filters);
 };
