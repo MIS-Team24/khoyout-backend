@@ -73,62 +73,49 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
   } = filters;
   const offset = (page - 1) * limit;
 
-  const [designers, totalCount] = await Promise.all([
-    prisma.designerProfile.findMany({
-      where: {
-        location: location ? { contains: location } : undefined,
-        yearsExperience: yearsOfExperience ? { gte: yearsOfExperience } : undefined,
-        baseAccount: {
-          OR: [
-            { firstName: name ? { contains: name } : undefined },
-            { lastName: name ? { contains: name } : undefined }
-          ],
-          gender: gender ? { equals: gender } : undefined
-        },
-        reviews: minRating ? { some: { rating: { gte: minRating } } } : undefined
+  const queryConditions: Prisma.DesignerProfileWhereInput = {
+    location: location ? { contains: location } : undefined,
+    yearsExperience: yearsOfExperience ? { gte: yearsOfExperience } : undefined,
+    baseAccount: {
+      OR: [
+        { firstName: name ? { contains: name } : undefined },
+        { lastName: name ? { contains: name } : undefined }
+      ],
+      gender: gender ? { equals: gender } : undefined
+    },
+    reviews: minRating ? { some: { rating: { gte: minRating } } } : undefined
+  };
+
+  // Add pagination, sorting, and selection to the query
+  const designers = await prisma.designerProfile.findMany({
+    where: queryConditions,
+    skip: offset,
+    take: limit,
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+    select: {
+      baseAccountId: true,
+      ordersFinished: true,
+      address: true,
+      yearsExperience: true,
+      location: true,
+      workingDays: true,
+      reviews: {
+        select: {
+          rating: true
+        }
       },
-      skip: offset,
-      take: limit,
-      orderBy: {
-        [sortBy]: sortOrder,
-      },
-      select: {
-        baseAccountId: true,
-        ordersFinished: true,
-        address: true,
-        yearsExperience: true,
-        location: true,
-        workingDays: true,
-        reviews: {
-          select: {
-            rating: true
-          }
-        },
-        baseAccount: {
-          select: {
-            avatarUrl: true,
-            gender: true,
-            firstName: true,
-            lastName: true
-          }
+      baseAccount: {
+        select: {
+          avatarUrl: true,
+          gender: true,
+          firstName: true,
+          lastName: true
         }
       }
-    }),
-    prisma.designerProfile.count({
-      where: {
-        location: location ? { contains: location } : undefined,
-        yearsExperience: yearsOfExperience ? { gte: yearsOfExperience } : undefined,
-        baseAccount: {
-          OR: [
-            { firstName: name ? { contains: name } : undefined },
-            { lastName: name ? { contains: name } : undefined }
-          ],
-          gender: gender ? { equals: gender } : undefined
-        },
-        reviews: minRating ? { some: { rating: { gte: minRating } } } : undefined
-      }
-    })
-  ]);
+    }
+  });
 
   const filteredDesigners = designers.map(designer => {
     const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
@@ -152,12 +139,14 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     ? filteredDesigners.filter(designer => designer.openNow === openNow)
     : filteredDesigners;
 
-  const totalFilteredCount = openFilteredDesigners.length;
-  const paginatedDesigners = openFilteredDesigners.slice((page - 1) * limit, page * limit);
+  const totalFilteredCount = await prisma.designerProfile.count({
+    where: queryConditions
+  });
+
   const totalPages = Math.ceil(totalFilteredCount / limit);
 
   return {
-    designers: paginatedDesigners.length ? paginatedDesigners : null,
+    designers: openFilteredDesigners.length ? openFilteredDesigners : null,
     pagination: {
       current_page: page,
       total_pages: totalPages,
