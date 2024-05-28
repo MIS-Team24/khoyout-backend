@@ -20,6 +20,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma.schema ./
+
 ENV DATABASE_URL="postgres://postgres.uwwosfcacyovhelyelwl:EzzOps21@21@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
 ENV ACCESS_TOKEN_SECRET_KEY=fc0066fdbfd78d2091ce6a50d9e026254d444cd477cbd44b2b6782d713458c269804026a0090ead274ddf0e0eacb2bcaa910af5d7263bcabedcbf38f582fd3bf
 ENV ACCESS_TOKEN_SECRET_REFRESH_KEY=fc0066fdbfd78d2091ce6a50d9e026254d444cd477cbd44b2b6782d713458c269804026a0090ead274ddf0e0eacb2bcaa910af5d7263bcabedcbf38f582fd3bf
