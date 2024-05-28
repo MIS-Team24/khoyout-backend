@@ -73,171 +73,189 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
   } = filters;
   const offset = (page - 1) * limit;
 
+  // Construct query conditions
   const queryConditions: Prisma.DesignerProfileWhereInput = {
-    location: location ? { contains: location } : undefined,
-    yearsExperience: yearsOfExperience ? { gte: yearsOfExperience } : undefined,
-    baseAccount: {
-      OR: [
-        { firstName: name ? { contains: name } : undefined },
-        { lastName: name ? { contains: name } : undefined }
-      ],
-      gender: gender ? { equals: gender } : undefined
-    },
-    reviews: minRating ? { some: { rating: { gte: minRating } } } : undefined
+    ...(location && { location: { contains: location } }),
+    ...(yearsOfExperience && { yearsExperience: { gte: yearsOfExperience } }),
+    ...(minRating && { reviews: { some: { rating: { gte: minRating } } } }),
   };
 
-  // Add pagination, sorting, and selection to the query
-  const designers = await prisma.designerProfile.findMany({
-    where: queryConditions,
-    skip: offset,
-    take: limit,
-    orderBy: {
-      [sortBy]: sortOrder,
-    },
-    select: {
-      baseAccountId: true,
-      ordersFinished: true,
-      address: true,
-      yearsExperience: true,
-      location: true,
-      workingDays: true,
-      reviews: {
-        select: {
-          rating: true
-        }
+  // Add baseAccount conditions only if necessary
+  if (name || gender) {
+    queryConditions.baseAccount = {
+      ...(name && { OR: [{ firstName: { contains: name } }, { lastName: { contains: name } }] }),
+      ...(gender && { gender: { equals: gender } })
+    };
+  }
+
+
+
+  try {
+    // Add pagination, sorting, and selection to the query
+    const designers = await prisma.designerProfile.findMany({
+      where: queryConditions,
+      skip: offset,
+      take: limit,
+      orderBy: {
+        [sortBy]: sortOrder,
       },
-      baseAccount: {
-        select: {
-          avatarUrl: true,
-          gender: true,
-          firstName: true,
-          lastName: true
+      select: {
+        baseAccountId: true,
+        ordersFinished: true,
+        address: true,
+        yearsExperience: true,
+        location: true,
+        workingDays: true,
+        reviews: {
+          select: {
+            rating: true
+          }
+        },
+        baseAccount: {
+          select: {
+            avatarUrl: true,
+            gender: true,
+            firstName: true,
+            lastName: true
+          }
         }
       }
-    }
-  });
+    });
 
-  const filteredDesigners = designers.map(designer => {
-    const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
-    const { open, openUntil } = isOpenNow(workingDays);
+    const filteredDesigners = designers.map(designer => {
+      const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
+      const { open, openUntil } = isOpenNow(workingDays);
+
+      return {
+        baseAccountId: designer.baseAccountId,
+        ordersFinished: designer.ordersFinished,
+        location: designer.location,
+        yearsExperience: designer.yearsExperience,
+        rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
+        avatarUrl: designer.baseAccount.avatarUrl,
+        gender: designer.baseAccount.gender,
+        name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
+        openNow: open,
+        openUntil: open ? openUntil : null
+      };
+    });
+
+    const openFilteredDesigners = openNow !== undefined
+      ? filteredDesigners.filter(designer => designer.openNow === openNow)
+      : filteredDesigners;
+
+    const totalFilteredCount = await prisma.designerProfile.count({
+      where: queryConditions
+    });
+
+    const totalPages = Math.ceil(totalFilteredCount / limit);
 
     return {
-      baseAccountId: designer.baseAccountId,
-      ordersFinished: designer.ordersFinished,
-      location: designer.location,
-      yearsExperience: designer.yearsExperience,
-      rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
-      avatarUrl: designer.baseAccount.avatarUrl,
-      gender: designer.baseAccount.gender,
-      name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
-      openNow: open,
-      openUntil: open ? openUntil : null
+      designers: openFilteredDesigners.length ? openFilteredDesigners : null,
+      pagination: {
+        current_page: page,
+        total_pages: totalPages,
+        entry_counts: totalFilteredCount,
+        next_page: page < totalPages ? page + 1 : null,
+        prev_page: page > 1 ? page - 1 : null
+      }
     };
-  });
-
-  const openFilteredDesigners = openNow !== undefined
-    ? filteredDesigners.filter(designer => designer.openNow === openNow)
-    : filteredDesigners;
-
-  const totalFilteredCount = await prisma.designerProfile.count({
-    where: queryConditions
-  });
-
-  const totalPages = Math.ceil(totalFilteredCount / limit);
-
-  return {
-    designers: openFilteredDesigners.length ? openFilteredDesigners : null,
-    pagination: {
-      current_page: page,
-      total_pages: totalPages,
-      entry_counts: totalFilteredCount,
-      next_page: page < totalPages ? page + 1 : null,
-      prev_page: page > 1 ? page - 1 : null
-    }
-  };
+  } catch (error) {
+    console.error("Error reading designers:", error);
+    throw new Error("Failed to read designers");
+  } finally {
+    await prisma.$disconnect();
+  }
 };
 
 // Function to find a specific designer by unique attribute
 export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInput) => {
-  const designer = await prisma.designerProfile.findUnique({
-    where: data,
-    select: {
-      baseAccountId: true,
-      ordersFinished: true,
-      latitude: true,
-      longtitude: true,
-      address: true,
-      yearsExperience: true,
-      about: true,
-      workingDays: true,
-      baseAccount: {
-        select: {
-          avatarUrl: true,
-          gender: true,
-          firstName: true,
-          lastName: true
-        }
-      },
-      reviews: {
-        select: {
-          rating: true,
-          comment: true,
-          postedOn: true,
-          avatarUrl: true,
-          user: {
-            select: {
-              baseAccountId: true // Assuming you want the user ID, add other fields if needed
+  try {
+    const designer = await prisma.designerProfile.findUnique({
+      where: data,
+      select: {
+        baseAccountId: true,
+        ordersFinished: true,
+        latitude: true,
+        longtitude: true,
+        address: true,
+        yearsExperience: true,
+        about: true,
+        workingDays: true,
+        baseAccount: {
+          select: {
+            avatarUrl: true,
+            gender: true,
+            firstName: true,
+            lastName: true
+          }
+        },
+        reviews: {
+          select: {
+            rating: true,
+            comment: true,
+            postedOn: true,
+            avatarUrl: true,
+            user: {
+              select: {
+                baseAccountId: true // Assuming you want the user ID, add other fields if needed
+              }
             }
           }
-        }
-      },
-      services: {
-        select: {
-          title: true,
-          description: true,
-          price: true
-        }
-      },
-      teamMembers: {
-        select: {
-          name: true,
-          role: true,
-          avatarUrl: true
-        }
-      },
-      categories: {
-        select: {
-          Category: {
-            select: {
-              name: true
+        },
+        services: {
+          select: {
+            title: true,
+            description: true,
+            price: true
+          }
+        },
+        teamMembers: {
+          select: {
+            name: true,
+            role: true,
+            avatarUrl: true
+          }
+        },
+        categories: {
+          select: {
+            Category: {
+              select: {
+                name: true
+              }
             }
           }
-        }
-      },
-      portfolios: {
-        select: {
-          url: true
+        },
+        portfolios: {
+          select: {
+            url: true
+          }
         }
       }
+    });
+
+    if (designer) {
+      const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
+      const { open, openUntil } = isOpenNow(workingDays);
+      return {
+        ...designer,
+        avatarUrl: designer.baseAccount.avatarUrl,
+        gender: designer.baseAccount.gender,
+        name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
+        openNow: open,
+        openUntil: open ? openUntil : null,
+        workingDays: formatWorkingDays(workingDays), // Format working days for readability
+        rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0
+      };
     }
-  });
 
-  if (designer) {
-    const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
-    const { open, openUntil } = isOpenNow(workingDays);
-    return {
-      ...designer,
-      avatarUrl: designer.baseAccount.avatarUrl,
-      gender: designer.baseAccount.gender,
-      name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
-      openNow: open,
-      openUntil: open ? openUntil : null,
-      workingDays: formatWorkingDays(workingDays), // Format working days for readability
-      rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0
-    };
+    return designer;
+  } catch (error) {
+    console.error("Error finding designer:", error);
+    throw new Error("Failed to find designer");
+  } finally {
+    await prisma.$disconnect();
   }
-
-  return designer;
 };
 
 // Validation schema using Joi
