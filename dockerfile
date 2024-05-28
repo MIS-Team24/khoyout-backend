@@ -13,6 +13,7 @@ RUN npx prisma generate && \
     npm run build
 
 FROM cgr.dev/chainguard/node:latest
+USER root
 
 WORKDIR /app
 
