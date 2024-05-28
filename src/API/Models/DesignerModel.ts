@@ -78,7 +78,10 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       location: location ? { contains: location } : undefined,
       yearsExperience: yearsOfExperience ? { gte: yearsOfExperience } : undefined,
       baseAccount: {
-        firstName: name ? { contains: name } : undefined,
+        OR: [
+          { firstName: name ? { contains: name } : undefined },
+          { lastName: name ? { contains: name } : undefined }
+        ],
         gender: gender ? { equals: gender } : undefined
       },
       reviews: minRating ? { some: { rating: { gte: minRating } } } : undefined
