@@ -13,6 +13,7 @@ import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
 import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
 import { UserType } from "../../../types/user";
+import { addDesigner } from "../../../Models/DesignerModel";
 
 // Helper function to split fullName
 function splitName(fullName: string): { firstName: string, lastName: string } {
@@ -24,6 +25,7 @@ function splitName(fullName: string): { firstName: string, lastName: string } {
 
 export async function RegisterHandler(req: Request, res: Response, next: NextFunction) {
     const registerBody = req.body as RegisterBody;
+    const registerAs = req.get("Account-Type");
 
     // Check if user already exists
     const userTarget = await getUserByEmail(registerBody.email);
@@ -57,9 +59,24 @@ export async function RegisterHandler(req: Request, res: Response, next: NextFun
         emailActivated: false // Setting default values based on your schema
     };
 
-    const user = await addUser(newUser.email, newUser.firstName, newUser.lastName, newUser.password);
+    let user;
 
-    // User form returned according to the frontend desire
+    if (registerAs === "Designer") {
+        user = await addDesigner(newUser.email, newUser.firstName, newUser.lastName, newUser.password, {
+            about: "Some place holder about me",
+            address: "Egypt",
+            location: "Alexandria",
+            avatarURL: "https://cdn.discordapp.com/avatars/468564013614366720/a_d4a42323372b912261d5503d62caba71.gif?size=512",
+            latitude: 13.21,
+            ordersFinished: 0,
+            longtitude: 31.213,
+            yearsOfExperience: 1,
+
+        });
+    } else {
+        user = await addUser(newUser.email, newUser.firstName, newUser.lastName, newUser.password);
+    }
+
     let userReturnedToFront: UserBody = {
         id: user.baseAccount.id,
         email: user.baseAccount.email,

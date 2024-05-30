@@ -9,6 +9,7 @@ import { getUserById, getUserLoginData, initiateUserDbSession } from "../../../.
 import { addHoursToDate, getUTCTime } from "../../../../../../Utilities/Time";
 import { BadServerException } from "../../../../../Exceptions/badServer";
 import generateUserJSONToken from "../../../../../../Utilities/generateToken";
+import { UserType } from "../../../../../types/user";
 
 export async function localLoginHandler (req: Request , res :Response , next :NextFunction)
 {
@@ -46,7 +47,8 @@ export async function localLoginHandler (req: Request , res :Response , next :Ne
         emailActivated:fullUser.emailActivated,
         createdAt : fullUser.createdAt,
         fullName: fullUser.firstName + " " + fullUser.lastName,
-        phone : fullUser.phone
+        phone : fullUser.phone,
+        type: fullUser.designer? UserType.Designer : UserType.User
     }
 
     return res.json({

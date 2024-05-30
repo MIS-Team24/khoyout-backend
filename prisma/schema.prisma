@@ -99,7 +99,7 @@ model Otps {
 }
 
 model DesignerProfile {
-  baseAccountId String @id @unique
+  baseAccountId   String  @id @unique
   avatarUrl       String
   address         String
   latitude        Decimal
@@ -122,6 +122,7 @@ model DesignerProfile {
   availabilityTimes AvailabilityTime[]
   appointments      Appointment[]
   bookingRequests   BookingRequest[]
+  checkoutSessions  checkoutSession[]
 }
 
 model AvailabilityTime {
@@ -210,15 +211,15 @@ model TeamMember {
 }
 
 model Review {
-  id         String @id @default(uuid())
+  id         String          @id @default(uuid())
   designerId String
   avatarUrl  String
   customerId String
-  rating   Int
-  comment  String
-  postedOn DateTime
-  user     Users           @relation(fields: [customerId], references: [baseAccountId])
-  designer DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
+  rating     Int
+  comment    String
+  postedOn   DateTime
+  user       Users           @relation(fields: [customerId], references: [baseAccountId])
+  designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Category {
@@ -230,8 +231,9 @@ model Category {
 model DesignersCategories {
   designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
   designerId String
-  Category   Category @relation(fields: [categoryId], references: [id])
+  Category   Category        @relation(fields: [categoryId], references: [id])
   categoryId String
+
   @@id([designerId, categoryId])
 }
 
@@ -260,6 +262,9 @@ enum NotificationType {
   BookingConfirmed
   Ideas
   AppointmentRequest
+  PremiumGranted
+  PremiumExpired
+  PremiumRevoked
 }
 
 enum NotificationSenderType {
@@ -278,4 +283,22 @@ model Notification {
   receiver   BaseAccount            @relation(fields: [receiverId], references: [id], name: "notificationReceiver")
   senderId   String?
   sender     BaseAccount?           @relation(fields: [senderId], references: [id], name: "notificationSender")
+}
+
+model checkoutSession {
+  id          String @id
+  designerId  String
+  checkoutUrl String
+
+  designer DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+}
+
+enum permiumSubscriptionType {
+  STANDARD
+  PREMIUM
+}
+
+model premiumSubscription {
+  designerId       String                  @id @unique
+  subscriptionType permiumSubscriptionType
 }

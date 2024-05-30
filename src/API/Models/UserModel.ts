@@ -135,6 +135,16 @@ export async function getUserById(userId: string) {
     const result = await prisma.baseAccount.findFirst({
         where: {
             id: userId
+        },
+        select: {
+            email: true,
+            emailActivated: true,
+            createdAt: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+            designer: true,
+            user: true
         }
     });
 
