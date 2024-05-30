@@ -21,7 +21,8 @@ const store = new pgSession({
 });
 
 app.use(cors());
-app.use(express.json());
+// this was uncommented because it was moved to a deeper level
+// app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routing

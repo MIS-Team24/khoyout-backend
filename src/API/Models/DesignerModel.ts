@@ -275,3 +275,81 @@ const designerFilterSchema = Joi.object({
 export const validateFilters = (filters: DesignerFilters) => {
   return designerFilterSchema.validate(filters);
 };
+
+type designerProfileDetails = {
+  about: string,
+  address: string,
+  avatarURL: string,
+  latitude: number,
+  longtitude: number,
+  location: string,
+  ordersFinished: number,
+  yearsOfExperience: number
+}
+
+export async function addDesigner (email: string, firstName: string, lastName: string, password: string, designerDetails: designerProfileDetails)
+{
+  const user = await prisma.designerProfile.create({
+      data: {
+          baseAccount: {
+              create: {
+                  email: email,
+                  firstName: firstName,
+                  lastName: lastName,
+                  password: password,
+                  emailActivated: false,
+              }
+          },
+          about: designerDetails.about,
+          address: designerDetails.address,
+          avatarUrl: designerDetails.avatarURL,
+          latitude: designerDetails.latitude,
+          longtitude: designerDetails.longtitude,
+          location: designerDetails.location,
+          ordersFinished: designerDetails.ordersFinished,
+          yearsExperience: designerDetails.yearsOfExperience,
+          workingDays: ""
+      },
+      select: {
+          baseAccount: true,
+      }
+  });
+
+  return user;
+}
+
+export async function getDesignerBaseAccountByEmail(email: string)
+{
+  try
+  {
+    const result = await prisma.designerProfile.findFirst({
+      where: {
+        baseAccount: {
+          email: email
+        }
+      },
+      select: {
+        baseAccount: true,
+      }
+    });
+
+    return result;
+  }
+  catch (error) {
+    return false;
+  }
+}
+
+export async function getDesignerSubscriptionTier(designerId: string) : Promise<"PREMIUM" | "STANDARD" | undefined>
+{
+  const result = await prisma.premiumSubscription.findFirst({
+    where: {
+      designerId: designerId
+    },
+    select: {
+      subscriptionType: true
+    }
+  });
+  
+  return result?.subscriptionType?? undefined;
+}

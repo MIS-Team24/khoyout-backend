@@ -12,17 +12,14 @@ import { checkIfNotAuthenticated } from "../../Middleware/CheckAuth";
 const router = express.Router();
 
 //sign-up
-router.post("/auth/register", BodyValidator({schema: registerSchema})
-    , RegisterHandler)
-router.post("/auth/verify-email", BodyValidator({schema: otpVerifyEmailSchema}) 
-    , validateOtp , verifyEmailHandler)
-router.post("/auth/send-otp", BodyValidator({schema: emailSchema})
-    , OtpSentToEmailHandler)
+router.post("/register", BodyValidator({schema: registerSchema}), RegisterHandler);
+router.post("/verify-email", BodyValidator({schema: otpVerifyEmailSchema}), validateOtp, verifyEmailHandler);
+router.post("/send-otp", BodyValidator({schema: emailSchema}), OtpSentToEmailHandler)
 //
 
 //reset password
-router.post("/auth/validate-otp", BodyValidator({schema: otpVerifyEmailSchema}), validateOtp , validateOtpHandler);
-router.put("/auth/reset-password", checkIfNotAuthenticated ,BodyValidator({schema: resetPasswordSchema}), resetPasswordHandler);
+router.post("/validate-otp", BodyValidator({schema: otpVerifyEmailSchema}), validateOtp , validateOtpHandler);
+router.put("/reset-password", checkIfNotAuthenticated ,BodyValidator({schema: resetPasswordSchema}), resetPasswordHandler);
 //
 
 export default router;
