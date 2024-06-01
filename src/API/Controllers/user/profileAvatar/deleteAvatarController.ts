@@ -10,25 +10,6 @@ import { UserBody } from "../../../types/auth"
 
 export const deleteAvatarController = async (req : Request , res : Response) =>{
     try {
-        // const email = req.body.email  
-        // if(!email){
-        //     return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
-        //         new BadRequestException(Messages.INVALID_DATA 
-        //             , ErrorCode.INVALID_DATA)
-        //     ))   
-        // }
-
-        // //find that user to get their id
-        // const user = await findUserBy({email})
-        // //
-
-        // if(!user){
-        //     return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
-        //         new BadRequestException(Messages.USER_NOT_FOUND 
-        //             , ErrorCode.USER_NOT_FOUND)
-        //     ))   
-        // }
-
         const user = req?.user as UserBody
         
         const { data } = await supabase.storage

@@ -353,3 +353,11 @@ export async function getDesignerSubscriptionTier(designerId: string) : Promise<
   
   return result?.subscriptionType?? undefined;
 }
+
+export const updateDesignerBy = async (uniqueData : Prisma.DesignerProfileWhereUniqueInput, data : Prisma.DesignerProfileUpdateInput) => {
+  const designer = await prisma.designerProfile.update({
+    where : uniqueData,
+    data : {...data}
+  })
+  return designer 
+}

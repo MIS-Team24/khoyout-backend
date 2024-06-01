@@ -15,9 +15,10 @@ import BodyValidator from "../../Middleware/BodyValidator";
 const router = express.Router();
 
 //user avatar
-router.post("/upload-update-avatar", checkIfAuthenticated(), upload.single("file") , uploadUpdateAvatarController)
+router.patch("/upload-update-avatar", checkIfAuthenticated(), upload.single("file") , uploadUpdateAvatarController)
 router.delete("/delete-avatar",checkIfAuthenticated() , deleteAvatarController)
 //
+
 router.get("/read-user" , checkIfAuthenticated() , readUserData)
 router.put("/change-password" ,checkIfAuthenticated(), BodyValidator({schema: cahngePasswordSchema}) , changeUserPassword)
 router.put("/update-data" , checkIfAuthenticated() , updateUserData)
