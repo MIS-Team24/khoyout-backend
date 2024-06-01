@@ -36,7 +36,13 @@ const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: stri
   const currentDay = new Date().getDay().toString(); // Convert to string to match JSON keys
   const currentTime = new Date().toTimeString().slice(0, 5); // Get current time in HH:mm format
 
+  console.log("Current Day:", currentDay);
+  console.log("Current Time:", currentTime);
+  console.log("Working Days:", workingDays);
+
   const todayWorkingHours = workingDays?.[currentDay];
+  console.log("Today's Working Hours:", todayWorkingHours);
+
   if (!todayWorkingHours || todayWorkingHours.start.compare === "") return { open: false };
 
   if (currentTime >= todayWorkingHours.start.compare && currentTime <= todayWorkingHours.end.compare) {
@@ -88,8 +94,6 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     };
   }
 
-
-
   try {
     // Add pagination, sorting, and selection to the query
     const designers = await prisma.designerProfile.findMany({
@@ -123,7 +127,14 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     });
 
     const filteredDesigners = designers.map(designer => {
-      const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
+      let workingDays: WorkingHours;
+      try {
+        workingDays = JSON.parse(designer.workingDays as unknown as string);
+      } catch (e) {
+        console.error("Error parsing workingDays JSON:", e);
+        workingDays = {};
+      }
+
       const { open, openUntil } = isOpenNow(workingDays);
 
       return {
@@ -235,7 +246,14 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
     });
 
     if (designer) {
-      const workingDays: WorkingHours = JSON.parse(designer.workingDays as unknown as string);
+      let workingDays: WorkingHours;
+      try {
+        workingDays = JSON.parse(designer.workingDays as unknown as string);
+      } catch (e) {
+        console.error("Error parsing workingDays JSON:", e);
+        workingDays = {};
+      }
+
       const { open, openUntil } = isOpenNow(workingDays);
       return {
         ...designer,
