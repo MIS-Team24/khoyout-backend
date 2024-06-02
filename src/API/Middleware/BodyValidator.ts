@@ -13,13 +13,13 @@ export enum objectToValidate {
 
 type BodyValidatorOptions = {
     schema: z.ZodObject<any, any>,
-    validateTarget: objectToValidate
+    validateTarget?: objectToValidate
 }
 
 export default function BodyValidator(options: BodyValidatorOptions) {
     return function (req: Request, res: Response, next: NextFunction) {
         try {
-            options.schema.parse(options.validateTarget === objectToValidate.BODY? req.body : req.query);
+            options.schema.parse(options.validateTarget === objectToValidate.QUERY? req.query : req.body);
             next();
         } catch (error) {
             if (error instanceof ZodError) {
