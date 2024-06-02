@@ -106,9 +106,8 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       select: {
         baseAccountId: true,
         ordersFinished: true,
-        address: true,
+        address: true,  // Change from location to address
         yearsExperience: true,
-        location: true,
         workingDays: true,
         reviews: {
           select: {
@@ -140,7 +139,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       return {
         baseAccountId: designer.baseAccountId,
         ordersFinished: designer.ordersFinished,
-        location: designer.location,
+        address: designer.address,  // Change from location to address
         yearsExperience: designer.yearsExperience,
         rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
         avatarUrl: designer.baseAccount.avatarUrl,
@@ -255,15 +254,31 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
       }
 
       const { open, openUntil } = isOpenNow(workingDays);
+
       return {
-        ...designer,
-        avatarUrl: designer.baseAccount.avatarUrl,
-        gender: designer.baseAccount.gender,
-        name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
+        baseAccountId: designer.baseAccountId,
+        ordersFinished: designer.ordersFinished,
+        yearsExperience: designer.yearsExperience,
+        about: designer.about,
+        workingDays: formatWorkingDays(workingDays), // Format working days for readability
+        rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
+        baseAccount: {
+          avatarUrl: designer.baseAccount.avatarUrl,
+          gender: designer.baseAccount.gender,
+          name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`
+        },
         openNow: open,
         openUntil: open ? openUntil : null,
-        workingDays: formatWorkingDays(workingDays), // Format working days for readability
-        rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0
+        locationDetails: { // Combine latitude, longitude, and address into one object
+          latitude: designer.latitude,
+          longitude: designer.longtitude,
+          address: designer.address,
+        },
+        reviews: designer.reviews,
+        services: designer.services,
+        teamMembers: designer.teamMembers,
+        categories: designer.categories,
+        portfolios: designer.portfolios,
       };
     }
 
