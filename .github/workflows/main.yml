@@ -16,17 +16,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ezzops/khoyoutbackend:${{ github.sha }} \
-            --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            --build-arg ACCESS_TOKEN_SECRET_KEY=${{ secrets.ACCESS_TOKEN_SECRET_KEY }} \
-            --build-arg ACCESS_TOKEN_SECRET_REFRESH_KEY=${{ secrets.ACCESS_TOKEN_SECRET_REFRESH_KEY }} \
-            --build-arg SESSION_SECRET=${{ secrets.SESSION_SECRET }} \
-            --build-arg OWNER_USER_APP=${{ secrets.OWNER_USER_APP }} \
-            --build-arg OWNER_PASSWORD_APP=${{ secrets.OWNER_PASSWORD_APP }} \
-            --build-arg PROJECT_URL=${{ secrets.PROJECT_URL }} \
-            --build-arg PROJECT_API_KEY=${{ secrets.PROJECT_API_KEY }} \
-            --build-arg STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} \
-            --build-arg STRIPE_WEBHOOK_SIGN_KEY=${{ secrets.STRIPE_WEBHOOK_SIGN_KEY }} .
+          docker build -t ezzops/khoyoutbackend:${{ github.sha }} .
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ezzops --password-stdin
           docker push ezzops/khoyoutbackend:${{ github.sha }}
 
