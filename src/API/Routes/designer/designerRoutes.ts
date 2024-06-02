@@ -1,7 +1,7 @@
 import express from 'express';
 import { getAllDesigners, getDesignerById } from "../../Controllers/designer/readAllDesignersController";
 import { z } from 'zod';
-import { QueryValidator } from '../../Middleware/BodyValidator';
+import BodyValidator, { objectToValidate } from '../../Middleware/BodyValidator';
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ export const designersQuerySchema = z.object({
     sortby: z.nativeEnum(designersSortBy).optional()
 });
 
-router.get('/', QueryValidator({schema: designersQuerySchema}), getAllDesigners);
+router.get('/', BodyValidator({schema: designersQuerySchema, validateTarget: objectToValidate.QUERY}), getAllDesigners);
 router.get('/:id', getDesignerById);
 
 export default router;
