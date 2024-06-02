@@ -118,11 +118,12 @@ model DesignerProfile {
   categories  DesignersCategories[]
   portfolios  Portfolio[]
 
-  baseAccount       BaseAccount        @relation(fields: [baseAccountId], references: [id])
-  availabilityTimes AvailabilityTime[]
-  appointments      Appointment[]
-  bookingRequests   BookingRequest[]
-  checkoutSessions  checkoutSession[]
+  baseAccount         BaseAccount          @relation(fields: [baseAccountId], references: [id])
+  availabilityTimes   AvailabilityTime[]
+  appointments        Appointment[]
+  bookingRequests     BookingRequest[]
+  checkoutSessions    checkoutSession[]
+  premiumSubscription premiumSubscription?
 }
 
 model AvailabilityTime {
@@ -301,4 +302,5 @@ enum permiumSubscriptionType {
 model premiumSubscription {
   designerId       String                  @id @unique
   subscriptionType permiumSubscriptionType
+  designer         DesignerProfile         @relation(fields: [designerId], references: [baseAccountId])
 }
