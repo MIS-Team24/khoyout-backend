@@ -27,7 +27,7 @@ jobs:
       - name: SSH to server and execute commands
         uses: appleboy/ssh-action@master
         with:
-            host: oniverse.xyz
+            host: 159.223.244.192
             username: root
             password: ${{ secrets.Node_Pass }}
             script: |
