@@ -4,6 +4,7 @@ import { uploadUpdateDesignerAvatar } from '../../Controllers/designer/profileAv
 import { upload } from '../../../Services/multer';
 import { deleteDesignerAvatar } from '../../Controllers/designer/profileAvatar/deleteDesignerAvatar';
 import { readDesignerProfileData } from '../../Controllers/designer/readDesignerProfileData';
+import { updateDesignerData } from '../../Controllers/designer/updateDesignerData';
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ router.get('/:id', getDesignerById);
 router.patch("/upload-update-avatar/:id", upload.single("file") , uploadUpdateDesignerAvatar)
 router.delete("/delete-avatar/:id", deleteDesignerAvatar)
 router.get('/read-profile-data/:id', readDesignerProfileData);
+router.patch('/update-profile-data/:id', updateDesignerData);
 //
 
 export default router;
