@@ -11,6 +11,13 @@ export const deleteDesignerAvatar = async (req : Request , res : Response) =>{
     try {       
         const designer = await findDesignerBy({ baseAccountId: req.params.id });
 
+        if(!designer){         
+            return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
+                new BadRequestException(Messages.DESIGNER_NOT_FOUND 
+                    , ErrorCode.DESIGNER_NOT_FOUND)
+            ))  
+        }
+
         const { data } = await supabase.storage
         .from('khoyout')
         .remove([`/designers/${designer?.baseAccountId}/designer_profile_avatar`])
@@ -27,7 +34,7 @@ export const deleteDesignerAvatar = async (req : Request , res : Response) =>{
         if(!designerUpdated){         
             return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
                 new BadRequestException(Messages.DESIGNER_NOT_FOUND 
-                    , ErrorCode.USER_NOT_FOUND)
+                    , ErrorCode.DESIGNER_NOT_FOUND)
             ))  
         }
 

@@ -1,8 +1,9 @@
 import express from 'express';
 import { getAllDesigners, getDesignerById } from "../../Controllers/designer/readAllDesignersController";
-import { uploadUpdateDesignerAvatar } from '../../Controllers/designer/profileAvatar/uploadUpdateAvatar';
+import { uploadUpdateDesignerAvatar } from '../../Controllers/designer/profileAvatar/uploadUpdateDesignerAvatar';
 import { upload } from '../../../Services/multer';
-import { deleteDesignerAvatar } from '../../Controllers/designer/profileAvatar/deleteAvatar';
+import { deleteDesignerAvatar } from '../../Controllers/designer/profileAvatar/deleteDesignerAvatar';
+import { readDesignerProfileData } from '../../Controllers/designer/readDesignerProfileData';
 
 const router = express.Router();
 
@@ -12,6 +13,7 @@ router.get('/:id', getDesignerById);
 //profile management
 router.patch("/upload-update-avatar/:id", upload.single("file") , uploadUpdateDesignerAvatar)
 router.delete("/delete-avatar/:id", deleteDesignerAvatar)
+router.get('/read-profile-data/:id', readDesignerProfileData);
 //
 
 export default router;

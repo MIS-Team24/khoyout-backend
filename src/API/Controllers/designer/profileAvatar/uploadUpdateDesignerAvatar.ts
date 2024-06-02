@@ -20,6 +20,13 @@ export const uploadUpdateDesignerAvatar= async (req : Request , res : Response) 
 
         const designer = await findDesignerBy({ baseAccountId: req.params.id });
         
+        if(!designer){         
+            return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
+                new BadRequestException(Messages.DESIGNER_NOT_FOUND 
+                    , ErrorCode.DESIGNER_NOT_FOUND)
+            ))  
+        }
+        
         // decode file buffer to base64
         const fileBase64 = decodeFileToBase64(file)
         //
@@ -48,7 +55,7 @@ export const uploadUpdateDesignerAvatar= async (req : Request , res : Response) 
         if(!designerUpdated){         
             return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
                 new BadRequestException(Messages.DESIGNER_NOT_FOUND 
-                    , ErrorCode.USER_NOT_FOUND)
+                    , ErrorCode.DESIGNER_NOT_FOUND)
             ))  
         }
 
