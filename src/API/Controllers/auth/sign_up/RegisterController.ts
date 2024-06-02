@@ -85,7 +85,7 @@ export async function RegisterHandler(req: Request, res: Response, next: NextFun
         firstName: user.baseAccount.firstName,
         lastName: user.baseAccount.lastName,
         phone: user.baseAccount.phone,
-        type: UserType.User
+        type: registerAs === "Designer"? UserType.Designer : UserType.User
     };
 
     // Generate a random OTP from 4 numbers
