@@ -15,10 +15,25 @@
 
 import { Request, Response } from 'express';
 import { readAllDesigners, findDesignerBy } from "../../Models/DesignerModel";
+import { designerGender, designersQuerySchema, designersSortBy } from '../../Routes/designer/designerRoutes';
+
+type designerType = {
+    name?: string;
+    openNow?: boolean;
+    location?: string;
+    minRating?: number
+    gender?: designerGender;
+    yearsOfExperience?: number;
+    page?: number;
+    limit?: number;
+    sortby?: designersSortBy;
+};
 
 export const getAllDesigners = async (req: Request, res: Response) => {
     try {
-        const designers = await readAllDesigners(req.query);
+        const assertedQuery = designersQuerySchema.safeParse(req.query);// not the typical way you'd wanna do this, but its safe eitehrway t hanks to the middleware.
+        const fixedTypeQuery = assertedQuery.data as designerType;
+        const designers = await readAllDesigners(fixedTypeQuery);
         res.json(designers);
     } catch (error) {
         res.status(500).json({ error: error as any });

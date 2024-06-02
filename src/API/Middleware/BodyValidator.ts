@@ -36,3 +36,30 @@ export default function BodyValidator(options: BodyValidatorOptions) {
         }
     }
 }
+
+export function QueryValidator(options: BodyValidatorOptions) {
+    return function (req: Request, res: Response, next: NextFunction) {
+        try {
+            options.schema.parse(req.query);
+            next();
+        } catch (error) {
+            if (error instanceof ZodError) {
+                const errorMessages = error.errors.map((issue: any) => ({
+                    message: `${issue.path.join('.')} is ${issue.message}`,
+                }));
+
+                return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
+                    new BadRequestException(Messages.INVALID_DATA 
+                        , ErrorCode.INVALID_DATA
+                        ,{isDataValid : false , error : errorMessages})
+                ))
+            } else { 
+                return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
+                    new BadServerException(Messages.SERVER_ERROR 
+                        , ErrorCode.SERVER_ERROR
+                        ,{isDataValid : false , error})
+                ))
+            }
+        }
+    }
+}
