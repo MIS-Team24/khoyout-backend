@@ -73,6 +73,5 @@ export async function getAllUserNotifications(recieverId: string, limit: number 
             created_at: "desc"
         }
     });
-
     return results;
 }
