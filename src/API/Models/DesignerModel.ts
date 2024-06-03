@@ -13,8 +13,7 @@ interface DesignerFilters {
   name?: string;
   page?: number;
   limit?: number;
-  sortBy?: keyof Prisma.DesignerProfileOrderByWithRelationInput;
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: 'mostBooked' | 'highestReviews' | 'highestRated' | keyof Prisma.DesignerProfileOrderByWithRelationInput;
 }
 
 interface WorkingHour {
@@ -36,12 +35,7 @@ const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: stri
   const currentDay = new Date().getDay().toString(); // Convert to string to match JSON keys
   const currentTime = new Date().toTimeString().slice(0, 5); // Get current time in HH:mm format
 
-  console.log("Current Day:", currentDay);
-  console.log("Current Time:", currentTime);
-  console.log("Working Days:", workingDays);
-
   const todayWorkingHours = workingDays?.[currentDay];
-  console.log("Today's Working Hours:", todayWorkingHours);
 
   if (!todayWorkingHours || todayWorkingHours.start.compare === "") return { open: false };
 
@@ -74,14 +68,13 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     name,
     page = 1,
     limit = 10,
-    sortBy = 'baseAccountId',
-    sortOrder = 'asc'
+    sortBy = 'baseAccountId'
   } = filters;
   const offset = (page - 1) * limit;
 
   // Construct query conditions
   const queryConditions: Prisma.DesignerProfileWhereInput = {
-    ...(location && { location: { contains: location } }),
+    ...(location && { address: { contains: location } }),
     ...(yearsOfExperience && { yearsExperience: { gte: yearsOfExperience } }),
     ...(minRating && { reviews: { some: { rating: { gte: minRating } } } }),
   };
@@ -95,18 +88,15 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
   }
 
   try {
-    // Add pagination, sorting, and selection to the query
+    // Fetch designers with their reviews
     const designers = await prisma.designerProfile.findMany({
       where: queryConditions,
       skip: offset,
       take: limit,
-      orderBy: {
-        [sortBy]: sortOrder,
-      },
       select: {
         baseAccountId: true,
         ordersFinished: true,
-        address: true,  // Change from location to address
+        address: true,
         yearsExperience: true,
         workingDays: true,
         reviews: {
@@ -125,7 +115,8 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       }
     });
 
-    const filteredDesigners = designers.map(designer => {
+    // Calculate additional fields and sort
+    const sortedDesigners = designers.map(designer => {
       let workingDays: WorkingHours;
       try {
         workingDays = JSON.parse(designer.workingDays as unknown as string);
@@ -136,23 +127,38 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
 
       const { open, openUntil } = isOpenNow(workingDays);
 
+      const rating = designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0;
+      const reviewCount = designer.reviews.length;
+
       return {
         baseAccountId: designer.baseAccountId,
         ordersFinished: designer.ordersFinished,
-        address: designer.address,  // Change from location to address
+        address: designer.address,
         yearsExperience: designer.yearsExperience,
-        rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
+        rating,
+        reviewCount,
         avatarUrl: designer.baseAccount.avatarUrl,
         gender: designer.baseAccount.gender,
         name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
         openNow: open,
         openUntil: open ? openUntil : null
       };
+    }).sort((a, b) => {
+      switch (sortBy) {
+        case 'mostBooked':
+          return b.ordersFinished - a.ordersFinished;
+        case 'highestReviews':
+          return b.reviewCount - a.reviewCount;
+        case 'highestRated':
+          return b.rating - a.rating;
+        default:
+          return 0;
+      }
     });
 
     const openFilteredDesigners = openNow !== undefined
-      ? filteredDesigners.filter(designer => designer.openNow === openNow)
-      : filteredDesigners;
+      ? sortedDesigners.filter(designer => designer.openNow === openNow)
+      : sortedDesigners;
 
     const totalFilteredCount = await prisma.designerProfile.count({
       where: queryConditions
