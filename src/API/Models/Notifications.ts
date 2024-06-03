@@ -55,6 +55,16 @@ export async function markNotificationsAsRead(receiverId: string, IDs: number[])
 export async function getAllUserNotifications(recieverId: string, limit: number = 10)
 {
     const results = await prisma.notification.findMany({
+        select: {
+            id: true,
+            created_at: true,
+            details: true,
+            read: true,
+            type: true,
+            sender: true,
+            senderId: true,
+            senderType: true
+        },
         where: {
             receiverId: recieverId,
         },
@@ -63,6 +73,5 @@ export async function getAllUserNotifications(recieverId: string, limit: number 
             created_at: "desc"
         }
     });
-
     return results;
 }
