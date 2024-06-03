@@ -3,7 +3,6 @@ import { ErrorCode, ResStatus } from "../Exceptions/main"
 import { errorResponseTemplate } from "../../Services/responses/ErrorTemplate"
 import { Messages } from "../../Services/responses/Messages"
 import { BadAuthonticationException } from "../Exceptions/badAuthontication"
-import { BadRequestException } from "../Exceptions/badRequest"
 import { getUserByToken } from "../Models/UserModel"
 import { UserType } from "../types/user"
 
