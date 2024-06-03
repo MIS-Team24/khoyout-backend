@@ -6,7 +6,7 @@ type NotificationBodySettings = {
     notification: NotificationType
 }
 
-export async function sendNotificationToDesigner(settings: NotificationBodySettings, receiverUserID: string, meta: Object, senderUserId: string | undefined)
+export async function deployNotification(settings: NotificationBodySettings, receiverUserID: string, meta: Object, senderUserId: string | undefined)
 {
     try
     {
@@ -24,7 +24,6 @@ export async function sendNotificationToDesigner(settings: NotificationBodySetti
                 senderId: senderUserId,
                 senderType: settings.from,
                 type: settings.notification,
-                details: details,
             }
         });
         return true;
@@ -56,6 +55,16 @@ export async function markNotificationsAsRead(receiverId: string, IDs: number[])
 export async function getAllUserNotifications(recieverId: string, limit: number = 10)
 {
     const results = await prisma.notification.findMany({
+        select: {
+            id: true,
+            created_at: true,
+            details: true,
+            read: true,
+            type: true,
+            sender: true,
+            senderId: true,
+            senderType: true
+        },
         where: {
             receiverId: recieverId,
         },
