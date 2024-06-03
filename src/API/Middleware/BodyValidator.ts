@@ -19,7 +19,7 @@ type BodyValidatorOptions = {
 export default function BodyValidator(options: BodyValidatorOptions) {
     return function (req: Request, res: Response, next: NextFunction) {
         try {
-            options.schema.parse(options.validateTarget === objectToValidate.QUERY? req.query : req.body);
+            options.schema.parse(options.validateTarget === objectToValidate.QUERY ? req.query : req.body);
             next();
         } catch (error) {
             if (error instanceof ZodError) {

@@ -6,9 +6,10 @@ import BodyValidator, { objectToValidate } from '../../Middleware/BodyValidator'
 const router = express.Router();
 
 export enum designersSortBy {
-    asc = "asc",
-    dec = "dec",
-    yearsExperience = "yearsExperience"
+    yearsExperience = "yearsExperience",
+    mostBooked = "mostBooked",
+    highestReviews = "highestReviews",
+    highestRated = "highestRated"
 }
 
 export enum designerGender {
@@ -25,10 +26,10 @@ export const designersQuerySchema = z.object({
     yearsOfExperience: z.coerce.number().min(0).max(100).optional(),
     page: z.coerce.number().int().min(0).max(Number.MAX_SAFE_INTEGER).optional(),
     limit: z.coerce.number().int().min(0).max(500).optional(),
-    sortby: z.nativeEnum(designersSortBy).optional()
+    sortBy: z.nativeEnum(designersSortBy).optional()
 });
 
-router.get('/', BodyValidator({schema: designersQuerySchema, validateTarget: objectToValidate.QUERY}), getAllDesigners);
+router.get('/', BodyValidator({ schema: designersQuerySchema, validateTarget: objectToValidate.QUERY }), getAllDesigners);
 router.get('/:id', getDesignerById);
 
 export default router;
