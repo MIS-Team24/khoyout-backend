@@ -1,12 +1,12 @@
 import {Request, Response} from "express"
-import { supabase } from "../../../Services/supabaseStorage"
-import { ErrorCode, ResStatus } from "../../Exceptions/main"
-import { errorResponseTemplate } from "../../../Services/responses/ErrorTemplate"
-import { BadRequestException } from "../../Exceptions/badRequest"
-import { Messages } from "../../../Services/responses/Messages"
-import { BadServerException } from "../../Exceptions/badServer"
-import { findDesignerBy} from "../../Models/DesignerModel"
-import { deletePortofolioFileByID } from "../../Models/PortofolioModel"
+import { supabase } from "../../../../Services/supabaseStorage"
+import { ErrorCode, ResStatus } from "../../../Exceptions/main"
+import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate"
+import { BadRequestException } from "../../../Exceptions/badRequest"
+import { Messages } from "../../../../Services/responses/Messages"
+import { BadServerException } from "../../../Exceptions/badServer"
+import { findDesignerBy} from "../../../Models/DesignerModel"
+import { deletePortofolioFileByID } from "../../../Models/PortofolioModel"
 
 export const deleteDesignerPortofolioFile = async (req : Request , res : Response) =>{
     try {       

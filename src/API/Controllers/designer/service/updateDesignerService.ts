@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { ErrorCode , ResStatus } from "../../Exceptions/main";
-import { errorResponseTemplate } from "../../../Services/responses/ErrorTemplate";
-import { BadRequestException } from "../../Exceptions/badRequest";
-import { Messages } from "../../../Services/responses/Messages";
-import { findDesignerBy } from "../../Models/DesignerModel";
-import { updateServiceByID } from "../../Models/serviceModel";
+import { ErrorCode , ResStatus } from "../../../Exceptions/main";
+import { errorResponseTemplate } from "../../../../Services/responses/ErrorTemplate";
+import { BadRequestException } from "../../../Exceptions/badRequest";
+import { Messages } from "../../../../Services/responses/Messages";
+import { findDesignerBy } from "../../../Models/DesignerModel";
+import { updateServiceByID } from "../../../Models/ServiceModel";
 
 export const updateDesignerService = async (req : Request , res : Response) => {
     const designer = await findDesignerBy({ baseAccountId: req.params.id });
