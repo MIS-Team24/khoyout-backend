@@ -75,7 +75,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
   // Construct query conditions
   const queryConditions: Prisma.DesignerProfileWhereInput = {
     ...(location && { address: { contains: location } }),
-    ...(yearsOfExperience !== undefined && { yearsExperience: { equals: yearsOfExperience } }),
+    ...(yearsOfExperience !== undefined && yearsOfExperience > 0 && { yearsExperience: { equals: yearsOfExperience } }),
     ...(minRating && { reviews: { some: { rating: { gte: minRating } } } }),
   };
 
