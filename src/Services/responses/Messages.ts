@@ -25,4 +25,6 @@ export enum Messages {
     REQUEST_DAYOFWEEK_AND_DATE_NOT_MATCHING = "The date sent and the picked available time must be matching for the day of the week.",
     DESIGNER_NOT_FOUND = "This designer is not exist!",
     DESIGNER_UPDATED = "Designer updated successfully!",
+    SERVICE_UPDATED = "Service updated successfully!",
+    SERVICE_NOT_FOUND = "Service is not exist!"
 }

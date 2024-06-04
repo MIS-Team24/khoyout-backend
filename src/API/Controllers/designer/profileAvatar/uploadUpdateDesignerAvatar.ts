@@ -47,7 +47,6 @@ export const uploadUpdateDesignerAvatar= async (req : Request , res : Response) 
             .getPublicUrl(`/designers/${designer?.baseAccountId}/designer_profile_avatar`)
         //
 
-
         //update avatar url field in the database
         const designerUpdated = await updateDesignerBy({baseAccountId :  designer?.baseAccountId}, {avatarUrl : image?.publicUrl})
         //

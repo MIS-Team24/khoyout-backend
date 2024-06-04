@@ -205,6 +205,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         services: {
           select: {
+            id:true ,
             title: true,
             description: true,
             price: true
@@ -228,6 +229,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         portfolios: {
           select: {
+            id:true,
             url: true
           }
         }

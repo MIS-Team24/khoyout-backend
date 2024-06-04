@@ -29,6 +29,7 @@ export enum ErrorCode {
     INCORRECT_PASSWORD = 1011,
     INVALID_FILE = 1012,
     DESIGNER_NOT_FOUND = 1013,
+    SERVICE_NOT_FOUND = 1014
 }
 
 export enum ResStatus {
