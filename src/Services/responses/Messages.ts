@@ -27,5 +27,6 @@ export enum Messages {
     DESIGNER_UPDATED = "Designer updated successfully!",
     SERVICE_UPDATED = "Service updated successfully!",
     SERVICE_NOT_FOUND = "Service is not exist!",
-    SERVICE_CREATED = "New service is created successfully!"
+    SERVICE_CREATED = "New service is created successfully!",
+    FILE_REMOVED = "File removed successfully!"
 }

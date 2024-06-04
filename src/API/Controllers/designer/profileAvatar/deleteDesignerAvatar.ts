@@ -39,7 +39,7 @@ export const deleteDesignerAvatar = async (req : Request , res : Response) =>{
         }
 
         return res.status(ResStatus.OK).json({
-            message : Messages.DESIGNER_UPDATED,
+            message : Messages.FILE_REMOVED,
             isAvatarRemoved : true
         }) 
 

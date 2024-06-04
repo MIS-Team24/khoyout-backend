@@ -16,12 +16,12 @@ router.get('/', getAllDesigners);
 router.get('/:id', getDesignerById);
 
 //profile management
-router.patch("/upload-update-avatar/:id", upload.single("file") , uploadUpdateDesignerAvatar)
+router.post("/upload-update-avatar/:id", upload.single("file") , uploadUpdateDesignerAvatar)
 router.delete("/delete-avatar/:id", deleteDesignerAvatar)
 
 router.get('/read-profile-data/:id', readDesignerProfileData);
 router.patch('/update-personal-info-or-map/:id', updateDesignerData);
-router.patch('/upload-update-portofolio-file/:id', upload.single("file"), uploadUpdateDesignerProtofolioFile);
+router.post('/upload-update-portofolio-file/:id', upload.single("file"), uploadUpdateDesignerProtofolioFile);
 router.delete("/delete-portofolio-file/:id/:fileId", deleteDesignerPortofolioFile)
 router.patch('/update-service-data/:id/:serviceId', updateDesignerService);
 router.post('/add-service/:id', createDesignerService);

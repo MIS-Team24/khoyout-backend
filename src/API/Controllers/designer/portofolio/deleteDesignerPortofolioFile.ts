@@ -25,7 +25,7 @@ export const deleteDesignerPortofolioFile = async (req : Request , res : Respons
         await deletePortofolioFileByID(req.params.fileId)
 
         return res.status(ResStatus.OK).json({
-            message : Messages.DESIGNER_UPDATED,
+            message : Messages.FILE_REMOVED,
             isFileRemoved : true
         }) 
 
