@@ -117,12 +117,13 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
 
     // Calculate additional fields and sort
     const sortedDesigners = designers.map(designer => {
-      let workingDays: WorkingHours;
+      let workingDays: WorkingHours = {};
       try {
-        workingDays = JSON.parse(designer.workingDays as unknown as string);
+        if (designer.workingDays) {
+          workingDays = JSON.parse(designer.workingDays as unknown as string);
+        }
       } catch (e) {
         console.error("Error parsing workingDays JSON:", e);
-        workingDays = {};
       }
 
       const { open, openUntil } = isOpenNow(workingDays);
@@ -251,12 +252,13 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
     });
 
     if (designer) {
-      let workingDays: WorkingHours;
+      let workingDays: WorkingHours = {};
       try {
-        workingDays = JSON.parse(designer.workingDays as unknown as string);
+        if (designer.workingDays) {
+          workingDays = JSON.parse(designer.workingDays as unknown as string);
+        }
       } catch (e) {
         console.error("Error parsing workingDays JSON:", e);
-        workingDays = {};
       }
 
       const { open, openUntil } = isOpenNow(workingDays);
