@@ -11,6 +11,7 @@ interface DesignerFilters {
   yearsOfExperience?: number;
   openNow?: boolean;
   name?: string;
+  category?: string;
   page?: number;
   limit?: number;
   sortBy?: 'mostBooked' | 'highestReviews' | 'highestRated' | keyof Prisma.DesignerProfileOrderByWithRelationInput;
@@ -46,14 +47,11 @@ const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: stri
   return { open: false };
 };
 
-const formatWorkingDays = (workingDays: WorkingHours): string[] => {
+const formatWorkingDays = (workingDays: WorkingHours): { day: string, hours: string }[] => {
   return Object.entries(workingDays).map(([day, hours]) => {
     const dayName = daysOfWeek[parseInt(day)];
-    if (hours.start.display === "Closed") {
-      return `${dayName} Closed`;
-    } else {
-      return `${dayName} ${hours.start.display} - ${hours.end.display}`;
-    }
+    const displayHours = hours.start.display === "Closed" ? "Closed" : `${hours.start.display} - ${hours.end.display}`;
+    return { day: dayName, hours: displayHours };
   });
 };
 
@@ -66,6 +64,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     yearsOfExperience,
     openNow,
     name,
+    category,
     page = 1,
     limit = 10,
     sortBy = 'baseAccountId'
@@ -76,7 +75,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
   const queryConditions: Prisma.DesignerProfileWhereInput = {
     ...(location && { address: { contains: location } }),
     ...(yearsOfExperience !== undefined && yearsOfExperience > 0 && { yearsExperience: { equals: yearsOfExperience } }),
-    ...(minRating && { reviews: { some: { rating: { gte: minRating } } } }),
+    ...(category && { categories: { some: { Category: { name: { equals: category } } } } })
   };
 
   // Add baseAccount conditions only if necessary
@@ -111,12 +110,26 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
             firstName: true,
             lastName: true
           }
+        },
+        categories: {
+          select: {
+            Category: {
+              select: {
+                name: true
+              }
+            }
+          }
         }
       }
     });
 
     // Calculate additional fields and sort
-    const sortedDesigners = designers.map(designer => {
+    const filteredDesigners = designers.filter(designer => {
+      const rating = designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0;
+      return minRating ? rating >= minRating : true;
+    });
+
+    const sortedDesigners = filteredDesigners.map(designer => {
       let workingDays: WorkingHours = {};
       try {
         if (designer.workingDays) {
@@ -131,10 +144,14 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       const rating = designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0;
       const reviewCount = designer.reviews.length;
 
+      // Extract provision and city from address
+      const addressParts = designer.address.split(', ');
+      const provisionCityAddress = `${addressParts[addressParts.length - 2]}, ${addressParts[addressParts.length - 1]}`;
+
       return {
         baseAccountId: designer.baseAccountId,
         ordersFinished: designer.ordersFinished,
-        address: designer.address,
+        address: provisionCityAddress,
         yearsExperience: designer.yearsExperience,
         rating,
         reviewCount,
@@ -142,7 +159,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
         gender: designer.baseAccount.gender,
         name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
         openNow: open,
-        openUntil: open ? openUntil : null
+        openUntil: open ? openUntil : null,
       };
     }).sort((a, b) => {
       switch (sortBy) {
@@ -168,7 +185,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     const totalPages = Math.ceil(totalFilteredCount / limit);
 
     return {
-      designers: openFilteredDesigners.length ? openFilteredDesigners : null,
+      designers: openFilteredDesigners.length ? openFilteredDesigners : {},
       pagination: {
         current_page: page,
         total_pages: totalPages,
@@ -299,6 +316,29 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
   }
 };
 
+// Function to find only the portfolio attribute of a designer
+export const findDesignerPortfolioBy = async (data: Prisma.DesignerProfileWhereUniqueInput) => {
+  try {
+    const designer = await prisma.designerProfile.findUnique({
+      where: data,
+      select: {
+        portfolios: {
+          select: {
+            url: true
+          }
+        }
+      }
+    });
+
+    return designer?.portfolios || [];
+  } catch (error) {
+    console.error("Error finding designer portfolio:", error);
+    throw new Error("Failed to find designer portfolio");
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
 // Validation schema using Joi
 const designerFilterSchema = Joi.object({
   location: Joi.string().optional(),
@@ -307,6 +347,7 @@ const designerFilterSchema = Joi.object({
   yearsOfExperience: Joi.number().integer().min(0).optional(),
   openNow: Joi.boolean().optional(),
   name: Joi.string().optional(),
+  category: Joi.string().valid('Casual', 'Formal', 'Classic', 'Soiree').optional(),
   page: Joi.number().integer().min(1).optional(),
   limit: Joi.number().integer().min(1).optional(),
   sortBy: Joi.string().optional(),
@@ -328,41 +369,38 @@ type designerProfileDetails = {
   yearsOfExperience: number
 }
 
-export async function addDesigner (email: string, firstName: string, lastName: string, password: string, designerDetails: designerProfileDetails)
-{
+export async function addDesigner(email: string, firstName: string, lastName: string, password: string, designerDetails: designerProfileDetails) {
   const user = await prisma.designerProfile.create({
-      data: {
-          baseAccount: {
-              create: {
-                  email: email,
-                  firstName: firstName,
-                  lastName: lastName,
-                  password: password,
-                  emailActivated: false,
-              }
-          },
-          about: designerDetails.about,
-          address: designerDetails.address,
-          avatarUrl: designerDetails.avatarURL,
-          latitude: designerDetails.latitude,
-          longtitude: designerDetails.longtitude,
-          location: designerDetails.location,
-          ordersFinished: designerDetails.ordersFinished,
-          yearsExperience: designerDetails.yearsOfExperience,
-          workingDays: ""
+    data: {
+      baseAccount: {
+        create: {
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          password: password,
+          emailActivated: false,
+        }
       },
-      select: {
-          baseAccount: true,
-      }
+      about: designerDetails.about,
+      address: designerDetails.address,
+      avatarUrl: designerDetails.avatarURL,
+      latitude: designerDetails.latitude,
+      longtitude: designerDetails.longtitude,
+      location: designerDetails.location,
+      ordersFinished: designerDetails.ordersFinished,
+      yearsExperience: designerDetails.yearsOfExperience,
+      workingDays: ""
+    },
+    select: {
+      baseAccount: true,
+    }
   });
 
   return user;
 }
 
-export async function getDesignerBaseAccountByEmail(email: string)
-{
-  try
-  {
+export async function getDesignerBaseAccountByEmail(email: string) {
+  try {
     const result = await prisma.designerProfile.findFirst({
       where: {
         baseAccount: {
@@ -375,14 +413,12 @@ export async function getDesignerBaseAccountByEmail(email: string)
     });
 
     return result;
-  }
-  catch (error) {
+  } catch (error) {
     return false;
   }
 }
 
-export async function getDesignerSubscriptionTier(designerId: string) : Promise<"PREMIUM" | "STANDARD" | undefined>
-{
+export async function getDesignerSubscriptionTier(designerId: string): Promise<"PREMIUM" | "STANDARD" | undefined> {
   const result = await prisma.premiumSubscription.findFirst({
     where: {
       designerId: designerId
@@ -391,6 +427,6 @@ export async function getDesignerSubscriptionTier(designerId: string) : Promise<
       subscriptionType: true
     }
   });
-  
-  return result?.subscriptionType?? undefined;
+
+  return result?.subscriptionType ?? undefined;
 }
