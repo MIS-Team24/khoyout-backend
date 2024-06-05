@@ -19,9 +19,9 @@ router.post("/upload-update-avatar", checkIfAuthenticated(), upload.single("file
 router.delete("/delete-avatar",checkIfAuthenticated() , deleteAvatarController)
 //
 
-router.get("/read-user" , checkIfAuthenticated() , readUserData)
+router.get("/read-user-profile-data" , checkIfAuthenticated() , readUserData)
 router.patch("/change-password" ,checkIfAuthenticated(), BodyValidator({schema: cahngePasswordSchema}) , changeUserPassword)
-router.patch("/update-data" , checkIfAuthenticated() , updateUserData)
+router.patch("/update-personal-info-data" , checkIfAuthenticated() , updateUserData)
 router.patch("/body-measurement-update-data" , checkIfAuthenticated() , updateBodyMeasurementData)
 router.patch("/style-preference-update-data" , checkIfAuthenticated() , updateStylePreferenceData)
 router.delete("/delete-account" , checkIfAuthenticated() ,  deleteUserAccount)
