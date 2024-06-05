@@ -38,7 +38,7 @@ const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: stri
 
   const todayWorkingHours = workingDays?.[currentDay];
 
-  if (!todayWorkingHours || todayWorkingHours.start.compare === "") return { open: false };
+  if (!todayWorkingHours || !todayWorkingHours.start?.compare) return { open: false };
 
   if (currentTime >= todayWorkingHours.start.compare && currentTime <= todayWorkingHours.end.compare) {
     return { open: true, openUntil: todayWorkingHours.end.display };
@@ -185,7 +185,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     const totalPages = Math.ceil(totalFilteredCount / limit);
 
     return {
-      designers: openFilteredDesigners.length ? openFilteredDesigners : {},
+      designers: openFilteredDesigners.length ? openFilteredDesigners : [],
       pagination: {
         current_page: page,
         total_pages: totalPages,
