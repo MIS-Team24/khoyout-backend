@@ -3,7 +3,6 @@ import Joi from "joi";
 
 const prisma = new PrismaClient();
 
-// Define the filters interface
 interface DesignerFilters {
   location?: string;
   minRating?: number;
@@ -33,8 +32,8 @@ type WorkingHours = { [key: string]: WorkingHour };
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: string } => {
-  const currentDay = new Date().getDay().toString(); // Convert to string to match JSON keys
-  const currentTime = new Date().toTimeString().slice(0, 5); // Get current time in HH:mm format
+  const currentDay = new Date().getDay().toString();
+  const currentTime = new Date().toTimeString().slice(0, 5);
 
   const todayWorkingHours = workingDays?.[currentDay];
 
@@ -55,7 +54,10 @@ const formatWorkingDays = (workingDays: WorkingHours): { day: string, hours: str
   });
 };
 
-// Function to get all designers with updated logic
+const normalizeName = (name: string) => {
+  return name.replace(/\s+/g, '').toLowerCase();
+};
+
 export const readAllDesigners = async (filters: DesignerFilters) => {
   const {
     location,
@@ -71,23 +73,29 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
   } = filters;
   const offset = (page - 1) * limit;
 
-  // Construct query conditions
   const queryConditions: Prisma.DesignerProfileWhereInput = {
-    ...(location && { address: { contains: location } }),
+    ...(location && { address: { contains: location, mode: 'insensitive' } }),
     ...(yearsOfExperience !== undefined && yearsOfExperience > 0 && { yearsExperience: { equals: yearsOfExperience } }),
     ...(category && { categories: { some: { Category: { name: { equals: category } } } } })
   };
 
-  // Add baseAccount conditions only if necessary
   if (name || gender) {
     queryConditions.baseAccount = {
-      ...(name && { OR: [{ firstName: { contains: name } }, { lastName: { contains: name } }] }),
+      ...(name && {
+        OR: [
+          { firstName: { contains: name, mode: 'insensitive' } },
+          { lastName: { contains: name, mode: 'insensitive' } },
+          { AND: [
+            { firstName: { contains: name.split(' ')[0], mode: 'insensitive' } },
+            { lastName: { contains: name.split(' ')[1], mode: 'insensitive' } }
+          ]}
+        ]
+      }),
       ...(gender && { gender: { equals: gender } })
     };
   }
 
   try {
-    // Fetch designers with their reviews
     const designers = await prisma.designerProfile.findMany({
       where: queryConditions,
       skip: offset,
@@ -123,7 +131,6 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       }
     });
 
-    // Calculate additional fields and sort
     const filteredDesigners = designers.filter(designer => {
       const rating = designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0;
       return minRating ? rating >= minRating : true;
@@ -144,7 +151,6 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       const rating = designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0;
       const reviewCount = designer.reviews.length;
 
-      // Extract provision and city from address
       const addressParts = designer.address.split(', ');
       const provisionCityAddress = `${addressParts[addressParts.length - 2]}, ${addressParts[addressParts.length - 1]}`;
 
@@ -202,7 +208,6 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
   }
 };
 
-// Function to find a specific designer by unique attribute
 export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInput) => {
   try {
     const designer = await prisma.designerProfile.findUnique({
@@ -232,7 +237,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
             avatarUrl: true,
             user: {
               select: {
-                baseAccountId: true // Assuming you want the user ID, add other fields if needed
+                baseAccountId: true
               }
             }
           }
@@ -285,7 +290,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         ordersFinished: designer.ordersFinished,
         yearsExperience: designer.yearsExperience,
         about: designer.about,
-        workingDays: formatWorkingDays(workingDays), // Format working days for readability
+        workingDays: formatWorkingDays(workingDays),
         rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
         baseAccount: {
           avatarUrl: designer.baseAccount.avatarUrl,
@@ -294,7 +299,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         openNow: open,
         openUntil: open ? openUntil : null,
-        locationDetails: { // Combine latitude, longitude, and address into one object
+        locationDetails: {
           latitude: designer.latitude,
           longitude: designer.longtitude,
           address: designer.address,
@@ -316,7 +321,6 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
   }
 };
 
-// Function to find only the portfolio attribute of a designer
 export const findDesignerPortfolioBy = async (data: Prisma.DesignerProfileWhereUniqueInput) => {
   try {
     const designer = await prisma.designerProfile.findUnique({
@@ -339,7 +343,6 @@ export const findDesignerPortfolioBy = async (data: Prisma.DesignerProfileWhereU
   }
 };
 
-// Validation schema using Joi
 const designerFilterSchema = Joi.object({
   location: Joi.string().optional(),
   minRating: Joi.number().min(1).max(5).optional(),

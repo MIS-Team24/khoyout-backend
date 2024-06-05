@@ -28,16 +28,12 @@ export default function BodyValidator(options: BodyValidatorOptions) {
                 }));
 
                 return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
-                    new BadRequestException(Messages.INVALID_DATA 
-                        , ErrorCode.INVALID_DATA
-                        ,{isDataValid : false , error : errorMessages})
-                ))
+                    new BadRequestException(Messages.INVALID_DATA, ErrorCode.INVALID_DATA, { isDataValid: false, error: errorMessages })
+                ));
             } else { 
                 return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
-                    new BadServerException(Messages.SERVER_ERROR 
-                        , ErrorCode.SERVER_ERROR
-                        ,{isDataValid : false , error})
-                ))
+                    new BadServerException(Messages.SERVER_ERROR, ErrorCode.SERVER_ERROR, { isDataValid: false, error })
+                ));
             }
         }
     }

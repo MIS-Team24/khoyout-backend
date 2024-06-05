@@ -32,12 +32,16 @@ type designerType = {
 
 export const getAllDesigners = async (req: Request, res: Response) => {
   try {
-    const assertedQuery = designersQuerySchema.safeParse(req.query); // Not the typical way you'd want to do this, but it's safe either way thanks to the middleware.
+    const assertedQuery = designersQuerySchema.safeParse(req.query);
+    if (!assertedQuery.success) {
+      return res.status(400).json({ errors: assertedQuery.error.format() });
+    }
+
     const fixedTypeQuery = assertedQuery.data as designerType;
     const designers = await readAllDesigners(fixedTypeQuery);
     res.json(designers);
   } catch (error) {
-    res.status(500).json({ error: error as any });
+    res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
 };
 
@@ -50,7 +54,7 @@ export const getDesignerById = async (req: Request, res: Response) => {
       res.status(404).json({ error: 'Designer not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error as any });
+    res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
 };
 
@@ -59,6 +63,6 @@ export const getDesignerPortfolioById = async (req: Request, res: Response) => {
     const portfolio = await findDesignerPortfolioBy({ baseAccountId: req.params.id });
     res.json(portfolio);
   } catch (error) {
-    res.status(500).json({ error: error as any });
+    res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
 };
