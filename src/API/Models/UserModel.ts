@@ -1,5 +1,5 @@
 import { prisma  } from "../../Database";
-import { Prisma  } from "@prisma/client";
+import { Prisma, UserDeleteAccountReason  } from "@prisma/client";
 import { UserBody } from "../types/auth";
 import { getUTCTime } from "../../Utilities/Time";
 import { UserType } from "../types/user";
@@ -131,6 +131,22 @@ export async function deleteAllUserSessionsFromDb(userId: string) : Promise<bool
     }
 }
 
+export async function insertAccountDeleteReason(reason: UserDeleteAccountReason, otherReason?: string) : Promise<boolean>
+{
+    try
+    {
+        await prisma.accountDeletes.create({
+            data: {
+                reason: reason,
+                otherReason: otherReason
+            }
+        })
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
 export async function getUserById(userId: string) {
     const result = await prisma.baseAccount.findFirst({
         where: {
@@ -231,6 +247,15 @@ export const updateUser = async ( uniqueData : Prisma.BaseAccountWhereUniqueInpu
     return user 
 }
 //
+
+export async function deleteBaseAccountWithId(id: string) {
+    const result = await prisma.baseAccount.delete({
+        where: {
+            id: id
+        },
+    });
+    return result;
+}
 
 //update user data
 export const deleteUser = async (data : Prisma.UsersWhereUniqueInput) => {

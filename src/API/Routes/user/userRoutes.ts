@@ -9,7 +9,7 @@ import { updateBodyMeasurementData } from "../../Controllers/user/updateBodyMeas
 import { updateStylePreferenceData } from "../../Controllers/user/updateStylePreference";
 import { readUserData } from "../../Controllers/user/readDataController";
 import { changeUserPassword } from "../../Controllers/user/changePassword";
-import { cahngePasswordSchema } from "../../../Services/validationSchemas/UserSchema";
+import { DeleteAccountBodySchema, cahngePasswordSchema } from "../../../Services/validationSchemas/UserSchema";
 import BodyValidator from "../../Middleware/BodyValidator";
 
 const router = express.Router();
@@ -24,6 +24,6 @@ router.patch("/change-password" ,checkIfAuthenticated(), BodyValidator({schema: 
 router.patch("/update-personal-info-data" , checkIfAuthenticated() , updateUserData)
 router.patch("/body-measurement-update-data" , checkIfAuthenticated() , updateBodyMeasurementData)
 router.patch("/style-preference-update-data" , checkIfAuthenticated() , updateStylePreferenceData)
-router.delete("/delete-account" , checkIfAuthenticated() ,  deleteUserAccount)
+router.post("/delete-account" , checkIfAuthenticated(), BodyValidator({schema: DeleteAccountBodySchema}) ,deleteUserAccount)
 
 export default router;

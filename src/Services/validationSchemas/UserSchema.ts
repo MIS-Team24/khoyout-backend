@@ -1,3 +1,4 @@
+import { UserDeleteAccountReason } from "@prisma/client";
 import { z } from "zod";
 
 export const loginSchema = z.object({
@@ -33,3 +34,7 @@ export const cahngePasswordSchema = z.object({
     repeatPassword: z.string().min(8)
 });
 
+export const DeleteAccountBodySchema = z.object({
+    reason: z.nativeEnum(UserDeleteAccountReason),
+    otherReason: z.string().optional()
+});

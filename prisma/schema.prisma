@@ -46,7 +46,7 @@ model Users {
   stylePreferences        StylePreferences?
   Reviews                 Review[]
 
-  baseAccount     BaseAccount      @relation(fields: [baseAccountId], references: [id])
+  baseAccount     BaseAccount      @relation(fields: [baseAccountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   appointments    Appointment[]
   bookingRequests BookingRequest[]
 }
@@ -118,7 +118,7 @@ model DesignerProfile {
   categories  DesignersCategories[]
   portfolios  Portfolio[]
 
-  baseAccount         BaseAccount          @relation(fields: [baseAccountId], references: [id])
+  baseAccount         BaseAccount          @relation(fields: [baseAccountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   availabilityTimes   AvailabilityTime[]
   appointments        Appointment[]
   bookingRequests     BookingRequest[]
@@ -243,7 +243,7 @@ model Sessions {
   accountId  String   @unique
   ExpiryDate DateTime
 
-  baseAccount BaseAccount @relation(fields: [accountId], references: [id])
+  baseAccount BaseAccount @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum Gender {
@@ -281,9 +281,9 @@ model Notification {
   created_at DateTime               @default(now())
   senderType NotificationSenderType
   receiverId String
-  receiver   BaseAccount            @relation(fields: [receiverId], references: [id], name: "notificationReceiver")
+  receiver   BaseAccount            @relation(fields: [receiverId], references: [id], name: "notificationReceiver", onDelete: Cascade, onUpdate: Cascade)
   senderId   String?
-  sender     BaseAccount?           @relation(fields: [senderId], references: [id], name: "notificationSender")
+  sender     BaseAccount?           @relation(fields: [senderId], references: [id], name: "notificationSender", onDelete: Cascade, onUpdate: Cascade)
 }
 
 model checkoutSession {
