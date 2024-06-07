@@ -200,14 +200,6 @@ export async function verifyEmailDb(email: string)
     }
 }
 
-//
-
-//create user
-// export const addUser = async (data : Prisma.UsersCreateInput) => {
-//     const user = await prisma.users.create({data})
-//     return user as UserBody
-// }
-
 export async function addUser (email: string, firstName: string, lastName: string, password: string)
 {
     const user = await prisma.users.create({
@@ -229,7 +221,6 @@ export async function addUser (email: string, firstName: string, lastName: strin
 
     return user;
 }
-//
 
 //update user data
 export const updateUser = async ( uniqueData : Prisma.BaseAccountWhereUniqueInput , data? : Prisma.BaseAccountUpdateInput) => {

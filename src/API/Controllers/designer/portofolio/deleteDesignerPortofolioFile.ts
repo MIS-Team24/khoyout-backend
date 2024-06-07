@@ -5,29 +5,28 @@ import { errorResponseTemplate } from "../../../../Services/responses/ErrorTempl
 import { BadRequestException } from "../../../Exceptions/badRequest"
 import { Messages } from "../../../../Services/responses/Messages"
 import { BadServerException } from "../../../Exceptions/badServer"
-import { findUserBy, updateUser } from "../../../Models/UserModel"
-import { UserBody } from "../../../types/auth"
+import { findDesignerBy} from "../../../Models/DesignerModel"
+import { deletePortofolioFileByID } from "../../../Models/PortofolioModel"
 
-export const deleteAvatarController = async (req : Request , res : Response) =>{
-    try {
-        const user = req?.user as UserBody
-        
-        const { data } = await supabase.storage
-        .from('khoyout')
-        .remove([`/users/${user?.id}/user_profile_avatar`])
-
-        const userUpdated = await updateUser( {id : user.id} , {avatarUrl : null})
-        
-        if(!userUpdated){         
+export const deleteDesignerPortofolioFile = async (req : Request , res : Response) =>{
+    try {       
+        const designer = await findDesignerBy({ baseAccountId: req.params.id});
+        if(!designer){         
             return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
-                new BadRequestException(Messages.USER_NOT_FOUND 
-                    , ErrorCode.USER_NOT_FOUND)
+                new BadRequestException(Messages.DESIGNER_NOT_FOUND 
+                    , ErrorCode.DESIGNER_NOT_FOUND)
             ))  
         }
 
+        await supabase.storage
+        .from('khoyout')
+        .remove([`/designers/${designer?.baseAccountId}/portofolio/${req.params.fileId}`])
+
+        await deletePortofolioFileByID(req.params.fileId)
+
         return res.status(ResStatus.OK).json({
-            message : Messages.USER_UPDATED,
-            isAvatarRemoved : true
+            message : Messages.FILE_REMOVED,
+            isFileRemoved : true
         }) 
 
         } catch (error) {

@@ -6,10 +6,9 @@ import { errorResponseTemplate } from "../../../../Services/responses/ErrorTempl
 import { BadRequestException } from "../../../Exceptions/badRequest"
 import { Messages } from "../../../../Services/responses/Messages"
 import { BadServerException } from "../../../Exceptions/badServer"
-import { updateUser } from "../../../Models/UserModel"
-import { UserBody } from "../../../types/auth"
+import { findDesignerBy, updateDesignerBy } from "../../../Models/DesignerModel"
 
-export const uploadUpdateAvatarController = async (req : Request , res : Response) =>{
+export const uploadUpdateDesignerAvatar= async (req : Request , res : Response) =>{
     try {
         const file = req.file;
         if(!file) {           
@@ -19,8 +18,15 @@ export const uploadUpdateAvatarController = async (req : Request , res : Respons
             ))        
         }
 
-        const user = req?.user as UserBody
-
+        const designer = await findDesignerBy({ baseAccountId: req.params.id });
+        
+        if(!designer){         
+            return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
+                new BadRequestException(Messages.DESIGNER_NOT_FOUND 
+                    , ErrorCode.DESIGNER_NOT_FOUND)
+            ))  
+        }
+        
         // decode file buffer to base64
         const fileBase64 = decodeFileToBase64(file)
         //
@@ -28,7 +34,7 @@ export const uploadUpdateAvatarController = async (req : Request , res : Respons
         // upload the file to supabase
         const { data } = await supabase.storage
             .from("khoyout")
-            .upload(`/users/${user?.id}/user_profile_avatar`, fileBase64 , {
+            .upload(`/designers/${designer?.baseAccountId}/designer_profile_avatar`, fileBase64 , {
                 contentType: "image/png",
                 cacheControl: '3600',
                 upsert: true
@@ -38,17 +44,17 @@ export const uploadUpdateAvatarController = async (req : Request , res : Respons
         // get public url of the uploaded file
         const { data : image } = await supabase.storage
             .from('khoyout')
-            .getPublicUrl(`/users/${user?.id}/user_profile_avatar`)
+            .getPublicUrl(`/designers/${designer?.baseAccountId}/designer_profile_avatar`)
         //
 
         //update avatar url field in the database
-        const userUpdated = await updateUser( {id : user.id} , {avatarUrl : image?.publicUrl})
+        const designerUpdated = await updateDesignerBy({baseAccountId :  designer?.baseAccountId}, {avatarUrl : image?.publicUrl})
         //
 
-        if(!userUpdated){         
+        if(!designerUpdated){         
             return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
-                new BadRequestException(Messages.USER_NOT_FOUND 
-                    , ErrorCode.USER_NOT_FOUND)
+                new BadRequestException(Messages.DESIGNER_NOT_FOUND 
+                    , ErrorCode.DESIGNER_NOT_FOUND)
             ))  
         }
 
@@ -57,7 +63,6 @@ export const uploadUpdateAvatarController = async (req : Request , res : Respons
             avatarUrl : image.publicUrl
         }) 
 
-        
         } catch (error) {
             console.log(error)           
             return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(

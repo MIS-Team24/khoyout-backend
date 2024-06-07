@@ -18,11 +18,12 @@ const router = express.Router();
 router.post("/upload-update-avatar", checkIfAuthenticated(), upload.single("file") , uploadUpdateAvatarController)
 router.delete("/delete-avatar",checkIfAuthenticated() , deleteAvatarController)
 //
-router.get("/read-user" , checkIfAuthenticated() , readUserData)
-router.put("/change-password" ,checkIfAuthenticated(), BodyValidator({schema: cahngePasswordSchema}) , changeUserPassword)
-router.put("/update-data" , checkIfAuthenticated() , updateUserData)
-router.put("/body-measurement-update-data" , checkIfAuthenticated() , updateBodyMeasurementData)
-router.put("/style-preference-update-data" , checkIfAuthenticated() , updateStylePreferenceData)
+
+router.get("/read-user-profile-data" , checkIfAuthenticated() , readUserData)
+router.patch("/change-password" ,checkIfAuthenticated(), BodyValidator({schema: cahngePasswordSchema}) , changeUserPassword)
+router.patch("/update-personal-info-data" , checkIfAuthenticated() , updateUserData)
+router.patch("/body-measurement-update-data" , checkIfAuthenticated() , updateBodyMeasurementData)
+router.patch("/style-preference-update-data" , checkIfAuthenticated() , updateStylePreferenceData)
 router.delete("/delete-account" , checkIfAuthenticated() ,  deleteUserAccount)
 
 export default router;

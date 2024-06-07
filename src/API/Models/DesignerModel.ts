@@ -244,6 +244,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         services: {
           select: {
+            id:true ,
             title: true,
             description: true,
             price: true
@@ -267,6 +268,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         portfolios: {
           select: {
+            id:true,
             url: true
           }
         }
@@ -430,6 +432,13 @@ export async function getDesignerSubscriptionTier(designerId: string): Promise<"
       subscriptionType: true
     }
   });
+  return result?.subscriptionType?? undefined;
+}
 
-  return result?.subscriptionType ?? undefined;
+export const updateDesignerBy = async (uniqueData : Prisma.DesignerProfileWhereUniqueInput, data : Prisma.DesignerProfileUpdateInput) => {
+  const designer = await prisma.designerProfile.update({
+    where : uniqueData,
+    data : {...data}
+  })
+  return designer 
 }
