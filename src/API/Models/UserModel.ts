@@ -25,7 +25,8 @@ export async function getUserByEmail(email: string)
 export async function getUserLoginData(email: string) {
     const result = await prisma.baseAccount.findUnique({
         where: {
-            email: email
+            email: email,
+            emailActivated: true
         },
         select: {
             email: true,
