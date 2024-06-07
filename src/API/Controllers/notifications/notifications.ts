@@ -20,9 +20,11 @@ export async function GetUserNotificationsController(req: Request, res: Response
             read: notif.read,
             type: notif.type,
             time: notif.created_at,
-            sender: {
-                id: notif.senderId,
-            },
+            sender: notif.sender !== null? {
+                id: notif.sender.id,
+                name: notif.sender.firstName + " " + notif.sender.lastName,
+                avatarURL: notif.sender.avatarUrl
+            } : null,
             details: JSON.parse(notif.details as string)
         }
     })

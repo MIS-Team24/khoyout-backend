@@ -2,20 +2,91 @@ import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
-const avatarUrl = [
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GNXZRJQKT",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UVHMSWOZE",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/FIFQTMUPC",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/ZOKOOOHIP",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GUXUYZJNQ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LFKLRTJJB",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/WRIFLQONZ"
+const predefinedPortfolios = [
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/MCFGLRMIQ",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/IQHZTNSRJ",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/RDAZZUUOA",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/MFYHSJONH",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/TCOCEAAHZ",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/DOPLZGJMK",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/VUCPBTQOM",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/XBETLHTIV",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/UGUOEYHMD",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/AYIWTREKG",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/PRHFAKMJF",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/PVCAZAYQA",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/RNGYSBSGM",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/QUTHYHGFG",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/QSYZCDQCJ",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/UQHDTDUAA",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/WIMWTUYGS",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/RMFNCSZLU",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/UZFNHLAVA",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/IBMFKMQNG",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/PEQNMFLXG",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/MEMPIPFMB",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/WTSCONRVZ",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/QPPNJHEFO",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/AZUYFXMKV",
 ];
+
+  const avatarUrl = [
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JDRVAKHSC",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TZFRUZPFY",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TMCOQZFLB",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JKEEBUAPA",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UBXGTLGMV",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MDTQHQOKH",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MWPOIXJPI",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/OMPQUXAVJ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BEQQWVLHW",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/FZQVNTUWQ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/INRFQVIXI",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/NPKUYGRMC",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/DYNYQDDYZ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YHSLPNFHD",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JGACWNYXM",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KRJJJWMFA",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YKZXMEIEY",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/RTXKDOHOT",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YWFFNBOPC",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KWFDCSIJV",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LGQAEHZMS",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/HPVWJVKLC",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/PAKNSKRFH",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BBCDCUFEF",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KIUFDJAKG",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BJYYLBJVA",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/IAPSZCZTN",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/IMIRDLDQV",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UMOBGTZUB",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KSJPKYUKU",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LRITWWCYG",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/PZENWADMQ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/VIOENVYGH",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/QJHHFSTHR",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/DROHWSIJH",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UTYPSALXS",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/FFTXFJIXD",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YUESKRWLQ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/ARNSTHNBS",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LNJWVNCHL",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MHZCLUJPT",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/ZYRIBXAJV",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/CMGSSYMQD",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TOHQFOBDW",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/XYOBLKSQW",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/OLNWFNSVQ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TFDBBBJPX",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BMDUDKTAI",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GLAMYSDXV",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GJLBIGGEE",
+  ];
 
 const predefinedDesigners = [
   {
     name: "Laila Fares",
-    location: "Al-Ajmi",
+    location: "Al Agami",
     address: "12 Al Nasr Road, Al-Ajmi, Alexandria",
     latitude: 31.1054,
     longitude: 29.7841,
@@ -402,6 +473,15 @@ function getFormattedWorkingHours(): WorkingHours {
   };
 }
 
+function getFormattedWorkingDays(): { day: string, hours: string }[] {
+  const workingHours = getFormattedWorkingHours();
+  return Object.entries(workingHours).map(([day, hours]) => {
+    const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][parseInt(day)];
+    const displayHours = hours.start.display === "Closed" ? "Closed" : `${hours.start.display} - ${hours.end.display}`;
+    return { day: dayName, hours: displayHours };
+  });
+}
+
 function getRandomItems<T>(items: T[], min: number, max: number): T[] {
   const count = Math.floor(Math.random() * (max - min + 1)) + min;
   return items.sort(() => 0.5 - Math.random()).slice(0, count);
@@ -433,7 +513,6 @@ async function main() {
         baseAccountId: baseAccount.id
       }
     });
-
     await prisma.designerProfile.create({
       data: {
         baseAccountId: baseAccount.id,
@@ -444,7 +523,7 @@ async function main() {
         longtitude: designer.longitude,
         yearsExperience: designer.yearsExperience,
         about: designer.about,
-        workingDays: JSON.stringify(getFormattedWorkingHours()),
+        workingDays: JSON.stringify(getFormattedWorkingDays()), // Update to new format
         ordersFinished: Math.floor(Math.random() * 15),
         reviews: {
           create: getRandomItems(predefinedReviewers, 2, 4).map((reviewer, index) => ({
@@ -468,6 +547,11 @@ async function main() {
         categories: {
           create: getRandomItems(createdCategories, 2, 4).map(category => ({
             Category: { connect: { id: category.id } }
+          }))
+        },
+        portfolios: {
+            create: predefinedPortfolios.slice(0, Math.floor(Math.random() * 5) + 6).map(url => ({
+            url: url
           }))
         }
       }

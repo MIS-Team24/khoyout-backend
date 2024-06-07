@@ -11,8 +11,8 @@ export async function createCheckoutSession(designerId: string, email: string, p
     try {
         const session = await stripeClient.checkout.sessions.create({
             customer_email: email,
-            cancel_url: "https://www.youtube.com/watch?v=4_vtOKcfCG8",
-            success_url: "https://www.youtube.com/watch?v=UH2G9XqQE3Q",
+            cancel_url: "https://khoyout.live/subscription/"+plan,
+            success_url: "https://khoyout.live/",
             mode: "subscription",
             line_items: [
                 {

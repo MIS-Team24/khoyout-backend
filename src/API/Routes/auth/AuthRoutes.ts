@@ -19,7 +19,7 @@ router.post("/send-otp", BodyValidator({schema: emailSchema}), OtpSentToEmailHan
 
 //reset password
 router.post("/validate-otp", BodyValidator({schema: otpVerifyEmailSchema}), validateOtp , validateOtpHandler);
-router.put("/reset-password", checkIfNotAuthenticated ,BodyValidator({schema: resetPasswordSchema}), resetPasswordHandler);
+router.post("/reset-password", checkIfNotAuthenticated ,BodyValidator({schema: resetPasswordSchema}), resetPasswordHandler);
 //
 
 export default router;

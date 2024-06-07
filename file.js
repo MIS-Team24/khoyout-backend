@@ -55,4 +55,4 @@ function renameFunction(oldName) {
 }
 
 // Usage
-renameFilesInBucket('khoyout', renameFunction);
+renameFilesInBucket('EzzOps', renameFunction);
