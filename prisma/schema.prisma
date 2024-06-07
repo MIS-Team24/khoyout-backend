@@ -304,3 +304,17 @@ model premiumSubscription {
   subscriptionType permiumSubscriptionType
   designer         DesignerProfile         @relation(fields: [designerId], references: [baseAccountId])
 }
+
+enum UserDeleteAccountReason {
+  ACCOUNT_CREATED_BY_MISTAKE
+  NO_LONGER_USEFUL
+  CANT_FIND_SERVICES_OR_DESIGNERS
+  OTHER
+}
+
+model AccountDeletes {
+  id          Int                     @id @default(autoincrement())
+  deleted_at  DateTime                @default(now())
+  reason      UserDeleteAccountReason
+  otherReason String?
+}

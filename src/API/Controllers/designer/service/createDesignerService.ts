@@ -4,7 +4,7 @@ import { errorResponseTemplate } from "../../../../Services/responses/ErrorTempl
 import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
 import { findDesignerBy } from "../../../Models/DesignerModel";
-import { addService } from "../../../Models/ServiceModel";
+import { addService } from "../../../Models/serviceModel";
 import { BadServerException } from "../../../Exceptions/badServer";
 
 export const createDesignerService = async (req : Request , res : Response) => {

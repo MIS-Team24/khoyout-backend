@@ -4,7 +4,7 @@ import { errorResponseTemplate } from "../../../../Services/responses/ErrorTempl
 import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
 import { findDesignerBy } from "../../../Models/DesignerModel";
-import { updateServiceByID } from "../../../Models/ServiceModel";
+import { updateServiceByID } from "../../../Models/serviceModel";
 
 export const updateDesignerService = async (req : Request , res : Response) => {
     const designer = await findDesignerBy({ baseAccountId: req.params.id });

@@ -1,5 +1,4 @@
 import express from 'express';
-import { getAllDesigners, getDesignerById } from "../../Controllers/designer/readAllDesignersController";
 import { uploadUpdateDesignerAvatar } from '../../Controllers/designer/profileAvatar/uploadUpdateDesignerAvatar';
 import { upload } from '../../../Services/multer';
 import { deleteDesignerAvatar } from '../../Controllers/designer/profileAvatar/deleteDesignerAvatar';
