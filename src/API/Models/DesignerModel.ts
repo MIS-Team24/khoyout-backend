@@ -49,13 +49,21 @@ const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: stri
 const formatWorkingDays = (workingDays: WorkingHours): { day: string, hours: string }[] => {
   return Object.entries(workingDays).map(([day, hours]) => {
     const dayName = daysOfWeek[parseInt(day)];
-    const displayHours = hours.start.display === "Closed" ? "Closed" : `${hours.start.display} - ${hours.end.display}`;
+    const displayHours = hours?.start?.display === "Closed" ? "Closed" : `${hours?.start?.display ?? "N/A"} - ${hours?.end?.display ?? "N/A"}`;
     return { day: dayName, hours: displayHours };
   });
 };
 
-const normalizeName = (name: string) => {
-  return name.replace(/\s+/g, '').toLowerCase();
+const parseWorkingDays = (workingDaysStr: string): WorkingHours => {
+  let workingDays: WorkingHours = {};
+  try {
+    if (workingDaysStr) {
+      workingDays = JSON.parse(workingDaysStr as unknown as string);
+    }
+  } catch (e) {
+    console.error("Error parsing workingDays JSON:", e);
+  }
+  return workingDays;
 };
 
 export const readAllDesigners = async (filters: DesignerFilters) => {
@@ -137,14 +145,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     });
 
     const sortedDesigners = filteredDesigners.map(designer => {
-      let workingDays: WorkingHours = {};
-      try {
-        if (designer.workingDays) {
-          workingDays = JSON.parse(designer.workingDays as unknown as string);
-        }
-      } catch (e) {
-        console.error("Error parsing workingDays JSON:", e);
-      }
+      let workingDays: WorkingHours = parseWorkingDays(designer.workingDays as unknown as string);
 
       const { open, openUntil } = isOpenNow(workingDays);
 
@@ -276,14 +277,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
     });
 
     if (designer) {
-      let workingDays: WorkingHours = {};
-      try {
-        if (designer.workingDays) {
-          workingDays = JSON.parse(designer.workingDays as unknown as string);
-        }
-      } catch (e) {
-        console.error("Error parsing workingDays JSON:", e);
-      }
+      let workingDays: WorkingHours = parseWorkingDays(designer.workingDays as unknown as string);
 
       const { open, openUntil } = isOpenNow(workingDays);
 
@@ -432,7 +426,7 @@ export async function getDesignerSubscriptionTier(designerId: string): Promise<"
       subscriptionType: true
     }
   });
-  return result?.subscriptionType?? undefined;
+  return result?.subscriptionType ?? undefined;
 }
 
 export const updateDesignerBy = async (uniqueData : Prisma.DesignerProfileWhereUniqueInput, data : Prisma.DesignerProfileUpdateInput) => {
