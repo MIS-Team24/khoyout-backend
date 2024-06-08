@@ -16,9 +16,9 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ezzops/khoyoutbackend:${{ github.sha }} .
-          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login --username ezzops --password-stdin
-          docker push ezzops/khoyoutbackend:${{ github.sha }}
+          sudo docker build -t ezzops/khoyoutbackend:${{ github.sha }} .
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | sudo docker login --username ezzops --password-stdin
+          sudo docker push ezzops/khoyoutbackend:${{ github.sha }}
 
   CD:
     needs: CI
@@ -31,10 +31,10 @@ jobs:
             username: ezz
             password: ${{ secrets.Node_Pass }}
             script: |
-              container_id=$(docker ps --format "{{.ID}}")
-              docker logs $container_id > logs__khoyoutbackend$(date +%Y%m%d).log
-              docker stop $(docker ps -aq)
-              docker rm $(docker ps -aq)
-              docker rmi $(docker images -q)
-              docker run -d --restart=unless-stopped -p 3005:3005 ezzops/khoyoutbackend:${{ github.sha }}
-              docker run -d --restart=unless-stopped --net=host -it -e NGROK_AUTHTOKEN=2ZHD9jIsD64TAdsRufwzJiAn9g0_3tfmUazFkEeVG6scCWNuB ngrok/ngrok:latest http --domain=highly-true-possum.ngrok-free.app 3005 &
+              sudo container_id=$(docker ps --format "{{.ID}}")
+              sudo docker logs $container_id > logs__khoyoutbackend$(date +%Y%m%d).log
+              sudo docker stop $(docker ps -aq)
+              sudo docker rm $(docker ps -aq)
+              sudo docker rmi $(docker images -q)
+              sudo docker run -d --restart=unless-stopped -p 3005:3005 ezzops/khoyoutbackend:${{ github.sha }}
+              sudo docker run -d --restart=unless-stopped --net=host -it -e NGROK_AUTHTOKEN=2ZHD9jIsD64TAdsRufwzJiAn9g0_3tfmUazFkEeVG6scCWNuB ngrok/ngrok:latest http --domain=highly-true-possum.ngrok-free.app 3005 &
