@@ -304,7 +304,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         services: designer.services,
         teamMembers: designer.teamMembers,
         categories: designer.categories,
-        portfolios: designer.portfolios,
+        // portfolios: designer.portfolios,
       };
     }
 
