@@ -37,4 +37,4 @@ jobs:
               docker rm $(docker ps -aq)
               docker rmi $(docker images -q)
               docker run -d --restart=unless-stopped -p 3005:3005 ezzops/khoyoutbackend:${{ github.sha }}
-              docker run -d --restart=unless-stopped --net=host -it -e NGROK_AUTHTOKEN=2ZHD9jIsD64TAdsRufwzJiAn9g0_3tfmUazFkEeVG6scCWNuB ngrok/ngrok:latest http --domain=highly-true-possum.ngrok-free.app 3005 &
+              docker run -d --restart=unless-stopped --net=host -it -e NGROK_AUTHTOKEN=26914AfvDQGanrDob5ONai7vs8e_iSbRucoJ7cTpnh9Q9ufU ngrok/ngrok http 3005 --domain=popular-mosquito-rarely.ngrok-free.app &
