@@ -30,18 +30,18 @@ const predefinedPortfolios = [
   "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/AZUYFXMKV",
 ];
 
-const avatarUrl = [
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JDRVAKHSC",
+  const avatarUrl = [
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JDRVAKHSC",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TZFRUZPFY",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TMCOQZFLB",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JKEEBUAPA",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UBXGTLGMV",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MDTQHQOKH",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MWPOIXJPI",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/OMPQUXAVJ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BEQQWVLHW",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/FZQVNTUWQ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/INRFQVIXI",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/OMPQUXAVJ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BEQQWVLHW",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/FZQVNTUWQ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/INRFQVIXI",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/NPKUYGRMC",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/DYNYQDDYZ",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YHSLPNFHD",
@@ -50,8 +50,8 @@ const avatarUrl = [
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YKZXMEIEY",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/RTXKDOHOT",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YWFFNBOPC",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KWFDCSIJV",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LGQAEHZMS",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KWFDCSIJV",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LGQAEHZMS",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/HPVWJVKLC",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/PAKNSKRFH",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BBCDCUFEF",
@@ -60,10 +60,10 @@ const avatarUrl = [
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/IAPSZCZTN",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/IMIRDLDQV",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UMOBGTZUB",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KSJPKYUKU",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KSJPKYUKU",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LRITWWCYG",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/PZENWADMQ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/VIOENVYGH",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/VIOENVYGH",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/QJHHFSTHR",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/DROHWSIJH",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UTYPSALXS",
@@ -71,17 +71,17 @@ const avatarUrl = [
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YUESKRWLQ",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/ARNSTHNBS",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LNJWVNCHL",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MHZCLUJPT",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/ZYRIBXAJV",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/CMGSSYMQD",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TOHQFOBDW",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/XYOBLKSQW",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/OLNWFNSVQ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TFDBBBJPX",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MHZCLUJPT",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/ZYRIBXAJV",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/CMGSSYMQD",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TOHQFOBDW",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/XYOBLKSQW",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/OLNWFNSVQ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TFDBBBJPX",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BMDUDKTAI",
     "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GLAMYSDXV",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GJLBIGGEE",
-];
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GJLBIGGEE",
+  ];
 
 const predefinedDesigners = [
   {
@@ -482,6 +482,7 @@ function getFormattedWorkingDays(): { day: string, hours: string }[] {
   });
 }
 
+
 function getRandomItems<T>(items: T[], min: number, max: number): T[] {
   const count = Math.floor(Math.random() * (max - min + 1)) + min;
   return items.sort(() => 0.5 - Math.random()).slice(0, count);
@@ -531,7 +532,6 @@ async function main() {
             comment: reviewTexts[index] || "Default review comment.",
             postedOn: new Date(),
             avatarUrl: avatarUrl[(i + index) % avatarUrl.length],
-            name: reviewer,
             customerId: user.baseAccountId // Ensure customerId is set correctly
           }))
         },

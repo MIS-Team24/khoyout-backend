@@ -257,7 +257,6 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         reviews: {
           select: {
-            name: true,            
             rating: true,
             comment: true,
             postedOn: true,
