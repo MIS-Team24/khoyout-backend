@@ -216,6 +216,7 @@ model Review {
   designerId String
   avatarUrl  String
   customerId String
+  name        String
   rating     Int
   comment    String
   postedOn   DateTime
