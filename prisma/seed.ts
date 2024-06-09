@@ -427,45 +427,25 @@ const categories = [
   { name: "Formal" }
 ];
 
-interface WorkingHour {
-  start: {
-    display: string;
-    compare: string;
-  };
-  end: {
-    display: string;
-    compare: string;
-  };
+enum DayOfWeek {
+  SUNDAY = 'SUNDAY',
+  MONDAY = 'MONDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY',
+  THURSDAY = 'THURSDAY',
+  FRIDAY = 'FRIDAY',
+  SATURDAY = 'SATURDAY'
 }
 
-type WorkingHours = { [key: string]: WorkingHour };
-
-function getFormattedWorkingHours(): WorkingHours {
-  return {
-    "0": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "1": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "2": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "3": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "4": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "5": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "6": { start: { display: "Closed", compare: "" }, end: { display: "Closed", compare: "" } },
-  };
-}
-
-function getFormattedWorkingDays(): { day: string, hours: string }[] {
-  const workingHours = getFormattedWorkingHours();
-  return Object.entries(workingHours).map(([day, hours]) => {
-    const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][parseInt(day)];
-    const displayHours = hours.start.display === "Closed" ? "Closed" : `${hours.start.display} - ${hours.end.display}`;
-    return { day: dayName, hours: displayHours };
-  });
-}
-
-
-function getRandomItems<T>(items: T[], min: number, max: number): T[] {
-  const count = Math.floor(Math.random() * (max - min + 1)) + min;
-  return items.sort(() => 0.5 - Math.random()).slice(0, count);
-}
+const daysOfWeek: DayOfWeek[] = [
+  DayOfWeek.SUNDAY,
+  DayOfWeek.MONDAY,
+  DayOfWeek.TUESDAY,
+  DayOfWeek.WEDNESDAY,
+  DayOfWeek.THURSDAY,
+  DayOfWeek.FRIDAY,
+  DayOfWeek.SATURDAY
+];
 
 async function main() {
   const createdCategories = await Promise.all(categories.map(category => 
@@ -493,7 +473,8 @@ async function main() {
         baseAccountId: baseAccount.id
       }
     });
-    await prisma.designerProfile.create({
+    
+    const designerProfile = await prisma.designerProfile.create({
       data: {
         baseAccountId: baseAccount.id,
         address: designer.address,
@@ -537,7 +518,33 @@ async function main() {
         }
       }
     });
+
+    // Seed AvailabilityTime for each designer
+    for (const day of daysOfWeek) {
+      for (let hour = 6; hour < 22; hour++) {
+        await prisma.availabilityTime.create({
+          data: {
+            dayOfWeek: day,
+            startTime: `${hour.toString().padStart(2, '0')}:00:00`,
+            endTime: `${(hour + 1).toString().padStart(2, '0')}:00:00`,
+            designerId: designerProfile.baseAccountId
+          }
+        });
+      }
+    }
   }
+}
+
+function getFormattedWorkingDays(): { day: string, hours: string }[] {
+  return daysOfWeek.map(day => ({
+    day: day.toString(),
+    hours: "6:00 AM - 10:00 PM"
+  }));
+}
+
+function getRandomItems<T>(items: T[], min: number, max: number): T[] {
+  const count = Math.floor(Math.random() * (max - min + 1)) + min;
+  return items.sort(() => 0.5 - Math.random()).slice(0, count);
 }
 
 main()
