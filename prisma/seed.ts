@@ -510,6 +510,7 @@ async function main() {
             rating: Math.floor(Math.random() * 5) + 1,
             comment: reviewTexts[index] || "Default review comment.",
             postedOn: new Date(),
+            name: reviewer,
             avatarUrl: avatarUrl[(i + index) % avatarUrl.length],
             customerId: user.baseAccountId // Ensure customerId is set correctly
           }))
