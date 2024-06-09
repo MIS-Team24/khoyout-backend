@@ -116,4 +116,4 @@ The Authentication module manages user authentication, including login, logout, 
 4. **Middleware Validation**:
    - Protects routes by validating the OTP before granting access.
 
-This documentation provides a comprehensive overview of the authentication module, detailing the endpoints, methods, request and response structures, and overall flow of operations. This can be used to create an activity diagram reflecting the business logic and process flows.
+![image](https://github.com/MIS-Team24/khoyout-backend/assets/73319030/ab60587c-3c3b-433b-b689-bbfb9dc9332e)

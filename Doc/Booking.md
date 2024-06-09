@@ -232,3 +232,5 @@ The Booking module manages the scheduling and management of appointments between
    - User requests a list of all appointments.
    - System verifies the user's authentication and retrieves the appointments.
    - Responds with the list of appointments.
+
+![image](https://github.com/MIS-Team24/khoyout-backend/assets/73319030/cdb6b0eb-c919-4fa9-b11a-ea35af91f8ec)

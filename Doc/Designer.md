@@ -257,3 +257,5 @@ The Designer module manages designer profiles, portfolios, and services. This mo
     - Designer updates their profile data.
     - System validates and updates the profile data.
     - Responds with a confirmation message.
+
+    ![image](https://github.com/MIS-Team24/khoyout-backend/assets/73319030/37dca161-bf5f-43ea-8710-cd39a5377481)

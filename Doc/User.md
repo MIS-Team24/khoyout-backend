@@ -257,3 +257,5 @@ The User module manages user profiles, avatars, passwords, accounts, and prefere
    - User requests to update their style preferences.
    - System updates the style preferences in the database.
    - Responds with a confirmation message.
+
+   ![image](https://github.com/MIS-Team24/khoyout-backend/assets/73319030/ead106c1-b53e-4a0a-9109-da61e42ad6b1)

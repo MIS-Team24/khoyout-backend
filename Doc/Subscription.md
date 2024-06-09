@@ -83,3 +83,5 @@ The Payment module handles subscription payments for designers. This module allo
    - Stripe sends a webhook event.
    - System verifies the webhook signature.
    - System attaches the verified event to the request object and proceeds to the next middleware.
+
+   ![image](https://github.com/MIS-Team24/khoyout-backend/assets/73319030/2247b5af-2d97-4a26-9f3d-d875d870d1ba)

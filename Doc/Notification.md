@@ -64,3 +64,5 @@ The Notification module manages user notifications. This module allows users to 
    - System checks if the user is authenticated.
    - System updates the specified notifications as read in the database.
    - Responds with a confirmation message indicating success or failure.
+
+   ![image](https://github.com/MIS-Team24/khoyout-backend/assets/73319030/9753a364-7635-48c0-b07a-0e83367ddf74)
