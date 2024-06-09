@@ -179,7 +179,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
         name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
         openNow: open,
         openUntil: open ? openUntil : null,
-        workingDays: formattedWorkingDays
+        // workingDays: formattedWorkingDays
       };
     }).sort((a, b) => {
       switch (sortBy) {
