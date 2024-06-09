@@ -58,7 +58,17 @@ const parseWorkingDays = (workingDaysStr: string): WorkingHours => {
   let workingDays: WorkingHours = {};
   try {
     if (workingDaysStr) {
-      workingDays = JSON.parse(workingDaysStr as unknown as string);
+      const parsedDays = JSON.parse(workingDaysStr as unknown as string);
+      parsedDays.forEach((dayObj: { day: string, hours: string }) => {
+        const dayIndex = daysOfWeek.indexOf(dayObj.day);
+        if (dayIndex !== -1) {
+          const [start, end] = dayObj.hours === "Closed" ? ["Closed", "Closed"] : dayObj.hours.split(" - ");
+          workingDays[dayIndex.toString()] = {
+            start: { display: start, compare: start === "Closed" ? "" : start },
+            end: { display: end, compare: end === "Closed" ? "" : end }
+          };
+        }
+      });
     }
   } catch (e) {
     console.error("Error parsing workingDays JSON:", e);
@@ -155,6 +165,8 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
       const addressParts = designer.address.split(', ');
       const provisionCityAddress = `${addressParts[addressParts.length - 2]}, ${addressParts[addressParts.length - 1]}`;
 
+      const formattedWorkingDays = formatWorkingDays(workingDays);
+
       return {
         baseAccountId: designer.baseAccountId,
         ordersFinished: designer.ordersFinished,
@@ -167,6 +179,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
         name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
         openNow: open,
         openUntil: open ? openUntil : null,
+        workingDays: formattedWorkingDays
       };
     }).sort((a, b) => {
       switch (sortBy) {
@@ -245,7 +258,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         services: {
           select: {
-            id:true ,
+            id: true,
             title: true,
             description: true,
             price: true
@@ -269,7 +282,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         portfolios: {
           select: {
-            id:true,
+            id: true,
             url: true
           }
         }
@@ -281,12 +294,14 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
 
       const { open, openUntil } = isOpenNow(workingDays);
 
+      const formattedWorkingDays = formatWorkingDays(workingDays);
+
       return {
         baseAccountId: designer.baseAccountId,
         ordersFinished: designer.ordersFinished,
         yearsExperience: designer.yearsExperience,
         about: designer.about,
-        workingDays: formatWorkingDays(workingDays),
+        workingDays: formattedWorkingDays,
         rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
         baseAccount: {
           avatarUrl: designer.baseAccount.avatarUrl,
@@ -304,7 +319,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         services: designer.services,
         teamMembers: designer.teamMembers,
         categories: designer.categories,
-        // portfolios: designer.portfolios,
+        portfolios: designer.portfolios,
       };
     }
 
@@ -369,6 +384,16 @@ type designerProfileDetails = {
 }
 
 export async function addDesigner(email: string, firstName: string, lastName: string, password: string, designerDetails: designerProfileDetails) {
+  const sampleWorkingHours: WorkingHours = {
+    "0": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
+    "1": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
+    "2": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
+    "3": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
+    "4": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
+    "5": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
+    "6": { start: { display: "Closed", compare: "" }, end: { display: "Closed", compare: "" } },
+  };
+
   const user = await prisma.designerProfile.create({
     data: {
       baseAccount: {
@@ -388,7 +413,7 @@ export async function addDesigner(email: string, firstName: string, lastName: st
       location: designerDetails.location,
       ordersFinished: designerDetails.ordersFinished,
       yearsExperience: designerDetails.yearsOfExperience,
-      workingDays: ""
+      workingDays: JSON.stringify(sampleWorkingHours)
     },
     select: {
       baseAccount: true,
