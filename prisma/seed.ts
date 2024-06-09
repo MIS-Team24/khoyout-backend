@@ -463,12 +463,12 @@ type WorkingHours = { [key: string]: WorkingHour };
 
 function getFormattedWorkingHours(): WorkingHours {
   return {
-    "0": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "1": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "2": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "3": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "4": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "5": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
+    "0": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "1": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "2": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "3": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "4": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "5": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
     "6": { start: { display: "Closed", compare: "" }, end: { display: "Closed", compare: "" } },
   };
 }
@@ -481,6 +481,7 @@ function getFormattedWorkingDays(): { day: string, hours: string }[] {
     return { day: dayName, hours: displayHours };
   });
 }
+
 
 function getRandomItems<T>(items: T[], min: number, max: number): T[] {
   const count = Math.floor(Math.random() * (max - min + 1)) + min;

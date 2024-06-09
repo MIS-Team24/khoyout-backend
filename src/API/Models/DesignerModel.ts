@@ -36,11 +36,23 @@ const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: stri
   const currentTime = new Date().toTimeString().slice(0, 5);
 
   const todayWorkingHours = workingDays?.[currentDay];
+  const tomorrowWorkingHours = workingDays?.[(parseInt(currentDay) + 1) % 7];
 
   if (!todayWorkingHours || !todayWorkingHours.start?.compare) return { open: false };
 
-  if (currentTime >= todayWorkingHours.start.compare && currentTime <= todayWorkingHours.end.compare) {
-    return { open: true, openUntil: todayWorkingHours.end.display };
+  const startTime = todayWorkingHours.start.compare;
+  const endTime = todayWorkingHours.end.compare;
+
+  if (startTime < endTime) {
+    // Time span within the same day
+    if (currentTime >= startTime && currentTime <= endTime) {
+      return { open: true, openUntil: todayWorkingHours.end.display };
+    }
+  } else {
+    // Time span across midnight
+    if (currentTime >= startTime || currentTime <= endTime) {
+      return { open: true, openUntil: tomorrowWorkingHours ? tomorrowWorkingHours.end.display : todayWorkingHours.end.display };
+    }
   }
 
   return { open: false };
@@ -49,13 +61,31 @@ const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: stri
 const formatWorkingDays = (workingDays: WorkingHours): { day: string, hours: string }[] => {
   return Object.entries(workingDays).map(([day, hours]) => {
     const dayName = daysOfWeek[parseInt(day)];
-    const displayHours = hours.start.display === "Closed" ? "Closed" : `${hours.start.display} - ${hours.end.display}`;
+    const displayHours = hours?.start?.display === "Closed" ? "Closed" : `${hours?.start?.display ?? "N/A"} - ${hours?.end?.display ?? "N/A"}`;
     return { day: dayName, hours: displayHours };
   });
 };
 
-const normalizeName = (name: string) => {
-  return name.replace(/\s+/g, '').toLowerCase();
+const parseWorkingDays = (workingDaysStr: string): WorkingHours => {
+  let workingDays: WorkingHours = {};
+  try {
+    if (workingDaysStr) {
+      const parsedDays = JSON.parse(workingDaysStr as unknown as string);
+      parsedDays.forEach((dayObj: { day: string, hours: string }) => {
+        const dayIndex = daysOfWeek.indexOf(dayObj.day);
+        if (dayIndex !== -1) {
+          const [start, end] = dayObj.hours === "Closed" ? ["Closed", "Closed"] : dayObj.hours.split(" - ");
+          workingDays[dayIndex.toString()] = {
+            start: { display: start, compare: start === "Closed" ? "" : start },
+            end: { display: end, compare: end === "Closed" ? "" : end }
+          };
+        }
+      });
+    }
+  } catch (e) {
+    console.error("Error parsing workingDays JSON:", e);
+  }
+  return workingDays;
 };
 
 export const readAllDesigners = async (filters: DesignerFilters) => {
@@ -137,14 +167,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
     });
 
     const sortedDesigners = filteredDesigners.map(designer => {
-      let workingDays: WorkingHours = {};
-      try {
-        if (designer.workingDays) {
-          workingDays = JSON.parse(designer.workingDays as unknown as string);
-        }
-      } catch (e) {
-        console.error("Error parsing workingDays JSON:", e);
-      }
+      let workingDays: WorkingHours = parseWorkingDays(designer.workingDays as unknown as string);
 
       const { open, openUntil } = isOpenNow(workingDays);
 
@@ -153,6 +176,8 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
 
       const addressParts = designer.address.split(', ');
       const provisionCityAddress = `${addressParts[addressParts.length - 2]}, ${addressParts[addressParts.length - 1]}`;
+
+      const formattedWorkingDays = formatWorkingDays(workingDays);
 
       return {
         baseAccountId: designer.baseAccountId,
@@ -166,6 +191,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
         name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
         openNow: open,
         openUntil: open ? openUntil : null,
+        workingDays: formattedWorkingDays
       };
     }).sort((a, b) => {
       switch (sortBy) {
@@ -244,7 +270,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         services: {
           select: {
-            id:true ,
+            id: true,
             title: true,
             description: true,
             price: true
@@ -268,7 +294,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
         },
         portfolios: {
           select: {
-            id:true,
+            id: true,
             url: true
           }
         }
@@ -276,23 +302,18 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
     });
 
     if (designer) {
-      let workingDays: WorkingHours = {};
-      try {
-        if (designer.workingDays) {
-          workingDays = JSON.parse(designer.workingDays as unknown as string);
-        }
-      } catch (e) {
-        console.error("Error parsing workingDays JSON:", e);
-      }
+      let workingDays: WorkingHours = parseWorkingDays(designer.workingDays as unknown as string);
 
       const { open, openUntil } = isOpenNow(workingDays);
+
+      const formattedWorkingDays = formatWorkingDays(workingDays);
 
       return {
         baseAccountId: designer.baseAccountId,
         ordersFinished: designer.ordersFinished,
         yearsExperience: designer.yearsExperience,
         about: designer.about,
-        workingDays: formatWorkingDays(workingDays),
+        workingDays: formattedWorkingDays,
         rating: designer.reviews.length ? designer.reviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / designer.reviews.length : 0,
         baseAccount: {
           avatarUrl: designer.baseAccount.avatarUrl,
@@ -375,6 +396,16 @@ type designerProfileDetails = {
 }
 
 export async function addDesigner(email: string, firstName: string, lastName: string, password: string, designerDetails: designerProfileDetails) {
+  const sampleWorkingHours: WorkingHours = {
+    "0": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "1": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "2": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "3": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "4": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "5": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "6": { start: { display: "Closed", compare: "" }, end: { display: "Closed", compare: "" } },
+  };
+
   const user = await prisma.designerProfile.create({
     data: {
       baseAccount: {
@@ -394,7 +425,7 @@ export async function addDesigner(email: string, firstName: string, lastName: st
       location: designerDetails.location,
       ordersFinished: designerDetails.ordersFinished,
       yearsExperience: designerDetails.yearsOfExperience,
-      workingDays: ""
+      workingDays: JSON.stringify(sampleWorkingHours)
     },
     select: {
       baseAccount: true,
@@ -432,7 +463,7 @@ export async function getDesignerSubscriptionTier(designerId: string): Promise<"
       subscriptionType: true
     }
   });
-  return result?.subscriptionType?? undefined;
+  return result?.subscriptionType ?? undefined;
 }
 
 export const updateDesignerBy = async (uniqueData : Prisma.DesignerProfileWhereUniqueInput, data : Prisma.DesignerProfileUpdateInput) => {
