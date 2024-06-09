@@ -1,4 +1,5 @@
 import { prisma } from "../../Database";
+import { UserType } from "../types/user";
 
 export async function createAppointmentRequest(userId: string, designerId: string, startTime: Date, endTime: Date, description: string = "") : Promise<boolean>
 {
@@ -121,12 +122,67 @@ export async function cancelAppointmentRequest(designerId: string, userId: strin
     }
 }
 
-export async function getUserAppointments(userId: string)
+export async function getAccountAppointments(accountId: string, userType: UserType)
 {
     try {
         const result = await prisma.appointment.findMany({
             where: {
-                userId: userId
+                ... (userType === UserType.User? {userId: accountId} : {designerId: accountId})
+            },
+            select: {
+                user: {
+                    select: {
+                        baseAccount: true,
+                    }
+                },
+                userId: true,
+                status: true,
+                id: true,
+                request: true,
+                designer: {
+                    select: {
+                        baseAccount: true,
+                    }
+                },
+                designerId: true,
+                endDateTime: true,
+                startDateTime: true,
+            }
+        });
+        return result;
+    } catch (error) {
+        return undefined;
+    }
+}
+
+export async function getAccountRequests(accountId: string, userType: UserType)
+{
+    try {
+        const result = await prisma.bookingRequest.findMany({
+            where: {
+                ... (userType === UserType.User? {userId: accountId} : {designerId: accountId})
+            },
+            select: {
+                user: {
+                    select: {
+                        baseAccount: true,
+                    }
+                },
+                userId: true,
+                status: true,
+                id: true,
+                designer: {
+                    select: {
+                        baseAccount: true,
+                    }
+                },
+                designerId: true,
+                endDateTime: true,
+                startDateTime: true,
+                requestDescription: true,
+                created_at: true,
+                last_updated: true,
+                Appointment: true
             }
         });
         return result;

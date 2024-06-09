@@ -11,6 +11,9 @@ import { handleFetchUserAppointments } from "../../Controllers/booking/fetchUser
 import { acceptAppointmentRequest } from "../../Models/AppointmentsModel";
 import { deployNotification } from "../../Models/Notifications";
 import { ResStatus } from "../../Exceptions/main";
+import { handleFetchRequests } from "../../Controllers/booking/fetchRequests";
+import { deleteAvailbilityTime, handleCreateAvailbityTime } from "../../Controllers/booking/createAvailabilityTime";
+import { postAvailableTime } from "../../../Services/validationSchemas/UserSchema";
 
 const router = Router();
 
@@ -22,10 +25,14 @@ const AppointmentSendingSchema = z.object({
       })
 });
 
-router.get("", checkIfAuthenticated(UserType.User), handleFetchUserAppointments); // GET /appointments
-
+// for all kinds of users
+router.get("", checkIfAuthenticated(), handleFetchUserAppointments); // GET /appointments
 router.get("/:designerId/available-times", handleFetchingDesignerTimes);
+router.get("/requests", checkIfAuthenticated(), handleFetchRequests);
+router.post("/available-times", checkIfAuthenticated(UserType.Designer), BodyValidator({schema: postAvailableTime}), handleCreateAvailbityTime);
+router.delete("/available-times/:id", checkIfAuthenticated(UserType.Designer), deleteAvailbilityTime);
 
+// for users
 router.post("/:designerId/requests", checkIfAuthenticated(UserType.User), BodyValidator({schema: AppointmentSendingSchema}), handleSendingAppointmentRequestToDesigner);
 router.delete("/:designerId/requests/:requestId", checkIfAuthenticated(UserType.User), handleCancelBookingRequest);
 

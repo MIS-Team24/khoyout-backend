@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getUserAppointments } from "../../Models/AppointmentsModel";
+import { getAccountAppointments } from "../../Models/AppointmentsModel";
 import { ResStatus } from "../../Exceptions/main";
 
 export async function handleFetchUserAppointments(req: Request, res: Response)
@@ -9,15 +9,19 @@ export async function handleFetchUserAppointments(req: Request, res: Response)
         return res.sendStatus(401);
     }
 
-    const appointmentsList = await getUserAppointments(user.id);
+    const appointmentsList = await getAccountAppointments(user.id, user.type);
     if (!appointmentsList) return res.status(ResStatus.I_SERVER_ERROR);
     
     const returnedForm = appointmentsList.map((appoint) => {
         return {
             id: appoint.id,
             designerId: appoint.designerId,
+            designer: appoint.designer,
+            userId: appoint.userId,
+            user: appoint.user,
             startTime: appoint.startDateTime,
             endTime: appoint.endDateTime,
+            description: appoint.request.requestDescription,
             status: appoint.status
         }
     });

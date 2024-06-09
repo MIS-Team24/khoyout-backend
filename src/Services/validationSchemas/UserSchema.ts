@@ -1,4 +1,4 @@
-import { UserDeleteAccountReason } from "@prisma/client";
+import { DayOfWeek, UserDeleteAccountReason } from "@prisma/client";
 import { z } from "zod";
 
 export const loginSchema = z.object({
@@ -37,4 +37,10 @@ export const cahngePasswordSchema = z.object({
 export const DeleteAccountBodySchema = z.object({
     reason: z.nativeEnum(UserDeleteAccountReason),
     otherReason: z.string().optional()
+});
+
+export const postAvailableTime = z.object({
+    startTime: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/),
+    endTime: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/),
+    day: z.nativeEnum(DayOfWeek)
 });
