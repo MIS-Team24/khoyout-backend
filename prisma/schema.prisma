@@ -218,6 +218,7 @@ model Review {
   customerId String
   rating     Int
   comment    String
+  name       String
   postedOn   DateTime
   user       Users           @relation(fields: [customerId], references: [baseAccountId])
   designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)

@@ -261,6 +261,7 @@ export const findDesignerBy = async (data: Prisma.DesignerProfileWhereUniqueInpu
             comment: true,
             postedOn: true,
             avatarUrl: true,
+            name: true,
             user: {
               select: {
                 baseAccountId: true
