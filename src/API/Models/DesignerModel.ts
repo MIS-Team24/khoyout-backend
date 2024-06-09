@@ -36,11 +36,23 @@ const isOpenNow = (workingDays: WorkingHours): { open: boolean; openUntil?: stri
   const currentTime = new Date().toTimeString().slice(0, 5);
 
   const todayWorkingHours = workingDays?.[currentDay];
+  const tomorrowWorkingHours = workingDays?.[(parseInt(currentDay) + 1) % 7];
 
   if (!todayWorkingHours || !todayWorkingHours.start?.compare) return { open: false };
 
-  if (currentTime >= todayWorkingHours.start.compare && currentTime <= todayWorkingHours.end.compare) {
-    return { open: true, openUntil: todayWorkingHours.end.display };
+  const startTime = todayWorkingHours.start.compare;
+  const endTime = todayWorkingHours.end.compare;
+
+  if (startTime < endTime) {
+    // Time span within the same day
+    if (currentTime >= startTime && currentTime <= endTime) {
+      return { open: true, openUntil: todayWorkingHours.end.display };
+    }
+  } else {
+    // Time span across midnight
+    if (currentTime >= startTime || currentTime <= endTime) {
+      return { open: true, openUntil: tomorrowWorkingHours ? tomorrowWorkingHours.end.display : todayWorkingHours.end.display };
+    }
   }
 
   return { open: false };
@@ -179,7 +191,7 @@ export const readAllDesigners = async (filters: DesignerFilters) => {
         name: `${designer.baseAccount.firstName} ${designer.baseAccount.lastName}`,
         openNow: open,
         openUntil: open ? openUntil : null,
-        // workingDays: formattedWorkingDays
+        workingDays: formattedWorkingDays
       };
     }).sort((a, b) => {
       switch (sortBy) {
@@ -385,12 +397,12 @@ type designerProfileDetails = {
 
 export async function addDesigner(email: string, firstName: string, lastName: string, password: string, designerDetails: designerProfileDetails) {
   const sampleWorkingHours: WorkingHours = {
-    "0": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "1": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "2": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "3": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "4": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
-    "5": { start: { display: "12:00 PM", compare: "12:00" }, end: { display: "10:00 PM", compare: "22:00" } },
+    "0": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "1": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "2": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "3": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "4": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
+    "5": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
     "6": { start: { display: "Closed", compare: "" }, end: { display: "Closed", compare: "" } },
   };
 
