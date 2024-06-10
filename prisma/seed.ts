@@ -3,84 +3,63 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 const predefinedPortfolios = [
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/MCFGLRMIQ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/IQHZTNSRJ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/RDAZZUUOA",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/MFYHSJONH",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/TCOCEAAHZ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/DOPLZGJMK",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/VUCPBTQOM",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/XBETLHTIV",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/UGUOEYHMD",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/AYIWTREKG",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/PRHFAKMJF",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/PVCAZAYQA",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/RNGYSBSGM",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/QUTHYHGFG",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/QSYZCDQCJ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/UQHDTDUAA",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/WIMWTUYGS",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/RMFNCSZLU",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/UZFNHLAVA",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/IBMFKMQNG",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/PEQNMFLXG",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/MEMPIPFMB",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/WTSCONRVZ",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/QPPNJHEFO",
-  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/AZUYFXMKV",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/JZJPRPSCU",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/JEXZWCFCS",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/DXBVEDXXG",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/HFFPNLECZ",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/ZUCFGFYLK",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/GSRUSYLRX",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/XSQGIOWTF",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/AUEPZZFWN",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/MDOHFALAX",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/NHIAXNSJH",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/DCCLXUUZR",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/MCOSXYYJI",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/ZNZIIQRZS",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/QBZJZKXLI",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/UTRQMDKMW",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/QVTICWWBS",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/WYFYAAUFC",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/YMCIAJIMV",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/ABCZZDODL",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/LHVHNLAHE",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/SBFBZCSRM",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/MEKNVXKAH",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/PVFSMRJFX",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/WWDZAOKPU",
+  "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/EzzOps/HVULXQBAJ",
 ];
 
   const avatarUrl = [
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JDRVAKHSC",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TZFRUZPFY",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TMCOQZFLB",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JKEEBUAPA",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UBXGTLGMV",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MDTQHQOKH",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MWPOIXJPI",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/OMPQUXAVJ",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BEQQWVLHW",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/FZQVNTUWQ",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/INRFQVIXI",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/NPKUYGRMC",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/DYNYQDDYZ",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YHSLPNFHD",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JGACWNYXM",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KRJJJWMFA",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YKZXMEIEY",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/RTXKDOHOT",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YWFFNBOPC",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KWFDCSIJV",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LGQAEHZMS",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/HPVWJVKLC",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/PAKNSKRFH",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BBCDCUFEF",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KIUFDJAKG",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BJYYLBJVA",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/IAPSZCZTN",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/IMIRDLDQV",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UMOBGTZUB",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/KSJPKYUKU",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LRITWWCYG",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/PZENWADMQ",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/VIOENVYGH",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/QJHHFSTHR",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/DROHWSIJH",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UTYPSALXS",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/FFTXFJIXD",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YUESKRWLQ",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/ARNSTHNBS",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LNJWVNCHL",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/MHZCLUJPT",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/ZYRIBXAJV",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/CMGSSYMQD",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TOHQFOBDW",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/XYOBLKSQW",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/OLNWFNSVQ",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/TFDBBBJPX",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BMDUDKTAI",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GLAMYSDXV",
-    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GJLBIGGEE",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/DXFKKGJSO",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/SQMBVZTUB",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/NASYOKFVQ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/EMXKQKIUF",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/NQJCZNDBB",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GPZDNNCHO",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/EMSWPHKIK",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LCRUKPMVW",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/QIRNUASDF",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YIPKKDKEK",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YYPFYAEEZ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LTRZHLYYZ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/LCBSTBBIU",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/ZBMMPUCOM",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/XUXOITWZD",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/RSHJCHNHJ",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/GBONNJLVN",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/XXCAQLKMT",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/CDGJYXCHV",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JVEOFMOEA",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/UBEJNMEEG",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/VGVICJHPB",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/BPSKULKNK",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/HKMJGDQXL",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/YSBQDCCIC",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/XWXWRVUTK",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/VIHZSJRDL",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/JGFGYKOXE",
+    "https://uwwosfcacyovhelyelwl.supabase.co/storage/v1/object/public/khoyout/FMGQOONNF",
   ];
 
 const predefinedDesigners = [
@@ -448,45 +427,25 @@ const categories = [
   { name: "Formal" }
 ];
 
-interface WorkingHour {
-  start: {
-    display: string;
-    compare: string;
-  };
-  end: {
-    display: string;
-    compare: string;
-  };
+enum DayOfWeek {
+  SUNDAY = 'SUNDAY',
+  MONDAY = 'MONDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY',
+  THURSDAY = 'THURSDAY',
+  FRIDAY = 'FRIDAY',
+  SATURDAY = 'SATURDAY'
 }
 
-type WorkingHours = { [key: string]: WorkingHour };
-
-function getFormattedWorkingHours(): WorkingHours {
-  return {
-    "0": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "1": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "2": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "3": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "4": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "5": { start: { display: "6:00 AM", compare: "06:00" }, end: { display: "1:00 AM", compare: "01:00" } },
-    "6": { start: { display: "Closed", compare: "" }, end: { display: "Closed", compare: "" } },
-  };
-}
-
-function getFormattedWorkingDays(): { day: string, hours: string }[] {
-  const workingHours = getFormattedWorkingHours();
-  return Object.entries(workingHours).map(([day, hours]) => {
-    const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][parseInt(day)];
-    const displayHours = hours.start.display === "Closed" ? "Closed" : `${hours.start.display} - ${hours.end.display}`;
-    return { day: dayName, hours: displayHours };
-  });
-}
-
-
-function getRandomItems<T>(items: T[], min: number, max: number): T[] {
-  const count = Math.floor(Math.random() * (max - min + 1)) + min;
-  return items.sort(() => 0.5 - Math.random()).slice(0, count);
-}
+const daysOfWeek: DayOfWeek[] = [
+  DayOfWeek.SUNDAY,
+  DayOfWeek.MONDAY,
+  DayOfWeek.TUESDAY,
+  DayOfWeek.WEDNESDAY,
+  DayOfWeek.THURSDAY,
+  DayOfWeek.FRIDAY,
+  DayOfWeek.SATURDAY
+];
 
 async function main() {
   const createdCategories = await Promise.all(categories.map(category => 
@@ -514,7 +473,8 @@ async function main() {
         baseAccountId: baseAccount.id
       }
     });
-    await prisma.designerProfile.create({
+    
+    const designerProfile = await prisma.designerProfile.create({
       data: {
         baseAccountId: baseAccount.id,
         address: designer.address,
@@ -531,6 +491,7 @@ async function main() {
             rating: Math.floor(Math.random() * 5) + 1,
             comment: reviewTexts[index] || "Default review comment.",
             postedOn: new Date(),
+            name: reviewer,
             avatarUrl: avatarUrl[(i + index) % avatarUrl.length],
             customerId: user.baseAccountId // Ensure customerId is set correctly
           }))
@@ -557,7 +518,33 @@ async function main() {
         }
       }
     });
+
+    // Seed AvailabilityTime for each designer
+    for (const day of daysOfWeek) {
+      for (let hour = 6; hour < 22; hour++) {
+        await prisma.availabilityTime.create({
+          data: {
+            dayOfWeek: day,
+            startTime: `${hour.toString().padStart(2, '0')}:00:00`,
+            endTime: `${(hour + 1).toString().padStart(2, '0')}:00:00`,
+            designerId: designerProfile.baseAccountId
+          }
+        });
+      }
+    }
   }
+}
+
+function getFormattedWorkingDays(): { day: string, hours: string }[] {
+  return daysOfWeek.map(day => ({
+    day: day.toString(),
+    hours: "6:00 AM - 10:00 PM"
+  }));
+}
+
+function getRandomItems<T>(items: T[], min: number, max: number): T[] {
+  const count = Math.floor(Math.random() * (max - min + 1)) + min;
+  return items.sort(() => 0.5 - Math.random()).slice(0, count);
 }
 
 main()
