@@ -281,6 +281,34 @@ export const readUser = async (data : Prisma.UsersWhereUniqueInput) => {
 }
 //
 
+export async function getAllUserDataById(id: string) {
+    try
+    {
+    const user = await prisma.baseAccount.findFirst({
+        where: {id: id},
+        select: {
+            avatarUrl: true,
+            BirthDate: true,
+            createdAt: true,
+            email: true,
+            emailActivated: true,
+            firstName: true,
+            lastName: true,
+            gender: true,
+            password: true,
+            id: true,
+            phone: true,
+            user: true,
+            designer: true,
+        }
+    });
+    return user;
+}
+ catch ( error) {
+    return false;
+ }
+}
+
 export async function getUserAvatarURLById(userId: string)
 {
     const user = await prisma.baseAccount.findFirst({
