@@ -15,7 +15,5 @@ export const readUserData = async (req : Request , res : Response) => {
                 , ErrorCode.USER_NOT_FOUND)
         ))  
     }
-    return res.status(ResStatus.OK).json({
-        user : userData
-    })
+    return res.status(ResStatus.OK).json(user)
 }
