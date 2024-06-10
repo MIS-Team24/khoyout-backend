@@ -28,7 +28,7 @@ export default async function handleAcceptingUserAppointmentRequest(req: Request
             return res.sendStatus(401);
         }
 
-        const result = urlSchema.parse({requestId: req.query.requestId})
+        const result = urlSchema.parse({requestId: req.params.requestId})
 
         const acceptedSuccessfully = await acceptAppointmentRequest(user.id, result.requestId);
         
