@@ -298,9 +298,31 @@ export async function getAllUserDataById(id: string) {
             password: true,
             id: true,
             phone: true,
-            user: true,
-            designer: true,
-        }
+            user: {
+                select: {
+                    age: true,
+                    city: true,
+                    country: true,
+                    stylePreferences: true
+                }
+            },
+            designer: {
+                select: {
+                    about: true,
+                    address: true,
+                    availabilityTimes: true,
+                    categories: true,
+                    latitude: true,
+                    longtitude: true,
+                    premiumSubscription: true,
+                    yearsExperience: true,
+                    location: true,
+                    teamMembers: true,
+                    services: true,
+                    ordersFinished: true,
+                }
+            },
+        },
     });
     return user;
 }
