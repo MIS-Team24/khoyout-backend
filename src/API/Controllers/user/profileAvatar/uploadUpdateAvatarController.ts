@@ -23,8 +23,6 @@ export const uploadUpdateAvatarController = async (req : Request , res : Respons
 
         // decode file buffer to base64
         const fileBase64 = decodeFileToBase64(file)
-        //
-
         // upload the file to supabase
         const { data } = await supabase.storage
             .from("khoyout")
@@ -34,13 +32,11 @@ export const uploadUpdateAvatarController = async (req : Request , res : Respons
                 upsert: true
             })
         //
-    
         // get public url of the uploaded file
         const { data : image } = await supabase.storage
             .from('khoyout')
-            .getPublicUrl(`/users/${user?.id}/user_profile_avatar`)
+            .getPublicUrl(`users/${user?.id}/user_profile_avatar`)
         //
-
         //update avatar url field in the database
         const userUpdated = await updateUser( {id : user.id} , {avatarUrl : image?.publicUrl})
         //

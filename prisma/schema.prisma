@@ -53,6 +53,7 @@ model Users {
 
 model BodyMeasurements {
   id            Int      @id @default(autoincrement())
+  body_shape    String?
   weight        Float?
   length        Float?
   shoulderWidth Float?
@@ -60,6 +61,7 @@ model BodyMeasurements {
   chest         Float?
   arms          Float?
   forearms      Float?
+  wrists        Float?
   waist         Float?
   hips          Float?
   thigh         Float?

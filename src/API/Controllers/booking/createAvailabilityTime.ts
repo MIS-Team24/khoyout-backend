@@ -11,7 +11,6 @@ export async function handleCreateAvailbityTime(req: Request, res: Response)
 {
     try
     {
-        console.log("asfas");
         const designer = req.user;
         if (!designer) {
             return res.sendStatus(401);

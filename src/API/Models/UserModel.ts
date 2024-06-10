@@ -302,7 +302,8 @@ export async function getAllUserDataById(id: string) {
                     age: true,
                     city: true,
                     country: true,
-                    stylePreferences: true
+                    stylePreferences: true,
+                    bodyMeasurements: true
                 }
             },
             designer: {

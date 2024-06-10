@@ -9,11 +9,12 @@ import { Messages } from "../../../Services/responses/Messages";
 export const readUserData = async (req : Request , res : Response) => {
     const user = req?.user as UserBody
     const userData = await getAllUserDataById(user?.id?? "")
+
     if(!userData){
         return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.USER_NOT_FOUND 
                 , ErrorCode.USER_NOT_FOUND)
         ))  
     }
-    return res.status(ResStatus.OK).json(user)
+    return res.status(ResStatus.OK).json(userData)
 }
