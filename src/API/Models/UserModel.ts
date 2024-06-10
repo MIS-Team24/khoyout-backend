@@ -295,7 +295,6 @@ export async function getAllUserDataById(id: string) {
             firstName: true,
             lastName: true,
             gender: true,
-            password: true,
             id: true,
             phone: true,
             user: {
