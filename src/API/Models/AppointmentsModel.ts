@@ -76,6 +76,24 @@ export async function getDesignerTimezone(designerId: string)
     return result?.timeZone;
 }
 
+export async function rejectAppointmentRequest(designerId: string, bookingRequestId: number) : Promise<{success: boolean, data: {userId: string} | undefined}>
+{
+    try {
+        const v = await prisma.bookingRequest.delete({
+            where: {
+                id: bookingRequestId,
+                designerId: designerId
+            }
+        });
+        return {
+            data: {userId: v.userId},
+            success: true
+        };
+    } catch (error) {
+        return {success: false, data: undefined}
+    }
+}
+
 export async function acceptAppointmentRequest(designerId: string, bookingRequestId: number) : Promise<{success: boolean, data: {userId: string} | undefined}>
 {
     try

@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import "../../Models/AppointmentsModel";
-import { acceptAppointmentRequest, createAppointmentRequest, getAvailableTimeById } from "../../Models/AppointmentsModel";
+import { acceptAppointmentRequest, rejectAppointmentRequest } from "../../Models/AppointmentsModel";
 import { ZodError, z } from "zod";
 import { BadRequestException } from "../../Exceptions/badRequest";
 import { errorResponseTemplate } from "../../../Services/responses/ErrorTemplate";
 import { ErrorCode, ResStatus } from "../../Exceptions/main";
 import { Messages } from "../../../Services/responses/Messages";
-import { convertFromTimezoneToUTC } from "../../../Utilities/Time";
 import { deployNotification } from "../../Models/Notifications";
 
 type AppointmentBookingBody = {
@@ -19,7 +18,7 @@ const urlSchema = z.object({
     requestId: z.coerce.number().int().min(0)
 })
 
-export default async function handleAcceptingUserAppointmentRequest(req: Request, res: Response)
+export default async function handleRejectingAppointmentRequest(req: Request, res: Response)
 {
     try
     {
@@ -30,18 +29,16 @@ export default async function handleAcceptingUserAppointmentRequest(req: Request
 
         const result = urlSchema.parse({requestId: req.params.requestId})
 
-        const acceptedSuccessfully = await acceptAppointmentRequest(user.id, result.requestId);
+        const rejectedSuccessfully = await rejectAppointmentRequest(user.id, result.requestId);
         
-        if (!acceptedSuccessfully.success) {
-            return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
-                new BadRequestException(Messages.INVALID_DATA, ErrorCode.INVALID_DATA)
+        if (!rejectedSuccessfully) {
+            return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
+                new BadRequestException(Messages.SERVER_ERROR, ErrorCode.SERVER_ERROR)
             ))
         }
         
-        await deployNotification({from: "User", notification: "BookingConfirmed"}, acceptedSuccessfully.data?.userId?? "", {}, user.id);
-
         res.status(ResStatus.OK).json({
-            message: "Successfully confirmed This Appointment."
+            message: "Successfully rejected This Requested."
         });
     } catch (error) {
         if (error instanceof ZodError) {

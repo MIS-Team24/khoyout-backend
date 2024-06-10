@@ -14,6 +14,7 @@ import { ResStatus } from "../../Exceptions/main";
 import { handleFetchRequests } from "../../Controllers/booking/fetchRequests";
 import { deleteAvailbilityTime, handleCreateAvailbityTime } from "../../Controllers/booking/createAvailabilityTime";
 import { postAvailableTime } from "../../../Services/validationSchemas/UserSchema";
+import handleRejectingAppointmentRequest from "../../Controllers/booking/rejectingAppointment";
 
 const router = Router();
 
@@ -38,7 +39,7 @@ router.delete("/:designerId/requests/:requestId", checkIfAuthenticated(UserType.
 
 // for designers.
 router.post("/requests/:requestId", checkIfAuthenticated(UserType.Designer), handleAcceptingUserAppointmentRequest);
-router.delete("/requests/:requestId", checkIfAuthenticated(UserType.Designer));
+router.delete("/requests/:requestId", checkIfAuthenticated(UserType.Designer), handleRejectingAppointmentRequest);
 
 // FOR TESTING
 router.post("/forceaccept", async (req, res) => {
