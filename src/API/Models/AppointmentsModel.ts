@@ -15,7 +15,7 @@ export async function createAppointmentRequest(userId: string, designerId: strin
                 endDateTime: endTime
             }
         });
-        console.log(result);
+
         return true;
     }
     catch (error) {
@@ -129,10 +129,9 @@ export async function acceptAppointmentRequest(designerId: string, bookingReques
 export async function cancelAppointmentRequest(designerId: string, userId: string, bookingRequestId: number) : Promise<boolean>
 {
     try {
-        const AppointmentRequest = await prisma.bookingRequest.findFirst({where: {id: bookingRequestId}});
-        if (!AppointmentRequest) return false;
-
-        await prisma.bookingRequest.delete({where: {id: bookingRequestId, designerId: designerId, userId: userId}});
+        await prisma.bookingRequest.delete({where: {id: bookingRequestId, designerId: designerId, userId: userId, status: {
+            notIn: ["Accepted", "Expired"]
+        }}});
 
         return true;
     } catch (error) {

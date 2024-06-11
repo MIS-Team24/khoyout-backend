@@ -29,7 +29,7 @@ export default async function handleSendingAppointmentRequestToDesigner(req: Req
             return res.sendStatus(401);
         }
 
-        const result = urlSchema.parse({designerId: req.params.designerId})
+        const result = urlSchema.parse({designerId: req.params.designerId, requestDescription: req.body.requestDescription})
         const typedAssertedBody = req.body as AppointmentBookingBody;
 
         const AvailabilityTimeRequested = await getAvailableTimeById(typedAssertedBody.availableTimeId, result.designerId);

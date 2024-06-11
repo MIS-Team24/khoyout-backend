@@ -29,11 +29,9 @@ export default async function handleCancelBookingRequest(req: Request, res: Resp
             return res.sendStatus(401);
         }
 
-        const urlSchemaValidation = urlSchema.parse({designerId: req.params.designerId, requestId: req.params.requestId});
-
-        const resultOfCancelling = await cancelAppointmentRequest(urlSchemaValidation.designerId, user.id, urlSchemaValidation.requestId);
+        const resultOfCancelling = await cancelAppointmentRequest(req.params.designerId, user.id, Number(req.params.requestId));
         
-        if (!resultOfCancelling) {
+        if (resultOfCancelling === false) {
             return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
                 new BadRequestException(Messages.INVALID_DATA, ErrorCode.INVALID_DATA)
             ))
