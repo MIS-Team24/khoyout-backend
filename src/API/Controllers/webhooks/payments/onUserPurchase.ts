@@ -5,9 +5,11 @@ import { getDesignerBaseAccountByEmail } from "../../../Models/DesignerModel";
 
 export async function onUserPurchaseHandler(req: Request, res: Response)
 {
+    console.log("1 stripe");
     if (!req.stripeEvent) {
         return;
     }
+    console.log("2 stripe");
 
     try {
         switch (req.stripeEvent.type) {
