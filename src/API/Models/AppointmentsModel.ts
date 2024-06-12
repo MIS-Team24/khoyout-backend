@@ -1,4 +1,5 @@
 import { prisma } from "../../Database";
+import { markType } from "../../Services/validationSchemas/UserSchema";
 import { UserType } from "../types/user";
 
 export async function createAppointmentRequest(userId: string, designerId: string, startTime: Date, endTime: Date, description: string = "") : Promise<boolean>
@@ -126,6 +127,41 @@ export async function acceptAppointmentRequest(designerId: string, bookingReques
     }
 }
 
+export async function getAppointmentByIdOfDesigner(designerId: string, appointmentId: number) {
+    return await prisma.appointment.findFirst({
+        where: {
+            designerId: designerId,
+            id: appointmentId
+        }
+    })
+}
+
+export async function setAppointmentMarkedAs(designerId: string, appointmentId: number, status: markType) : Promise<boolean>
+{
+    try
+    {
+        const found = await prisma.appointment.findFirst({
+            where: {
+                designerId: designerId,
+                id: appointmentId
+            }
+        })
+        if (!found) return false;
+        await prisma.appointment.updateMany({
+            where: {
+                designerId: designerId,
+                id: appointmentId
+            },
+            data: {
+                status: status
+            }
+        })
+        return true;
+    } catch (error) {
+        return false
+    }
+}
+
 export async function cancelAppointmentRequest(designerId: string, userId: string, bookingRequestId: number) : Promise<boolean>
 {
     try {
@@ -183,6 +219,7 @@ export async function getAccountRequests(accountId: string, userType: UserType)
                 user: {
                     select: {
                         baseAccount: true,
+                        bodyMeasurements: true
                     }
                 },
                 userId: true,

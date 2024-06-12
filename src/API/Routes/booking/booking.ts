@@ -6,14 +6,14 @@ import BodyValidator from "../../Middleware/BodyValidator";
 import { z } from "zod";
 import { handleFetchingDesignerTimes } from "../../Controllers/booking/availableTimesFetching";
 import handleCancelBookingRequest from "../../Controllers/booking/cancellingBookingRequest";
-import handleAcceptingUserAppointmentRequest from "../../Controllers/booking/acceptingAppointment";
+import handleAcceptingUserAppointmentRequest, { handleMarkinAppointmentAs } from "../../Controllers/booking/acceptingAppointment";
 import { handleFetchUserAppointments } from "../../Controllers/booking/fetchUserAppointments";
 import { acceptAppointmentRequest } from "../../Models/AppointmentsModel";
 import { deployNotification } from "../../Models/Notifications";
 import { ResStatus } from "../../Exceptions/main";
 import { handleFetchRequests } from "../../Controllers/booking/fetchRequests";
 import { deleteAvailbilityTime, handleCreateAvailbityTime } from "../../Controllers/booking/createAvailabilityTime";
-import { postAvailableTime } from "../../../Services/validationSchemas/UserSchema";
+import { appointmentMarking, postAvailableTime } from "../../../Services/validationSchemas/UserSchema";
 import handleRejectingAppointmentRequest from "../../Controllers/booking/rejectingAppointment";
 
 const router = Router();
@@ -40,6 +40,8 @@ router.delete("/:designerId/requests/:requestId", checkIfAuthenticated(UserType.
 // for designers.
 router.post("/requests/:requestId", checkIfAuthenticated(UserType.Designer), handleAcceptingUserAppointmentRequest);
 router.delete("/requests/:requestId", checkIfAuthenticated(UserType.Designer), handleRejectingAppointmentRequest);
+
+router.patch("/appointments/:appointmentId/mark", checkIfAuthenticated(UserType.Designer), BodyValidator({schema: appointmentMarking}), handleMarkinAppointmentAs)
 
 // FOR TESTING
 router.post("/forceaccept", async (req, res) => {
