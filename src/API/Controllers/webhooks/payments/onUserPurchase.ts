@@ -5,7 +5,6 @@ import { getDesignerBaseAccountByEmail } from "../../../Models/DesignerModel";
 
 export async function onUserPurchaseHandler(req: Request, res: Response)
 {
-    console.log("tafsafas");
     if (!req.stripeEvent) {
         return;
     }
@@ -13,6 +12,7 @@ export async function onUserPurchaseHandler(req: Request, res: Response)
     try {
         switch (req.stripeEvent.type) {
             case "checkout.session.completed": {
+                console.log("User Paid");
                 const StripeEvent = req.stripeEvent;
 
                 const bodyData = StripeEvent.data.object;
@@ -31,6 +31,7 @@ export async function onUserPurchaseHandler(req: Request, res: Response)
                 break;
             }
             case "customer.subscription.deleted": {
+                console.log("user lost payment");
                 const StripeEvent = req.stripeEvent;
                 const designerId = StripeEvent.data.object.metadata.designerId;
 
