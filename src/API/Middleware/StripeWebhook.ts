@@ -7,6 +7,7 @@ const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SIGN_KEY;
 export function StripeWebHookSign()
 {
     return (request: Request, response: Response, next: NextFunction) => {
+      console.log("found")
         if (stripeWebhookSecret) {
             const signature = request.headers['stripe-signature'];
             try {                

@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { grantDesignerPremium, revokeDesignerPremium } from "../../../../Services/Subscriptions/manageSubscriptions";
 import { deployNotification } from "../../../Models/Notifications";
 import { getDesignerBaseAccountByEmail } from "../../../Models/DesignerModel";
-import stripeClient from "../../../../Services/Billing/client";
 
 export async function onUserPurchaseHandler(req: Request, res: Response)
 {
