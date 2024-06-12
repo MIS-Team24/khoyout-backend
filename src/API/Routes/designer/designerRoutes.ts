@@ -7,11 +7,13 @@ import { updateDesignerData } from '../../Controllers/designer/updateDesignerInf
 import { uploadUpdateDesignerProtofolioFile } from '../../Controllers/designer/portofolio/uploadUpdateDesignerPortofolioFile';
 import { deleteDesignerPortofolioFile } from '../../Controllers/designer/portofolio/deleteDesignerPortofolioFile';
 import { updateDesignerService } from '../../Controllers/designer/service/updateDesignerService';
-import { createDesignerService } from '../../Controllers/designer/service/createDesignerService';
+import { createDesignerService, createServiceSchema } from '../../Controllers/designer/service/createDesignerService';
 
 import { getAllDesigners, getDesignerById, getDesignerPortfolioById } from "../../Controllers/designer/readAllDesignersController";
 import { z } from 'zod';
 import BodyValidator, { objectToValidate } from '../../Middleware/BodyValidator';
+import { checkIfAuthenticated } from '../../Middleware/CheckAuth';
+import { UserType } from '../../types/user';
 
 const router = express.Router();
 
@@ -52,8 +54,8 @@ router.get('/read-profile-data/:id', readDesignerProfileData);
 router.patch('/update-personal-info-or-map/:id', updateDesignerData);
 router.post('/upload-update-portofolio-file/:id', upload.single("file"), uploadUpdateDesignerProtofolioFile);
 router.delete("/delete-portofolio-file/:id/:fileId", deleteDesignerPortofolioFile)
-router.patch('/update-service-data/:id/:serviceId', updateDesignerService);
-router.post('/add-service/:id', createDesignerService);
-//
+
+router.patch('/services/:serviceId', checkIfAuthenticated(UserType.Designer), BodyValidator({schema: createServiceSchema}), updateDesignerService);
+router.post('/services', checkIfAuthenticated(UserType.Designer), BodyValidator({schema: createServiceSchema}), createDesignerService);
 
 export default router;

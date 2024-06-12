@@ -23,6 +23,7 @@ export async function handleFetchRequests(req: Request, res: Response)
             endTime: request.endDateTime,
             description: request.requestDescription,
             status: request.status,
+            service: request.service
         }
     });
 

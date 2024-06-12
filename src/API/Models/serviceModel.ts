@@ -1,29 +1,26 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../Database";
+import { createServiceType } from "../Controllers/designer/service/createDesignerService";
 
-export const addService = async (data : Prisma.ServiceCreateInput) => {
+export const addService = async (designerId: string, data: createServiceType) => {
     const service = await prisma.service.create({
         data : {
             description : data.description,
             price : data.price,
             title : data.title,
-            designer : {
-                connect :{
-                    baseAccountId : data.designer.connect?.baseAccountId
-                } 
-            }
+            designerId: designerId
         }
     })
     return service
 }
 
-export const updateServiceByID = async (id : string , data : Prisma.ServiceUpdateInput) => {
+export const updateServiceByID = async (designerId: string, id : string , data : createServiceType) => {
     const serviceUpdated = await prisma.service.update({
-        where : {id},
+        where : {id: id, designerId: designerId},
         data : {
-            designer : {
-                update : {baseAccountId : data.designer?.update?.baseAccountId}
-            }
+            price: data.price,
+            title: data.title,
+            description: data.description
         }
     })
     return serviceUpdated

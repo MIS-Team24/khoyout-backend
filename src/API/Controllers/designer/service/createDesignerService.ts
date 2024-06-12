@@ -6,20 +6,26 @@ import { Messages } from "../../../../Services/responses/Messages";
 import { findDesignerBy } from "../../../Models/DesignerModel";
 import { addService } from "../../../Models/serviceModel";
 import { BadServerException } from "../../../Exceptions/badServer";
+import { z } from "zod";
+
+export const createServiceSchema = z.object({
+    title: z.string().min(2),
+    description: z.string().min(40).max(4090),
+    price: z.number().int().min(0).max(10000)
+});
+
+export type createServiceType = z.infer<typeof createServiceSchema>
 
 export const createDesignerService = async (req : Request , res : Response) => {
-    const designer = await findDesignerBy({ baseAccountId: req.params.id });
-        
-    if(!designer){         
-        return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
-            new BadRequestException(Messages.DESIGNER_NOT_FOUND 
-                , ErrorCode.DESIGNER_NOT_FOUND)
-        ))  
+    const user = req.user;
+    if (!user) {
+        return res.sendStatus(401);
     }
 
-    const newService = {...req.body , designer}
+    const requestBody = req.body as createServiceType;
 
-    const newServiceCreated = await addService(newService)
+    const newServiceCreated = await addService(user.id, requestBody);
+
     if(!newServiceCreated){
         return res.status(ResStatus.I_SERVER_ERROR).json(errorResponseTemplate(
             new BadServerException(Messages.SERVER_ERROR 

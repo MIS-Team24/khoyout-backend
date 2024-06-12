@@ -155,6 +155,8 @@ model BookingRequest {
   endDateTime        DateTime
   requestDescription String
 
+  serviceId   String
+  service     Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId      String
   user        Users           @relation(fields: [userId], references: [baseAccountId])
   designerId  String
@@ -175,7 +177,8 @@ model Appointment {
   startDateTime DateTime
   endDateTime   DateTime
 
-  status AppointmentStatus
+  status     AppointmentStatus
+  leftReview Boolean           @default(false)
 
   requestId  Int             @unique
   request    BookingRequest  @relation(fields: [requestId], references: [id])
@@ -183,6 +186,8 @@ model Appointment {
   user       Users           @relation(fields: [userId], references: [baseAccountId])
   designerId String
   designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId])
+  serviceId  String
+  service    Service         @relation(fields: [serviceId], references: [id])
 }
 
 enum DayOfWeek {
@@ -196,12 +201,14 @@ enum DayOfWeek {
 }
 
 model Service {
-  id          String          @id @default(uuid())
-  designerId  String
-  title       String
-  description String
-  price       Int
-  designer    DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
+  id              String           @id @default(uuid())
+  designerId      String
+  title           String
+  description     String
+  price           Int
+  designer        DesignerProfile  @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
+  BookingRequests BookingRequest[]
+  Appointment     Appointment[]
 }
 
 model TeamMember {
@@ -221,7 +228,7 @@ model Review {
   rating     Int
   comment    String
   name       String
-  postedOn   DateTime
+  postedOn   DateTime        @default(now())
   user       Users           @relation(fields: [customerId], references: [baseAccountId])
   designer   DesignerProfile @relation(fields: [designerId], references: [baseAccountId], onDelete: Cascade, onUpdate: Cascade)
 }

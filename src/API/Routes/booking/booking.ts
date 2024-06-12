@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { checkIfAuthenticated } from "../../Middleware/CheckAuth";
 import { UserType } from "../../types/user";
-import handleSendingAppointmentRequestToDesigner from "../../Controllers/booking/appointmentRequest";
+import handleSendingAppointmentRequestToDesigner, { handleWritingReviewForAppointment } from "../../Controllers/booking/appointmentRequest";
 import BodyValidator from "../../Middleware/BodyValidator";
 import { z } from "zod";
 import { handleFetchingDesignerTimes } from "../../Controllers/booking/availableTimesFetching";
 import handleCancelBookingRequest from "../../Controllers/booking/cancellingBookingRequest";
 import handleAcceptingUserAppointmentRequest, { handleMarkinAppointmentAs } from "../../Controllers/booking/acceptingAppointment";
 import { handleFetchUserAppointments } from "../../Controllers/booking/fetchUserAppointments";
-import { acceptAppointmentRequest } from "../../Models/AppointmentsModel";
+import { acceptAppointmentRequest, reviewSchema } from "../../Models/AppointmentsModel";
 import { deployNotification } from "../../Models/Notifications";
 import { ResStatus } from "../../Exceptions/main";
 import { handleFetchRequests } from "../../Controllers/booking/fetchRequests";
@@ -21,6 +21,7 @@ const router = Router();
 const AppointmentSendingSchema = z.object({
     availableTimeId: z.number().int().min(0),
     requestDescription: z.string().min(0).max(8192),
+    serviceId: z.string(),
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
         message: "Date must be in the format YYYY-MM-DD"
       })
@@ -36,6 +37,7 @@ router.delete("/available-times/:id", checkIfAuthenticated(UserType.Designer), d
 // for users
 router.post("/:designerId/requests", checkIfAuthenticated(UserType.User), BodyValidator({schema: AppointmentSendingSchema}), handleSendingAppointmentRequestToDesigner);
 router.delete("/:designerId/requests/:requestId", checkIfAuthenticated(UserType.User), handleCancelBookingRequest);
+router.post("/:designerId/:appointmentId/reviews", checkIfAuthenticated(UserType.User), BodyValidator({schema: reviewSchema}), handleWritingReviewForAppointment)
 
 // for designers.
 router.post("/requests/:requestId", checkIfAuthenticated(UserType.Designer), handleAcceptingUserAppointmentRequest);

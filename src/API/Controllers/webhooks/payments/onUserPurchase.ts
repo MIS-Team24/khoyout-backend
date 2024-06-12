@@ -6,6 +6,7 @@ import stripeClient from "../../../../Services/Billing/client";
 
 export async function onUserPurchaseHandler(req: Request, res: Response)
 {
+    console.log("tafsafas");
     if (!req.stripeEvent) {
         return;
     }

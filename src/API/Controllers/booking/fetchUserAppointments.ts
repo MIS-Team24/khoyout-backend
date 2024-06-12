@@ -19,6 +19,7 @@ export async function handleFetchUserAppointments(req: Request, res: Response)
             designer: appoint.designer,
             userId: appoint.userId,
             user: appoint.user,
+            leftReview: appoint.leftReview,
             startTime: appoint.startDateTime,
             endTime: appoint.endDateTime,
             description: appoint.request.requestDescription,

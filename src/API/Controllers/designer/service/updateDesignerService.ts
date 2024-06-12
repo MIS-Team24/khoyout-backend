@@ -5,19 +5,18 @@ import { BadRequestException } from "../../../Exceptions/badRequest";
 import { Messages } from "../../../../Services/responses/Messages";
 import { findDesignerBy } from "../../../Models/DesignerModel";
 import { updateServiceByID } from "../../../Models/serviceModel";
+import { createServiceType } from "./createDesignerService";
 
 export const updateDesignerService = async (req : Request , res : Response) => {
-    const designer = await findDesignerBy({ baseAccountId: req.params.id });
-        
-    if(!designer){         
-        return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
-            new BadRequestException(Messages.DESIGNER_NOT_FOUND 
-                , ErrorCode.DESIGNER_NOT_FOUND)
-        ))  
+    const user = req.user;
+    if (!user) {
+        return res.sendStatus(401);
     }
 
-    const fieldsToUpdate = {...req.body , designer}
-    const serviceUpdated = await updateServiceByID(req.params.serviceId, fieldsToUpdate)   
+    const requestBody = req.body as createServiceType;
+
+    const serviceUpdated = await updateServiceByID(user.id, req.params.serviceId, requestBody);
+
     if(!serviceUpdated){         
         return res.status(ResStatus.BAD_REQUEST).json(errorResponseTemplate(
             new BadRequestException(Messages.SERVICE_NOT_FOUND 
