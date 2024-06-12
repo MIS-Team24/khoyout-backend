@@ -6,6 +6,7 @@ import { getDesignerBaseAccountByEmail } from "../../../Models/DesignerModel";
 export async function onUserPurchaseHandler(req: Request, res: Response)
 {
     console.log("1 stripe");
+    console.log(req.stripeEvent);
     if (!req.stripeEvent) {
         return;
     }
