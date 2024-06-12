@@ -93,13 +93,13 @@ export async function handleMarkinAppointmentAs(req: Request, res: Response)
             ))
         }
 
-        const UTCNow = getUTCTime();
+        // const UTCNow = getUTCTime();
 
-        if (!(UTCNow > appointmentOfDesigner.startDateTime)) {
-            return res.status(ResStatus.FORBIDDEN).json(errorResponseTemplate(
-                new BadRequestException("You must wait for the time to pass before you can mark this appointment as something.", ErrorCode.INVALID_DATA)
-            ))
-        }
+        // if (!(UTCNow > appointmentOfDesigner.startDateTime)) {
+        //     return res.status(ResStatus.FORBIDDEN).json(errorResponseTemplate(
+        //         new BadRequestException("You must wait for the time to pass before you can mark this appointment as something.", ErrorCode.INVALID_DATA)
+        //     ))
+        // }
 
 
         const acceptedSuccessfully = await setAppointmentMarkedAs(designerId, appointmentId, typeCastedBody.markAs);
