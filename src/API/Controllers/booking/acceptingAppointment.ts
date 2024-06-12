@@ -97,7 +97,7 @@ export async function handleMarkinAppointmentAs(req: Request, res: Response)
 
         if (!(UTCNow > appointmentOfDesigner.startDateTime)) {
             return res.status(ResStatus.FORBIDDEN).json(errorResponseTemplate(
-                new BadRequestException(Messages.INVALID_DATA, ErrorCode.INVALID_DATA)
+                new BadRequestException("You must wait for the time to pass before you can mark this appointment as something.", ErrorCode.INVALID_DATA)
             ))
         }
 
