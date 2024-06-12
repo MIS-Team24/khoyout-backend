@@ -43,7 +43,7 @@ export async function onUserPurchaseHandler(req: Request, res: Response)
                 break;
             }
             default: {
-                res.sendStatus(404);
+                res.sendStatus(500);
                 break;
             }
         }
